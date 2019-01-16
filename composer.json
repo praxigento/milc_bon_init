@@ -12,6 +12,7 @@
     }
   ],
   "require": {
+    "php": "^7.1",
     "teqfw/back-di-php": "dev-master",
     "teqfw/back-db-repo3-php": "dev-master as 0.1.0"
   },
