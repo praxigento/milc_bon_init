@@ -1,0 +1,6 @@
+/.idea/
+/cfg.work.sh
+/cfg/local.json
+/composer.lock
+/data/milc.sql
+/vendor/

@@ -1,0 +1,24 @@
+{
+  "name": "praxigento/milc_bon_init",
+  "description": "Initial environment to develop bonus component in MILC project.",
+  "type": "library",
+  "homepage": "https://github.com/praxigento/milc_bon_init",
+  "license": "GPL-3.0-only",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "Alex Gusev",
+      "email": "alex@flancer64.com"
+    }
+  ],
+  "require": {
+    "teqfw/back-di-php": "dev-master",
+    "teqfw/back-db-repo3-php": "dev-master as 0.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Praxigento\\Milc\\Bonus\\": "src/php"
+    }
+  },
+  "minimum-stability": "dev"
+}
