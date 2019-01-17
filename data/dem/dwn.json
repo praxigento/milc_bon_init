@@ -1,0 +1,77 @@
+{
+  "DEM": {
+    ".": "dwn",
+    "tree": {
+      ".": {
+        "desc": "Natural tree to save current 'parent-child' relations between customers.",
+        "attr": {
+          "customer_ref": {
+            "type": "reference",
+            "desc": "Reference to the customer itself."
+          },
+          "parent_ref": {
+            "type": "reference",
+            "desc": "Reference to the customer's parent."
+          }
+        },
+        "index": {
+          "pk": {
+            "type": "primary",
+            "attrs": ["customer_ref", "parent_ref"]
+          }
+        },
+        "relation": {
+          "customer": {
+            "path": "/res/partner",
+            "own": ["customer_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          },
+          "parent": {
+            "path": "/res/partner",
+            "own": ["parent_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          }
+        }
+      },
+      "trace": {
+        ".": {
+          "desc": "Trace log to save changes in 'parent-child' relations between customers.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "ID of the trace log item to add natural order if 'date' values are equal for different items."
+            },
+            "customer_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer itself."
+            },
+            "parent_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer's  parent."
+            },
+            "date": {
+              "type": "datetime",
+              "desc": "Reference to the parent."
+            }
+          },
+          "relation": {
+            "customer": {
+              "path": "/res/partner",
+              "own": ["customer_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "parent": {
+              "path": "/res/partner",
+              "own": ["parent_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

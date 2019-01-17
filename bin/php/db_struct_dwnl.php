@@ -8,7 +8,6 @@
 /* PHP Composer's autoloader (access to dependencies sources) */
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-
 /**
  * Get DI container then populate database schema with DEM'ed entities.
  */
@@ -26,23 +25,37 @@ try {
     $conn = $container->get(\TeqFw\Lib\Db\Api\Connection\Schema::class);
     $conn->beginTransaction();
 
+    /**
+     * Read current DB Schema using Doctrine.
+     */
     /** @var \Doctrine\DBAL\Schema\AbstractSchemaManager $man */
     $man = $conn->getSchemaManager();
     /** @var \Doctrine\DBAL\Schema\Schema $schema */
     $schema = $man->createSchema();
 
-    $tableName = 'dwn_tree';
-    $hasTable = $schema->hasTable($tableName);
-    if ($hasTable) {
-        $table = $schema->dropTable($tableName);
+    /**
+     * Add MILC tables to the Schema.
+     */
+    /** @var \TeqFw\Lib\Dem\Parser $parser */
+    $parser = $container->get(\TeqFw\Lib\Dem\Parser::class);
+    /** @var \TeqFw\Lib\Dem\Api\Helper\Ddl\Entity $ddl */
+    $ddl = $container->get(\TeqFw\Lib\Dem\Api\Helper\Ddl\Entity::class);
+
+    $json = readJsonDwn();
+    $collection = $parser->parseJson($json);
+    foreach ($collection->items as $entity) {
+        $ddl->create($schema, $entity);
     }
-    $table = $schema->createTable($tableName);
-    $table->addColumn('user_ref', 'integer', ['unsigned' => true]);
-    $table->addColumn('parent_ref', 'integer', ['length' => 32]);
-    $table->setPrimaryKey(['user_ref', 'parent_ref']);
 
+    $json = readJsonBon();
+    $collection = $parser->parseJson($json);
+    foreach ($collection->items as $entity) {
+        $ddl->create($schema, $entity);
+    }
 
-    /* persist tables into DB */
+    /**
+     * Persist tables into DB.
+     */
     /** @var \Doctrine\DBAL\Schema\Synchronizer\SingleDatabaseSynchronizer $sync */
     $sync = $container->get(\Doctrine\DBAL\Schema\Synchronizer\SingleDatabaseSynchronizer::class);
     $sync->updateSchema($schema);
@@ -53,4 +66,26 @@ try {
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+
+/**
+ * Load DEM JSON from file.
+ * @return string
+ */
+function readJsonDwn()
+{
+    $file = __DIR__ . '/../../data/dem/dwn.json';
+    $result = file_get_contents($file);
+    return $result;
+}
+
+/**
+ * Load DEM JSON from file.
+ * @return string
+ */
+function readJsonBon()
+{
+    $file = __DIR__ . '/../../data/dem/bon.json';
+    $result = file_get_contents($file);
+    return $result;
 }

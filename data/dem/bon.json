@@ -1,0 +1,42 @@
+{
+  "DEM": {
+    ".": "bon",
+    "tree": {
+      "binary": {
+        ".": {
+          "desc": "Binary tree to save 'parent-child' relations between customers to calculate binary bonus.",
+          "attr": {
+            "customer_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer itself."
+            },
+            "parent_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer's parent in binary tree."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["customer_ref", "parent_ref"]
+            }
+          },
+          "relation": {
+            "customer": {
+              "path": "/res/partner",
+              "own": ["customer_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "parent": {
+              "path": "/res/partner",
+              "own": ["parent_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
