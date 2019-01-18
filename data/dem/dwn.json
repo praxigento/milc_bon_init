@@ -12,12 +12,20 @@
           "parent_ref": {
             "type": "reference",
             "desc": "Reference to the customer's parent."
+          },
+          "depth": {
+            "type": "integer",
+            "desc": "Depth of the customer placement in the tree (starting from 1)."
+          },
+          "path": {
+            "type": "string",
+            "desc": "Path to the current customer (all parents IDs - ':1:23:345:')."
           }
         },
         "index": {
           "pk": {
             "type": "primary",
-            "attrs": ["customer_ref", "parent_ref"]
+            "attrs": ["customer_ref"]
           }
         },
         "relation": {
@@ -25,12 +33,12 @@
             "path": "/res/partner",
             "own": ["customer_ref"],
             "foreign": ["id"],
-            "on": {"delete": "cascade", "update": "cascade"}
+            "on": {"delete": "restrict", "update": "cascade"}
           },
           "parent": {
-            "path": "/res/partner",
+            "path": "/dwn/tree",
             "own": ["parent_ref"],
-            "foreign": ["id"],
+            "foreign": ["customer_ref"],
             "on": {"delete": "cascade", "update": "cascade"}
           }
         }
