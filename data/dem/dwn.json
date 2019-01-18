@@ -13,6 +13,10 @@
             "type": "reference",
             "desc": "Reference to the member's parent."
           },
+          "mlm_id": {
+            "type": "string",
+            "desc": "MLM ID of the member."
+          },
           "depth": {
             "type": "integer",
             "desc": "Depth of the member placement in the tree (starting from 1)."
@@ -25,6 +29,10 @@
         "index": {
           "pk": {
             "type": "primary",
+            "attrs": ["member_ref"]
+          },
+          "uniqueMlmId": {
+            "type": "unique",
             "attrs": ["member_ref"]
           }
         },
