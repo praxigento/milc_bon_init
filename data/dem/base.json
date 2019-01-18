@@ -1,0 +1,16 @@
+{
+  "DEM": {
+    "res": {
+      "partner": {
+        ".": {
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Reference to the customer itself."
+            }
+          }
+        }
+      }
+    }
+  }
+}

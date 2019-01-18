@@ -3,61 +3,61 @@
     ".": "dwn",
     "tree": {
       ".": {
-        "desc": "Natural tree to save current 'parent-child' relations between customers.",
+        "desc": "Natural tree to save current 'parent-child' relations between members.",
         "attr": {
-          "customer_ref": {
+          "member_ref": {
             "type": "reference",
-            "desc": "Reference to the customer itself."
+            "desc": "Reference to the member itself."
           },
           "parent_ref": {
             "type": "reference",
-            "desc": "Reference to the customer's parent."
+            "desc": "Reference to the member's parent."
           },
           "depth": {
             "type": "integer",
-            "desc": "Depth of the customer placement in the tree (starting from 1)."
+            "desc": "Depth of the member placement in the tree (starting from 1)."
           },
           "path": {
             "type": "string",
-            "desc": "Path to the current customer (all parents IDs - ':1:23:345:')."
+            "desc": "Path to the current member (all parents IDs - ':1:23:345:')."
           }
         },
         "index": {
           "pk": {
             "type": "primary",
-            "attrs": ["customer_ref"]
+            "attrs": ["member_ref"]
           }
         },
         "relation": {
-          "customer": {
+          "member": {
             "path": "/res/partner",
-            "own": ["customer_ref"],
+            "own": ["member_ref"],
             "foreign": ["id"],
             "on": {"delete": "restrict", "update": "cascade"}
           },
           "parent": {
             "path": "/dwn/tree",
             "own": ["parent_ref"],
-            "foreign": ["customer_ref"],
+            "foreign": ["member_ref"],
             "on": {"delete": "cascade", "update": "cascade"}
           }
         }
       },
       "trace": {
         ".": {
-          "desc": "Trace log to save changes in 'parent-child' relations between customers.",
+          "desc": "Trace log to save changes in 'parent-child' relations between members.",
           "attr": {
             "id": {
               "type": "identity",
               "desc": "ID of the trace log item to add natural order if 'date' values are equal for different items."
             },
-            "customer_ref": {
+            "member_ref": {
               "type": "reference",
-              "desc": "Reference to the customer itself."
+              "desc": "Reference to the member itself."
             },
             "parent_ref": {
               "type": "reference",
-              "desc": "Reference to the customer's  parent."
+              "desc": "Reference to the member's  parent."
             },
             "date": {
               "type": "datetime",
@@ -65,9 +65,9 @@
             }
           },
           "relation": {
-            "customer": {
+            "member": {
               "path": "/res/partner",
-              "own": ["customer_ref"],
+              "own": ["member_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },

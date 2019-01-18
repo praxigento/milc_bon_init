@@ -31,7 +31,8 @@ try {
     /** @var \Doctrine\DBAL\Schema\AbstractSchemaManager $man */
     $man = $conn->getSchemaManager();
     /** @var \Doctrine\DBAL\Schema\Schema $schema */
-    $schema = $man->createSchema();
+//    $schema = $man->createSchema();
+    $schema = new \Doctrine\DBAL\Schema\Schema();
 
     /**
      * Add MILC tables to the Schema.
@@ -40,6 +41,12 @@ try {
     $parser = $container->get(\TeqFw\Lib\Dem\Parser::class);
     /** @var \TeqFw\Lib\Dem\Api\Helper\Ddl\Entity $ddl */
     $ddl = $container->get(\TeqFw\Lib\Dem\Api\Helper\Ddl\Entity::class);
+
+    $json = readJsonBase();
+    $collection = $parser->parseJson($json);
+    foreach ($collection->items as $entity) {
+        $ddl->create($schema, $entity);
+    }
 
     $json = readJsonDwn();
     $collection = $parser->parseJson($json);
@@ -66,6 +73,17 @@ try {
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+
+/**
+ * Load DEM JSON from file.
+ * @return string
+ */
+function readJsonBase()
+{
+    $file = __DIR__ . '/../../data/dem/base.json';
+    $result = file_get_contents($file);
+    return $result;
 }
 
 /**

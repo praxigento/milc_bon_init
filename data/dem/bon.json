@@ -4,27 +4,27 @@
     "tree": {
       "binary": {
         ".": {
-          "desc": "Binary tree to save 'parent-child' relations between customers to calculate binary bonus.",
+          "desc": "Binary tree to save 'parent-child' relations between members to calculate binary bonus.",
           "attr": {
-            "customer_ref": {
+            "member_ref": {
               "type": "reference",
-              "desc": "Reference to the customer itself."
+              "desc": "Reference to the member itself."
             },
             "parent_ref": {
               "type": "reference",
-              "desc": "Reference to the customer's parent in binary tree."
+              "desc": "Reference to the member's parent in binary tree."
             }
           },
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["customer_ref", "parent_ref"]
+              "attrs": ["member_ref", "parent_ref"]
             }
           },
           "relation": {
-            "customer": {
+            "member": {
               "path": "/res/partner",
-              "own": ["customer_ref"],
+              "own": ["member_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
