@@ -76,6 +76,8 @@ try {
                 $trace = new ETreeTrace();
                 $trace->member_ref = $entry->member_ref;
                 $trace->parent_ref = $parentIdNew;
+                $seconds = random_int(0, 3600);
+                $date->modify("+$seconds seconds");
                 $trace->date = $date;
                 $em->persist($trace);
                 $entry->parent_ref = $parentIdNew;
