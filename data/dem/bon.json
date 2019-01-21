@@ -1,6 +1,63 @@
 {
   "DEM": {
-    ".": "bon",
+    ".": "/bon/base",
+    "calc": {
+      "type": {
+        ".": {
+          "desc": "Codifier for calculation types.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Calculation type ID."
+            },
+            "code": {
+              "type": "string",
+              "desc": "Calculation code to be referenced from programs/scripts."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Calculation type reference for humans."
+            }
+          },
+          "index": {
+            "uniqueCode": {
+              "type": "unique",
+              "attrs": ["code"]
+            }
+          }
+        }
+      }
+    },
+    "pv": {
+      "reg": {
+        ".": {
+          "desc": "Registry to save PV/APV movements.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Registry entry ID."
+            },
+            "volume": {
+              "type": "decimal",
+              "desc": "Amount of the PV/APV to be add/subtract to/from customer."
+            },
+            "is_autoship": {
+              "type": "boolean",
+              "default": false,
+              "desc": "'true' if this is an autoship PV."
+            },
+            "date": {
+              "type": "datetime",
+              "desc": "Timestamp to apply PV movement for customer (used in bonus calculations)."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Movement reference for humans."
+            }
+          }
+        }
+      }
+    },
     "tree": {
       "binary": {
         ".": {
