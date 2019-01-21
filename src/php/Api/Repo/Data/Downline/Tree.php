@@ -26,6 +26,11 @@ class Tree
      */
     public $member_ref;
     /**
+     * @var string
+     * @Column(type="string")
+     */
+    public $mlm_id;
+    /**
      * @var int
      * @Column(type="integer")
      */

@@ -62,6 +62,7 @@ try {
         $tree->parent_ref = $trace->parent_ref;
         $tree->depth = 1;
         $tree->path = '::';
+        $tree->mlm_id = $trace->member_ref;
         $em->persist($tree);
 
         /**

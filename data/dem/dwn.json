@@ -33,7 +33,7 @@
           },
           "uniqueMlmId": {
             "type": "unique",
-            "attrs": ["member_ref"]
+            "attrs": ["mlm_id"]
           }
         },
         "relation": {
