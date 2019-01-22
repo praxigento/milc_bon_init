@@ -48,7 +48,16 @@ try {
         $em->flush($partner);
 
         /* collect customer data (should be performed in outside FELICS ) */
-        $parentId = ($i == 0) ? $customerId : random_int(1, $i);
+        $count = count($custExist) - 1;
+        if ($i == 0) {
+            $parentId = $customerId;
+        } else {
+            /* parent ID should not be equal to customer ID - we have a failures when we delete customers */
+            do {
+                $key = random_int(0, $count);
+                $parentId = $custExist[$key];
+            } while ($parentId == $customerId);
+        }
         $mlmId = $customerId;
 
         /* register new customer in downline */
@@ -59,34 +68,42 @@ try {
         $seconds = random_int(0, 3600);
         $date->modify("+$seconds seconds");
         $reqAdd->date = $date;
+        echo "\nadd: $customerId/$parentId.";
         $respAdd = $srvDwnCustAdd->exec($reqAdd);
 
-        $count = count($custExist) - 1;
         if ($count > 1) {
             /**
              * Random parent update for existing customer.
              */
-            $keyCust = random_int(1, $count);
+            $keyCust = random_int(0, $count);
             $memberId = $custExist[$keyCust];
-            $keyParent = random_int(1, $count);
+            $keyParent = random_int(0, $count);
             $parentIdNew = $custExist[$keyParent];
-            $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\ChangeParent\Request();
-            $reqChange->customerId = $memberId;
-            $reqChange->parentIdNew = $parentIdNew;
-            $seconds = random_int(0, 3600);
-            $date->modify("+$seconds seconds");
-            $reqChange->date = $date;
-            $respChange = $srvDwnChangeParent->exec($reqChange);
+            if ($parentIdNew != $memberId) {
+                $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\ChangeParent\Request();
+                $reqChange->customerId = $memberId;
+                $reqChange->parentIdNew = $parentIdNew;
+                $seconds = random_int(0, 3600);
+                $date->modify("+$seconds seconds");
+                $reqChange->date = $date;
+                $respChange = $srvDwnChangeParent->exec($reqChange);
+                $parentIdOld = $respChange->parentIdOld;
+                echo "\nchanged: $memberId: $parentIdOld => $parentIdNew.";
+            }
             /* delete customer with 25%*/
             if (random_int(1, 4) == 2) {
-                $keyDel = random_int(1, $count);
+                $keyDel = random_int(0, $count);
                 $custIdDel = $custExist[$keyDel];
                 $reqDel = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\Delete\Request();
                 $reqDel->customerId = $custIdDel;
                 $seconds = random_int(0, 3600);
                 $date->modify("+$seconds seconds");
                 $reqDel->date = $date;
+                echo "\ndelete: $custIdDel.";
                 $respDel = $srvDwnDelete->exec($reqDel);
+                /* remove key from existing customers registry */
+                unset($custExist[$keyDel]);
+                $custExist = array_values($custExist);
             }
 
         }

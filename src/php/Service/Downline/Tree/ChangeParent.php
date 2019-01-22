@@ -30,6 +30,8 @@ class ChangeParent
     public function exec($req)
     {
         assert($req instanceof ARequest);
+        $result = new AResponse();
+
         $customerId = $req->customerId;
         $parentIdNew = $req->parentIdNew;
         $date = $req->date;
@@ -43,6 +45,7 @@ class ChangeParent
         $found = $this->manEntity->find(ETree::class, $customerId);
         if ($found) {
             $parentId = $found->parent_ref;
+            $result->parentIdOld = $parentId;
             if ($parentId != $parentIdNew) {
                 /* save data into downline tree trace */
                 $trace = new ETreeTrace();
@@ -58,8 +61,6 @@ class ChangeParent
             }
         }
 
-
-        $result = new AResponse();
         return $result;
     }
 }

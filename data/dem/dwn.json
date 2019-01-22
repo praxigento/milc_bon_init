@@ -83,7 +83,7 @@
             "path": "/dwn/tree",
             "own": ["parent_ref"],
             "foreign": ["member_ref"],
-            "on": {"delete": "cascade", "update": "cascade"}
+            "on": {"delete": "restrict", "update": "cascade"}
           }
         }
       },
@@ -101,7 +101,8 @@
             },
             "parent_ref": {
               "type": "reference",
-              "desc": "Reference to the member's  parent."
+              "desc": "Reference to the member's  parent.",
+              "not_null": false
             },
             "date": {
               "type": "datetime",

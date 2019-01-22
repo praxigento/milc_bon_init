@@ -10,5 +10,5 @@ namespace Praxigento\Milc\Bonus\Api\Service\Downline\Tree\ChangeParent;
 class Response
     extends \TeqFw\Lib\Data
 {
-
+    public $parentIdOld;
 }

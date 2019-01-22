@@ -44,6 +44,8 @@ class Delete
             /** @var ETree $foundTree */
             $foundTree = $this->manEntity->find(ETree::class, $customerId);
             if ($foundTree) {
+                /* UPDATE query does not change data in Entity Manager */
+                $this->manEntity->refresh($foundTree);
                 /* update parents for frontline customers in tree */
                 $parentId = $foundTree->parent_ref;
                 $qb = $this->manEntity->createQueryBuilder();
@@ -56,15 +58,18 @@ class Delete
                     'customerId' => $customerId,
                     'parentId' => $parentId
                 ];
-                $query->execute($params);
+                $updated = $query->execute($params);
+                $this->manEntity->flush();
                 /* remove tree entry */
-                $this->manEntity->remove($foundTree);
+                $removed = $this->manEntity->remove($foundTree);
+                $this->manEntity->flush();
                 /* save data into downline tree trace */
                 $trace = new ETreeTrace();
                 $trace->member_ref = $customerId;
                 $trace->parent_ref = null;
                 $trace->date = $date;
                 $this->manEntity->persist($trace);
+                $this->manEntity->flush();
             }
             /* update customer registry */
             $found->is_deleted = true;
