@@ -102,7 +102,7 @@
             "parent_ref": {
               "type": "reference",
               "desc": "Reference to the member's  parent.",
-              "not_null": false
+              "nullable": true
             },
             "date": {
               "type": "datetime",

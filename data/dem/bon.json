@@ -37,9 +37,15 @@
               "type": "identity",
               "desc": "Registry entry ID."
             },
+            "customer_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer."
+            },
             "volume": {
               "type": "decimal",
-              "desc": "Amount of the PV/APV to be add/subtract to/from customer."
+              "desc": "Amount of the PV/APV to be add/subtract to/from customer.",
+              "precision": 10,
+              "scale": 2
             },
             "is_autoship": {
               "type": "boolean",
@@ -52,44 +58,16 @@
             },
             "note": {
               "type": "string",
-              "desc": "Movement reference for humans."
-            }
-          }
-        }
-      }
-    },
-    "tree": {
-      "binary": {
-        ".": {
-          "desc": "Binary tree to save 'parent-child' relations between members to calculate binary bonus.",
-          "attr": {
-            "member_ref": {
-              "type": "reference",
-              "desc": "Reference to the member itself."
-            },
-            "parent_ref": {
-              "type": "reference",
-              "desc": "Reference to the member's parent in binary tree."
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["member_ref", "parent_ref"]
+              "desc": "Movement reference for humans.",
+              "nullable": true
             }
           },
           "relation": {
             "member": {
-              "path": "/res/partner",
-              "own": ["member_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "parent": {
-              "path": "/res/partner",
-              "own": ["parent_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "path": "/dwn/cust/reg",
+              "own": ["customer_ref"],
+              "foreign": ["customer_ref"],
+              "on": {"delete": "restrict", "update": "cascade"}
             }
           }
         }

@@ -32,18 +32,20 @@ try {
     $srvDwnDelete = $container->get(\Praxigento\Milc\Bonus\Api\Service\Downline\Tree\Delete::class);
 
     /**
-     * Create 1000 users.
+     * Create customers.
      */
     $date = new \DateTime();
     $date->modify('-100 days');
     /* IDs of the existing customers */
     $custExist = [];
-
+    $rootId = null;
     for ($i = 0; $i < 100; $i++) {
         /* create new customer in base DB structure */
         $partner = new EResPartner();
         $em->persist($partner);
         $customerId = $partner->id;
+        if (is_null($rootId))
+            $rootId = $customerId;
         $custExist[] = $customerId;
         $em->flush($partner);
 
@@ -79,7 +81,10 @@ try {
             $memberId = $custExist[$keyCust];
             $keyParent = random_int(0, $count);
             $parentIdNew = $custExist[$keyParent];
-            if ($parentIdNew != $memberId) {
+            if (
+                ($parentIdNew != $memberId) &&
+                ($memberId != $rootId)  // don't change parent for the root customer
+            ) {
                 $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\ChangeParent\Request();
                 $reqChange->customerId = $memberId;
                 $reqChange->parentIdNew = $parentIdNew;
@@ -94,24 +99,24 @@ try {
             if (random_int(1, 4) == 2) {
                 $keyDel = random_int(0, $count);
                 $custIdDel = $custExist[$keyDel];
-                $reqDel = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\Delete\Request();
-                $reqDel->customerId = $custIdDel;
-                $seconds = random_int(0, 3600);
-                $date->modify("+$seconds seconds");
-                $reqDel->date = $date;
-                echo "\ndelete: $custIdDel.";
-                $respDel = $srvDwnDelete->exec($reqDel);
-                /* remove key from existing customers registry */
-                unset($custExist[$keyDel]);
-                $custExist = array_values($custExist);
+                if ($custIdDel != $rootId) {
+                    $reqDel = new \Praxigento\Milc\Bonus\Api\Service\Downline\Tree\Delete\Request();
+                    $reqDel->customerId = $custIdDel;
+                    $seconds = random_int(0, 3600);
+                    $date->modify("+$seconds seconds");
+                    $reqDel->date = $date;
+                    echo "\ndelete: $custIdDel.";
+                    $respDel = $srvDwnDelete->exec($reqDel);
+                    /* remove key from existing customers registry */
+                    unset($custExist[$keyDel]);
+                    $custExist = array_values($custExist);
+                }
             }
 
         }
     }
 
-
     $em->flush();
-
 
     echo "\nDone.";
 } catch (\Throwable $e) {

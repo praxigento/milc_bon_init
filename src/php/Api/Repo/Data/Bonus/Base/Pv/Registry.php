@@ -30,7 +30,7 @@ class Registry
     public $id;
     /**
      * @var bool
-     * @Column(type="bool")
+     * @Column(type="boolean")
      */
     public $is_autoship;
     /**
@@ -39,8 +39,13 @@ class Registry
      */
     public $note;
     /**
+     * @var int
+     * @Column(type="integer")
+     */
+    public $customer_ref;
+    /**
      * @var float
-     * @Column(type="decimal")
+     * @Column(type="decimal", precision=10, scale=2)
      */
     public $volume;
 }
