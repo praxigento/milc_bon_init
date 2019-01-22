@@ -1,6 +1,50 @@
 {
   "DEM": {
     ".": "dwn",
+    "cust": {
+      "reg": {
+        ".": {
+          "desc": "Registry to save customer data is not related to downline tree directly.",
+          "attr": {
+            "customer_ref": {
+              "type": "reference",
+              "desc": "Reference to the customer data in main DB structure."
+            },
+            "mlm_id": {
+              "type": "string",
+              "desc": "MLM ID of the customer."
+            },
+            "is_deleted": {
+              "type": "boolean",
+              "desc": "'true' if customer is deleted/anonymized."
+            },
+            "is_inactive": {
+              "type": "boolean",
+              "desc": "'true' if customer is inactive."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["customer_ref"]
+            },
+            "uniqueMlmId": {
+              "type": "unique",
+              "attrs": ["mlm_id"]
+            }
+          },
+          "relation": {
+            "member": {
+              ".comment": "TODO: should we have a foreign key in case of customer can be deleted in the primary customer table?",
+              "path": "/res/partner",
+              "own": ["customer_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "restrict", "update": "cascade"}
+            }
+          }
+        }
+      }
+    },
     "tree": {
       ".": {
         "desc": "Natural tree to save current 'parent-child' relations between members.",
@@ -12,10 +56,6 @@
           "parent_ref": {
             "type": "reference",
             "desc": "Reference to the member's parent."
-          },
-          "mlm_id": {
-            "type": "string",
-            "desc": "MLM ID of the member."
           },
           "depth": {
             "type": "integer",
@@ -30,17 +70,13 @@
           "pk": {
             "type": "primary",
             "attrs": ["member_ref"]
-          },
-          "uniqueMlmId": {
-            "type": "unique",
-            "attrs": ["mlm_id"]
           }
         },
         "relation": {
           "member": {
-            "path": "/res/partner",
+            "path": "/dwn/cust/reg",
             "own": ["member_ref"],
-            "foreign": ["id"],
+            "foreign": ["customer_ref"],
             "on": {"delete": "restrict", "update": "cascade"}
           },
           "parent": {
@@ -74,15 +110,15 @@
           },
           "relation": {
             "member": {
-              "path": "/res/partner",
+              "path": "/dwn/cust/reg",
               "own": ["member_ref"],
-              "foreign": ["id"],
+              "foreign": ["customer_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "parent": {
-              "path": "/res/partner",
+              "path": "/dwn/cust/reg",
               "own": ["parent_ref"],
-              "foreign": ["id"],
+              "foreign": ["customer_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
           }

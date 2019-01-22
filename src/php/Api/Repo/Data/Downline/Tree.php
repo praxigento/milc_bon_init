@@ -14,6 +14,11 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Downline;
 class Tree
     extends \TeqFw\Lib\Data
 {
+    const DEPTH = 'depth';
+    const MEMBER_REF = 'member_ref';
+    const PARENT_REF = 'parent_ref';
+    const PATH = 'path';
+
     /**
      * @var int
      * @Column(type="integer")
@@ -25,11 +30,6 @@ class Tree
      * @Column(type="integer")
      */
     public $member_ref;
-    /**
-     * @var string
-     * @Column(type="string")
-     */
-    public $mlm_id;
     /**
      * @var int
      * @Column(type="integer")
