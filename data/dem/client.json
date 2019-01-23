@@ -1,0 +1,197 @@
+{
+  "DEM": {
+    ".": "client",
+    "reg": {
+      ".": {
+        "desc": "Registry to save client data.",
+        "attr": {
+          "client_ref": {
+            "type": "reference",
+            "desc": "Reference to the client data in Odoo 'res_partner'."
+          },
+          "mlm_id": {
+            "type": "string",
+            "desc": "MLM ID of the distributor.",
+            "nullable": true
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "desc": "'true' if client is deleted/anonymized.",
+            "default": false
+          },
+          "is_customer": {
+            "type": "boolean",
+            "desc": "'true' - client is customer, 'false' - distributor.",
+            "default": false
+          }
+        },
+        "index": {
+          "pk": {
+            "type": "primary",
+            "attrs": ["client_ref"]
+          },
+          "uniqueMlmId": {
+            "type": "unique",
+            "attrs": ["mlm_id"]
+          }
+        },
+        "relation": {
+          "client": {
+            ".comment": "TODO: should we have a foreign key in case of client can be deleted in the primary client table?",
+            "path": "/res/partner",
+            "own": ["client_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "restrict", "update": "cascade"}
+          }
+        }
+      },
+      "log": {
+        "del": {
+          ".": {
+            "desc": "Log to save 'delete' events in clients registry.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
+              },
+              "client_ref": {
+                "type": "reference",
+                "desc": "Reference to the client."
+              },
+              "date": {
+                "type": "datetime",
+                "desc": "Event date/time."
+              },
+              "is_deleted": {
+                "type": "boolean",
+                "desc": "'true' if client is deleted/anonymized.",
+                "default": false
+              }
+            },
+            "relation": {
+              "client": {
+                "path": "/client/reg",
+                "own": ["client_ref"],
+                "foreign": ["client_ref"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        },
+        "distr": {
+          ".": {
+            "desc": "Log to save 'setType' changes in clients registry.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
+              },
+              "client_ref": {
+                "type": "reference",
+                "desc": "Reference to the client."
+              },
+              "date": {
+                "type": "datetime",
+                "desc": "Event date/time."
+              },
+              "is_customer": {
+                "type": "boolean",
+                "desc": "'true' - client is customer, 'false' - distributor.",
+                "default": false
+              }
+            },
+            "relation": {
+              "client": {
+                "path": "/client/reg",
+                "own": ["client_ref"],
+                "foreign": ["client_ref"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tree": {
+      ".": {
+        "desc": "Natural tree to save current 'parent-child' relations between clients.",
+        "attr": {
+          "client_ref": {
+            "type": "reference",
+            "desc": "Reference to the client itself."
+          },
+          "parent_ref": {
+            "type": "reference",
+            "desc": "Reference to the client's parent."
+          },
+          "depth": {
+            "type": "integer",
+            "desc": "Depth of the client placement in the tree (starting from 1)."
+          },
+          "path": {
+            "type": "string",
+            "desc": "Path to the current client (all parents IDs - ':1:23:345:')."
+          }
+        },
+        "index": {
+          "pk": {
+            "type": "primary",
+            "attrs": ["client_ref"]
+          }
+        },
+        "relation": {
+          "client": {
+            "path": "/client/reg",
+            "own": ["client_ref"],
+            "foreign": ["client_ref"],
+            "on": {"delete": "restrict", "update": "cascade"}
+          },
+          "parent": {
+            "path": "/client/tree",
+            "own": ["parent_ref"],
+            "foreign": ["client_ref"],
+            "on": {"delete": "restrict", "update": "cascade"}
+          }
+        }
+      },
+      "log": {
+        ".": {
+          "desc": "Log to save changes in 'parent-child' relations between clients.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client itself."
+            },
+            "parent_ref": {
+              "type": "reference",
+              "desc": "Reference to the client's  parent.",
+              "nullable": true
+            },
+            "date": {
+              "type": "datetime",
+              "desc": "Event date/time."
+            }
+          },
+          "relation": {
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "parent": {
+              "path": "/client/reg",
+              "own": ["parent_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -37,13 +37,13 @@
               "type": "identity",
               "desc": "Registry entry ID."
             },
-            "customer_ref": {
+            "client_ref": {
               "type": "reference",
-              "desc": "Reference to the customer."
+              "desc": "Reference to the client."
             },
             "volume": {
               "type": "decimal",
-              "desc": "Amount of the PV/APV to be add/subtract to/from customer.",
+              "desc": "Amount of the PV/APV to be add/subtract to/from client.",
               "precision": 10,
               "scale": 2
             },
@@ -54,7 +54,7 @@
             },
             "date": {
               "type": "datetime",
-              "desc": "Timestamp to apply PV movement for customer (used in bonus calculations)."
+              "desc": "Timestamp to apply PV movement for client (used in bonus calculations)."
             },
             "note": {
               "type": "string",
@@ -64,9 +64,9 @@
           },
           "relation": {
             "member": {
-              "path": "/dwn/cust/reg",
-              "own": ["customer_ref"],
-              "foreign": ["customer_ref"],
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
               "on": {"delete": "restrict", "update": "cascade"}
             }
           }

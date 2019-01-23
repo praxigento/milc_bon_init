@@ -9,6 +9,9 @@ namespace Praxigento\Milc\Bonus;
 use Doctrine\ORM\EntityManager as DoctrineEntityMgr;
 use Doctrine\ORM\Tools\Setup as DoctrineSetup;
 
+/**
+ * Entry point for application (configuration, container, db connection, ...).
+ */
 class App
 {
     /** @var  \TeqFw\Lib\Di\Api\Container */

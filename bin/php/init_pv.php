@@ -8,7 +8,7 @@
 /* PHP Composer's autoloader (access to dependencies sources) */
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use Praxigento\Milc\Bonus\Api\Repo\Data\Downline\Tree as ETree;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree as ETree;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -39,7 +39,7 @@ try {
     $date = new \DateTime();
     foreach ($custs as $cust) {
         $totalAmnt = 0;
-        $custId = $cust->member_ref;
+        $custId = $cust->client_ref;
         $count = random_int(0, 3);
         /* add from 0 to 3 positive PV movements */
         for ($i = 0; $i < $count; $i++) {
@@ -90,7 +90,7 @@ function loadCustomers(\Doctrine\ORM\EntityManagerInterface $em)
     $all = $query->getArrayResult();
     foreach ($all as $one) {
         $item = new ETree($one);
-        $result[$item->member_ref] = $item;
+        $result[$item->client_ref] = $item;
     }
     return $result;
 }
