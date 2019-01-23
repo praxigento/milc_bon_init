@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore;
+namespace Praxigento\Milc\Bonus\Api\Service\Client\Restore;
 
 
 class Response

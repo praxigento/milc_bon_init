@@ -78,7 +78,7 @@
             }
           }
         },
-        "distr": {
+        "type": {
           ".": {
             "desc": "Log to save 'setType' changes in clients registry.",
             "attr": {

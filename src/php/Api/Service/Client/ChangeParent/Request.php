@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete;
+namespace Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent;
 
 
 class Request
@@ -14,4 +14,6 @@ class Request
     public $customerId;
     /** @var string */
     public $date;
+    /** @var int */
+    public $parentIdNew;
 }

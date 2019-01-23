@@ -4,15 +4,15 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Service\Client\Downline;
+namespace Praxigento\Milc\Bonus\Service\Client;
 
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree\Log as ETreeLog;
-use Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent\Request as ARequest;
-use Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent\Response as AResponse;
+use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Request as ARequest;
+use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Response as AResponse;
 
 class ChangeParent
-    implements \Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent
+    implements \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent
 {
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Format */
     private $hlpFormat;

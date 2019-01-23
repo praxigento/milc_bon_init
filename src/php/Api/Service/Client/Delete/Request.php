@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Client\Downline\Deactivate;
+namespace Praxigento\Milc\Bonus\Api\Service\Client\Delete;
 
 
 class Request

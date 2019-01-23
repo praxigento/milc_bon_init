@@ -4,17 +4,17 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Service\Client\Downline;
+namespace Praxigento\Milc\Bonus\Service\Client;
 
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Registry\Log\Delete as EDeleteLog;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree\Log as ETreeLog;
-use Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore\Request as ARequest;
-use Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore\Response as AResponse;
+use Praxigento\Milc\Bonus\Api\Service\Client\Restore\Request as ARequest;
+use Praxigento\Milc\Bonus\Api\Service\Client\Restore\Response as AResponse;
 
 class Restore
-    implements \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore
+    implements \Praxigento\Milc\Bonus\Api\Service\Client\Restore
 {
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Format */
     private $hlpFormat;

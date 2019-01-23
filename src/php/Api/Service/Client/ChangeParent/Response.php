@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent;
+namespace Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent;
 
 
 class Response

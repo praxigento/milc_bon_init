@@ -9,11 +9,14 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Repo\Data\Res\Partner as EResPartner;
+
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = 3600;
 const PERCENT_DELETE = 16;
 const PERCENT_RESTORE = 8;
+const PERCENT_SET_TYPE = 20;
 const TOTAL_ITEMS = 100;
+
 /**
  * Get DI container then populate database schema with DEM'ed entities.
  */
@@ -23,17 +26,6 @@ try {
      */
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
-
-    /**
-     * Get active objects (managers, services, etc.).
-     */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Add $srvDwnCustAdd */
-    $srvDwnCustAdd = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\Add::class);
-    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent $srvDwnChangeParent */
-    $srvDwnChangeParent = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent::class);
-    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete $srvDwnDelete */
-    $srvDwnDelete = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete::class);
 
     /**
      * Create customers.
@@ -62,55 +54,18 @@ try {
         /* change parent for random customer */
         changeParent($container, $date, $mapDistr, $rootId);
 
-        /* delete random customer (16%) */
+        /* delete random customer (see const PERCENT_DELETE) */
         [$date, $mapDistr, $mapDeleted] = deleteDistr($container, $date, $mapDistr, $mapDeleted, $rootId);
 
-        /* restore random customer */
+        /* restore random customer (see const PERCENT_RESTORE) */
         [$date, $mapDistr, $mapDeleted] = restoreDistr($container, $date, $mapDistr, $mapDeleted, $rootId);
 
-        if (0 > 1) {
-            /**
-             * Random parent update for existing customer.
-             */
-            $keyCust = random_int(0, $count);
-            $memberId = $mapDistr[$keyCust];
-            $keyParent = random_int(0, $count);
-            $parentIdNew = $mapDistr[$keyParent];
-            if (
-                ($parentIdNew != $memberId) &&
-                ($memberId != $rootId)  // don't change parent for the root customer
-            ) {
-                $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent\Request();
-                $reqChange->customerId = $memberId;
-                $reqChange->parentIdNew = $parentIdNew;
-                $seconds = random_int(0, 3600);
-                $date->modify("+$seconds seconds");
-                $reqChange->date = $date;
-                $respChange = $srvDwnChangeParent->exec($reqChange);
-                $parentIdOld = $respChange->parentIdOld;
-                echo "\nchanged: $memberId: $parentIdOld => $parentIdNew.";
-            }
-            /* delete customer with 25%*/
-            if (random_int(1, 4) == 2) {
-                $keyDel = random_int(0, $count);
-                $custIdDel = $mapDistr[$keyDel];
-                if ($custIdDel != $rootId) {
-                    $reqDel = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete\Request();
-                    $reqDel->customerId = $custIdDel;
-                    $seconds = random_int(0, 3600);
-                    $date->modify("+$seconds seconds");
-                    $reqDel->date = $date;
-                    echo "\ndelete: $custIdDel.";
-                    $respDel = $srvDwnDelete->exec($reqDel);
-                    /* remove key from existing customers registry */
-                    unset($mapDistr[$keyDel]);
-                    $mapDistr = array_values($mapDistr);
-                }
-            }
+        /* change client type (cust/distr) randomly (see const PERCENT_SET_TYPE) */
 
-        }
     }
 
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->flush();
 
     echo "\nDone.";
@@ -146,9 +101,9 @@ function downlineAddTo($container, $date, $mapDistr, $customerId, $rootId)
     $isNotDistr = (random_int(1, 20) == 8);
     $mlmId = ($isNotDistr) ? null : $customerId; // simple rule: MLM ID equals to ID for distributors
 
-    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Add $srvDwnCustAdd */
-    $srvDwnCustAdd = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\Add::class);
-    $reqAdd = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Add\Request();
+    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Add $srvDwnCustAdd */
+    $srvDwnCustAdd = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Add::class);
+    $reqAdd = new \Praxigento\Milc\Bonus\Api\Service\Client\Add\Request();
     $reqAdd->customerId = $customerId;
     $reqAdd->parentId = $parentId;
     $reqAdd->mlmId = $mlmId;
@@ -182,9 +137,9 @@ function changeParent($container, $date, $mapDistr, $rootId)
             ($parentIdNew != $custId) &&
             ($custId != $rootId)  // don't change parent for the root customer
         ) {
-            /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent $srvDwnChangeParent */
-            $srvDwnChangeParent = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent::class);
-            $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\ChangeParent\Request();
+            /** @var \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent $srvDwnChangeParent */
+            $srvDwnChangeParent = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent::class);
+            $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Request();
             $reqChange->customerId = $custId;
             $reqChange->parentIdNew = $parentIdNew;
             $date = dateModify($date);
@@ -216,9 +171,9 @@ function deleteDistr($container, $date, $mapDistr, $mapDeleted, $rootId)
             $key = random_int(0, $count);
             $custId = $mapDistr[$key];
             if ($custId != $rootId) {
-                /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete $srvDelete */
-                $srvDelete = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete::class);
-                $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Delete\Request();
+                /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Delete $srvDelete */
+                $srvDelete = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Delete::class);
+                $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Delete\Request();
                 $req->customerId = $custId;
                 $date = dateModify($date);
                 $req->date = $date;
@@ -249,9 +204,9 @@ function restoreDistr($container, $date, $mapDistr, $mapDeleted, $rootId)
                 ($custId != $rootId) &&
                 ($custId != $parentId)
             ) {
-                /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore $srvRestore */
-                $srvRestore = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore::class);
-                $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Downline\Restore\Request();
+                /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Restore $srvRestore */
+                $srvRestore = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Restore::class);
+                $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Restore\Request();
                 $req->customerId = $custId;
                 $req->parentId = $parentId;
                 $date = dateModify($date);
