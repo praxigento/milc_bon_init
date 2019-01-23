@@ -29,7 +29,7 @@ class Register
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $customerId = $req->customerId;
+        $clientId = $req->clientId;
         $volume = $req->volume;
         $isAutoship = (bool)$req->isAutoship;
         $date = $req->date;
@@ -38,7 +38,7 @@ class Register
 
         /* save data into registry */
         $pvReg = new EPvReg();
-        $pvReg->customer_ref = $customerId;
+        $pvReg->customer_ref = $clientId;
         $pvReg->volume = $volume;
         $pvReg->is_autoship = $isAutoship;
         $pvReg->date = $date;

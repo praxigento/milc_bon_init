@@ -11,7 +11,7 @@ class Request
     extends \TeqFw\Lib\Data
 {
     /** @var int */
-    public $customerId;
+    public $clientId;
     /** @var string */
     public $date;
     /** @var bool */

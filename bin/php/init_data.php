@@ -43,13 +43,14 @@ try {
         $customerId = createPartner($container);
         $mapAll[] = $customerId;
         /* add new customer to downline tree */
+        echo "\nnew: $customerId";
         [$date, $rootId, $parentId, $isNotDistr] = downlineAddTo($container, $date, $mapDistr, $customerId, $rootId);
         if ($isNotDistr) {
             $mapCust[] = $customerId;
         } else {
             $mapDistr[] = $customerId;
         }
-        echo "\nnew: $customerId/$parentId (not distr: $isNotDistr).";
+        echo "/$parentId (not distr: $isNotDistr).";
 
         /* change parent for random customer */
         changeParent($container, $date, $mapDistr, $rootId);
@@ -61,14 +62,14 @@ try {
         [$date, $mapDistr, $mapDeleted] = restoreDistr($container, $date, $mapDistr, $mapDeleted, $rootId);
 
         /* change client type (cust/distr) randomly (see const PERCENT_SET_TYPE) */
-
+        [$date, $mapDistr, $mapCust, $mapDeleted] = changeType($container, $date, $mapDistr, $mapCust, $mapDeleted, $rootId);
     }
 
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->flush();
 
-    echo "\nDone.";
+    echo "\n\nDone.\n";
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
@@ -99,12 +100,12 @@ function downlineAddTo($container, $date, $mapDistr, $customerId, $rootId)
     }
     /* 5% - new customer is not distributor */
     $isNotDistr = (random_int(1, 20) == 8);
-    $mlmId = ($isNotDistr) ? null : $customerId; // simple rule: MLM ID equals to ID for distributors
+    $mlmId = $customerId; // simple rule: MLM ID equals to ID
 
     /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Add $srvDwnCustAdd */
     $srvDwnCustAdd = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Add::class);
     $reqAdd = new \Praxigento\Milc\Bonus\Api\Service\Client\Add\Request();
-    $reqAdd->customerId = $customerId;
+    $reqAdd->clientId = $customerId;
     $reqAdd->parentId = $parentId;
     $reqAdd->mlmId = $mlmId;
     $reqAdd->isNotDistributor = $isNotDistr;
@@ -130,26 +131,91 @@ function changeParent($container, $date, $mapDistr, $rootId)
     $count = count($mapDistr) - 1;
     if ($count > 1) {
         $keyDistr = random_int(0, $count);
-        $custId = $mapDistr[$keyDistr];
+        $clientId = $mapDistr[$keyDistr];
         $keyParent = random_int(0, $count);
         $parentIdNew = $mapDistr[$keyParent];
         if (
-            ($parentIdNew != $custId) &&
-            ($custId != $rootId)  // don't change parent for the root customer
+            ($parentIdNew != $clientId) &&
+            ($clientId != $rootId)  // don't change parent for the root customer
         ) {
             /** @var \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent $srvDwnChangeParent */
             $srvDwnChangeParent = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent::class);
             $reqChange = new \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Request();
-            $reqChange->customerId = $custId;
+            $reqChange->clientId = $clientId;
             $reqChange->parentIdNew = $parentIdNew;
             $date = dateModify($date);
             $reqChange->date = $date;
+            echo "\nchanged: $clientId: ";
             $respChange = $srvDwnChangeParent->exec($reqChange);
             $parentIdOld = $respChange->parentIdOld;
-            echo "\nchanged: $custId: $parentIdOld => $parentIdNew.";
+            echo "$parentIdOld => $parentIdNew.";
         }
     }
     return [$date];
+}
+
+/**
+ * @param \Praxigento\Milc\Bonus\Api\Service\Client\SetType $container
+ * @param \DateTime $date
+ * @param int[] $mapDistr
+ * @param int[] $mapCust
+ * @param int[] $mapDeleted
+ * @param int $rootId
+ * @return array
+ * @throws \Exception
+ */
+function changeType($container, $date, $mapDistr, $mapCust, $mapDeleted, $rootId)
+{
+    $shouldChange = randomPercent(PERCENT_SET_TYPE);
+    if ($shouldChange) {
+        $changeDistr = randomPercent(50);
+        if ($changeDistr) {
+            /* change type for distributor */
+            $count = count($mapDistr) - 1;
+            if ($count > 1) {
+                $key = random_int(0, $count);
+                $clientId = $mapDistr[$key];
+            }
+        } else {
+            /* change type for customer */
+            $count = count($mapCust) - 1;
+            if ($count > 1) {
+                $key = random_int(0, $count);
+                $clientId = $mapCust[$key];
+            }
+        }
+        /* there is data to change*/
+        if (
+            isset($clientId) &&
+            ($clientId != $rootId) &&
+            !in_array($clientId, $mapDeleted)
+        ) {
+            $req = new \Praxigento\Milc\Bonus\Api\Service\Client\SetType\Request();
+            $req->clientId = $clientId;
+            $req->isCustomer = $changeDistr;
+            $date = dateModify($date);
+            $req->date = $date;
+            /** @var \Praxigento\Milc\Bonus\Api\Service\Client\SetType $srv */
+            $srv = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\SetType::class);
+            echo "\nset_type: $clientId, set_customer: $changeDistr";
+            $srv->exec($req);
+            /* fix maps */
+            if ($changeDistr) {
+                /* move distr to cust */
+                unset($mapDistr[$key]);
+                $mapDistr = array_values($mapDistr);
+                $mapCust[] = $clientId;
+            } else {
+                /* move cust to distr */
+                unset($mapCust[$key]);
+                $mapCust = array_values($mapCust);
+                $mapDistr[] = $clientId;
+            }
+            echo ".";
+        }
+    }
+
+    return [$date, $mapDistr, $mapCust, $mapDeleted];
 }
 
 /**
@@ -169,19 +235,20 @@ function deleteDistr($container, $date, $mapDistr, $mapDeleted, $rootId)
         if ($count > 1) {
             /* there are distributors to delete */
             $key = random_int(0, $count);
-            $custId = $mapDistr[$key];
-            if ($custId != $rootId) {
+            $clientId = $mapDistr[$key];
+            if ($clientId != $rootId) {
                 /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Delete $srvDelete */
                 $srvDelete = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Delete::class);
                 $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Delete\Request();
-                $req->customerId = $custId;
+                $req->clientId = $clientId;
                 $date = dateModify($date);
                 $req->date = $date;
+                echo "\ndeleted: $clientId";
                 $resp = $srvDelete->exec($req);
                 unset($mapDistr[$key]);
                 $mapDistr = array_values($mapDistr);
-                $mapDeleted[] = $custId;
-                echo "\ndeleted: $custId.";
+                $mapDeleted[] = $clientId;
+                echo ".";
             }
         }
     }
@@ -197,25 +264,26 @@ function restoreDistr($container, $date, $mapDistr, $mapDeleted, $rootId)
         if ($countDel > 1) {
             /* there are distributors to delete */
             $keyCust = random_int(0, $countDel);
-            $custId = $mapDeleted[$keyCust];
+            $clientId = $mapDeleted[$keyCust];
             $keyParent = random_int(0, $countDistr);
             $parentId = $mapDistr[$keyParent];
             if (
-                ($custId != $rootId) &&
-                ($custId != $parentId)
+                ($clientId != $rootId) &&
+                ($clientId != $parentId)
             ) {
                 /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Restore $srvRestore */
                 $srvRestore = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Restore::class);
                 $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Restore\Request();
-                $req->customerId = $custId;
+                $req->clientId = $clientId;
                 $req->parentId = $parentId;
                 $date = dateModify($date);
                 $req->date = $date;
+                echo "\nrestored: $clientId";
                 $resp = $srvRestore->exec($req);
                 unset($mapDeleted[$keyCust]);
                 $mapDeleted = array_values($mapDeleted);
-                $mapDistr[] = $custId;
-                echo "\nrestored: $custId.";
+                $mapDistr[] = $clientId;
+                echo ".";
             }
         }
     }

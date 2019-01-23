@@ -28,10 +28,10 @@ class Add
         $this->hlpFormat = $hlpFormat;
     }
 
-    private function addToRegistry($customerId, $mlmId, $isNotDistr)
+    private function addToRegistry($clientId, $mlmId, $isNotDistr)
     {
         $custReg = new ECustReg();
-        $custReg->client_ref = $customerId;
+        $custReg->client_ref = $clientId;
         $custReg->mlm_id = $mlmId;
         $custReg->is_deleted = false;
         $custReg->is_customer = $isNotDistr;
@@ -39,10 +39,10 @@ class Add
         $this->manEntity->flush();
     }
 
-    private function addToTree($customerId, $parentId)
+    private function addToTree($clientId, $parentId)
     {
         $tree = new ETree();
-        $tree->client_ref = $customerId;
+        $tree->client_ref = $clientId;
         $tree->parent_ref = $parentId;
         /* TODO: init depths & paths for customer */
         $tree->depth = 1;
@@ -50,10 +50,10 @@ class Add
         $this->manEntity->persist($tree);
     }
 
-    private function addToTreeLog($customerId, $parentId, $date)
+    private function addToTreeLog($clientId, $parentId, $date)
     {
         $log = new ETreeLog();
-        $log->client_ref = $customerId;
+        $log->client_ref = $clientId;
         $log->parent_ref = $parentId;
         $log->date = $date;
         $this->manEntity->persist($log);
@@ -62,7 +62,7 @@ class Add
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $customerId = $req->customerId;
+        $clientId = $req->clientId;
         $parentId = $req->parentId;
         $mlmId = $req->mlmId;
         $isNotDistr = $req->isNotDistributor;
@@ -71,13 +71,13 @@ class Add
             $date = $this->hlpFormat->getDateNowUtc();
 
         /* save data into registry */
-        $this->addToRegistry($customerId, $mlmId, $isNotDistr);
+        $this->addToRegistry($clientId, $mlmId, $isNotDistr);
 
         /* save data into current downline tree */
-        $this->addToTree($customerId, $parentId);
+        $this->addToTree($clientId, $parentId);
 
         /* save data into downline tree log */
-        $this->addToTreeLog($customerId, $parentId, $date);
+        $this->addToTreeLog($clientId, $parentId, $date);
 
         $this->manEntity->flush();
 

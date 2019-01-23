@@ -29,19 +29,19 @@ class Restore
         $this->hlpFormat = $hlpFormat;
     }
 
-    private function addToDeleteLog($customerId, $date)
+    private function addToDeleteLog($clientId, $date)
     {
         $log = new EDeleteLog();
-        $log->client_ref = $customerId;
+        $log->client_ref = $clientId;
         $log->date = $date;
         $log->is_deleted = false;
         $this->manEntity->persist($log);
     }
 
-    private function addToTree($customerId, $parentId)
+    private function addToTree($clientId, $parentId)
     {
         $tree = new ETree();
-        $tree->client_ref = $customerId;
+        $tree->client_ref = $clientId;
         $tree->parent_ref = $parentId;
         /* TODO: init depths & paths for customer */
         $tree->depth = 1;
@@ -49,10 +49,10 @@ class Restore
         $this->manEntity->persist($tree);
     }
 
-    private function addToTreeLog($customerId, $parentId, $date)
+    private function addToTreeLog($clientId, $parentId, $date)
     {
         $log = new ETreeLog();
-        $log->client_ref = $customerId;
+        $log->client_ref = $clientId;
         $log->parent_ref = $parentId;
         $log->date = $date;
         $this->manEntity->persist($log);
@@ -61,7 +61,7 @@ class Restore
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $customerId = $req->customerId;
+        $clientId = $req->clientId;
         $parentId = $req->parentId;
         $date = $req->date;
         if (!$date)
@@ -69,17 +69,17 @@ class Restore
 
         /* find data in customer registry */
         /** @var ECustReg $found */
-        $found = $this->manEntity->find(ECustReg::class, $customerId);
+        $found = $this->manEntity->find(ECustReg::class, $clientId);
         if ($found) {
             /* add customer to the tree */
-            $this->addToTree($customerId, $parentId);
+            $this->addToTree($clientId, $parentId);
             /* save into tree log */
-            $this->addToTreeLog($customerId, $parentId, $date);
+            $this->addToTreeLog($clientId, $parentId, $date);
             /* update customer registry */
             $found->is_deleted = false;
             $this->manEntity->persist($found);
             /* save into delete/restore log */
-            $this->addToDeleteLog($customerId, $date);
+            $this->addToDeleteLog($clientId, $date);
 
             $this->manEntity->flush();
         }

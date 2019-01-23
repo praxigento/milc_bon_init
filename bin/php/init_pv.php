@@ -46,7 +46,7 @@ try {
             $amount = random_int(100, 20000) / 100;
             $totalAmnt += $amount;
             $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Request();
-            $req->customerId = $custId;
+            $req->clientId = $custId;
             $req->volume = $amount;
             $isAutoship = (random_int(1, 5) == 1); // 20% - is autoship
             if ($isAutoship)
@@ -59,7 +59,7 @@ try {
             if ($needNegative) {
                 $amount = random_int(100, $totalAmnt * 100) / 100;
                 $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Request();
-                $req->customerId = $custId;
+                $req->clientId = $custId;
                 $req->volume = (-1) * $amount;
                 $rsp = $srvRegister->exec($req);
             }

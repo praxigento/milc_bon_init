@@ -32,7 +32,7 @@ class ChangeParent
         assert($req instanceof ARequest);
         $result = new AResponse();
 
-        $customerId = $req->customerId;
+        $clientId = $req->clientId;
         $parentIdNew = $req->parentIdNew;
         $date = $req->date;
         if (!$date)
@@ -42,14 +42,14 @@ class ChangeParent
          * Get customer from registry.
          */
         /** @var ETree $found */
-        $found = $this->manEntity->find(ETree::class, $customerId);
+        $found = $this->manEntity->find(ETree::class, $clientId);
         if ($found) {
             $parentId = $found->parent_ref;
             $result->parentIdOld = $parentId;
             if ($parentId != $parentIdNew) {
                 /* save data into downline tree trace */
                 $log = new ETreeLog();
-                $log->client_ref = $customerId;
+                $log->client_ref = $clientId;
                 $log->parent_ref = $parentIdNew;
                 $log->date = $date;
                 $this->manEntity->persist($log);
