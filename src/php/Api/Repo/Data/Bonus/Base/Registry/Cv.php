@@ -4,16 +4,16 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Pv;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Registry;
 
 
 /**
- * Registry to save PV/APV movements.
+ * Registry to save CV/ACV movements.
  *
  * @Entity
- * @Table(name="bon_base_pv_reg")
+ * @Table(name="bon_base_reg_cv")
  */
-class Registry
+class Cv
     extends \TeqFw\Lib\Data
 {
     /**

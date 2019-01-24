@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Service\Bonus\Pv;
+namespace Praxigento\Milc\Bonus\Service\Bonus\Registry;
 
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Pv\Registry as EPvReg;
-use Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Request as ARequest;
-use Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Response as AResponse;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Registry\Cv as ECvReg;
+use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request as ARequest;
+use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Response as AResponse;
 
-class Register
-    implements \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register
+class Cv
+    implements \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv
 {
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Format */
     private $hlpFormat;
@@ -37,12 +37,12 @@ class Register
             $date = $this->hlpFormat->getDateNowUtc();
 
         /* save data into registry */
-        $pvReg = new EPvReg();
-        $pvReg->client_ref = $clientId;
-        $pvReg->volume = $volume;
-        $pvReg->is_autoship = $isAutoship;
-        $pvReg->date = $date;
-        $this->manEntity->persist($pvReg);
+        $cvReg = new ECvReg();
+        $cvReg->client_ref = $clientId;
+        $cvReg->volume = $volume;
+        $cvReg->is_autoship = $isAutoship;
+        $cvReg->date = $date;
+        $this->manEntity->persist($cvReg);
         $this->manEntity->flush();
 
         $result = new AResponse();

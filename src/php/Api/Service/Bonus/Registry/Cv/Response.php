@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register;
+namespace Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv;
 
 
 class Response

@@ -310,8 +310,8 @@ function createPartner(\Psr\Container\ContainerInterface $container): int
 
 function movePv($container, $date, $mapDistr, $mapCust)
 {
-    /** @var \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register $srvRegister */
-    $srvRegister = $container->get(\Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register::class);
+    /** @var \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv $srvRegister */
+    $srvRegister = $container->get(\Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv::class);
 
     /* one PV movement for every 10 clients */
     $countDistrs = count($mapDistr);
@@ -336,7 +336,7 @@ function movePv($container, $date, $mapDistr, $mapCust)
         $amount = random_int(100, 20000) / 100;
         $isAutoship = randomPercent(20); // 20% - is autoship
         $date = dateModify($date);
-        $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Request();
+        $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request();
         $req->clientId = $clientId;
         $req->volume = $amount;
         $req->date = $date;

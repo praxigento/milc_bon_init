@@ -28,10 +28,10 @@
         }
       }
     },
-    "pv": {
-      "reg": {
+    "reg": {
+      "cv": {
         ".": {
-          "desc": "Registry to save PV/APV movements.",
+          "desc": "Registry to save (Autoship) Commissionable Volumes (CV/ACV) movements.",
           "attr": {
             "id": {
               "type": "identity",
@@ -43,22 +43,22 @@
             },
             "volume": {
               "type": "decimal",
-              "desc": "Amount of the PV/APV to be add/subtract to/from client.",
+              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
               "precision": 10,
               "scale": 2
             },
             "is_autoship": {
               "type": "boolean",
               "default": false,
-              "desc": "'true' if this is an autoship PV."
+              "desc": "'true' if this is an Autoship CV."
             },
             "date": {
               "type": "datetime",
-              "desc": "Timestamp to apply PV movement for client (used in bonus calculations)."
+              "desc": "Timestamp to apply CV movement for client (used in bonus calculations)."
             },
             "note": {
               "type": "string",
-              "desc": "Movement reference for humans.",
+              "desc": "Movement reference for humans (sale #... or smth. like this).",
               "nullable": true
             }
           },
