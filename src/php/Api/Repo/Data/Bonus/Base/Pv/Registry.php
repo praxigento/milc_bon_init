@@ -42,7 +42,7 @@ class Registry
      * @var int
      * @Column(type="integer")
      */
-    public $customer_ref;
+    public $client_ref;
     /**
      * @var float
      * @Column(type="decimal", precision=10, scale=2)

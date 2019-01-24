@@ -38,7 +38,7 @@ class Register
 
         /* save data into registry */
         $pvReg = new EPvReg();
-        $pvReg->customer_ref = $clientId;
+        $pvReg->client_ref = $clientId;
         $pvReg->volume = $volume;
         $pvReg->is_autoship = $isAutoship;
         $pvReg->date = $date;

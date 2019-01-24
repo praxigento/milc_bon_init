@@ -63,6 +63,7 @@ try {
 
         /* change client type (cust/distr) randomly (see const PERCENT_SET_TYPE) */
         [$date, $mapDistr, $mapCust, $mapDeleted] = changeType($container, $date, $mapDistr, $mapCust, $mapDeleted, $rootId);
+        [$date] = movePv($container, $date, $mapDistr, $mapCust);
     }
 
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
@@ -305,6 +306,58 @@ function createPartner(\Psr\Container\ContainerInterface $container): int
     $em->flush($partner);
     $result = $partner->id;
     return $result;
+}
+
+function movePv($container, $date, $mapDistr, $mapCust)
+{
+    /** @var \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register $srvRegister */
+    $srvRegister = $container->get(\Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register::class);
+
+    /* one PV movement for every 10 clients */
+    $countDistrs = count($mapDistr);
+    $countCusts = count($mapCust);
+    $total = $countDistrs + $countCusts;
+    $movementsDistr = intdiv($total, 10);
+    /* if total < 10 then 25% for one movement */
+    if (($movementsDistr < 1) && randomPercent(25))
+        $movementsDistr = 1;
+    /* make PV movements */
+    $percentDistr = round(($countDistrs / $total) * 100);
+    for ($i = 0; $i < $movementsDistr; $i++) {
+        $isDistr = randomPercent($percentDistr);
+        if ($isDistr) {
+            $key = random_int(0, $countDistrs - 1);
+            $clientId = $mapDistr[$key];
+        } else {
+            $key = random_int(0, $countCusts - 1);
+            $clientId = $mapCust[$key];
+        }
+        /* random amount of PV: 1.00 - 200.00 */
+        $amount = random_int(100, 20000) / 100;
+        $isAutoship = randomPercent(20); // 20% - is autoship
+        $date = dateModify($date);
+        $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Pv\Register\Request();
+        $req->clientId = $clientId;
+        $req->volume = $amount;
+        $req->date = $date;
+        if ($isAutoship)
+            $req->isAutoship = true;
+        echo "\nPV move: $amount PV to $clientId";
+        $srvRegister->exec($req);
+        echo ".";
+        /* 5% for backward movement */
+        $needBackward = randomPercent(5);
+        if ($needBackward) {
+            $date = dateModify($date);
+            $req->date = $date;
+            $req->volume = 0 - $amount;
+            echo "\nPV backward move: $amount PV from $clientId";
+            $srvRegister->exec($req);
+            echo ".";
+        }
+    }
+
+    return [$date];
 }
 
 /**
