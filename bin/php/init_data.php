@@ -313,17 +313,20 @@ function movePv($container, $date, $mapDistr, $mapCust)
     /** @var \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv $srvRegister */
     $srvRegister = $container->get(\Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv::class);
 
-    /* one PV movement for every 10 clients */
+    /* one CV movement for every 10 clients */
     $countDistrs = count($mapDistr);
     $countCusts = count($mapCust);
     $total = $countDistrs + $countCusts;
-    $movementsDistr = intdiv($total, 10);
+    $movements = intdiv($total, 10);
     /* if total < 10 then 25% for one movement */
-    if (($movementsDistr < 1) && randomPercent(25))
-        $movementsDistr = 1;
-    /* make PV movements */
-    $percentDistr = round(($countDistrs / $total) * 100);
-    for ($i = 0; $i < $movementsDistr; $i++) {
+    if (($movements < 1) && randomPercent(25))
+        $movements = 1;
+    /* make CV movements */
+    /* 75% - should be a movement for distributor */
+    $normDistr = $countDistrs * 75;
+    $normCust = $countCusts * 25;
+    $percentDistr = round(($normDistr / ($normDistr + $normCust)) * 100);
+    for ($i = 0; $i < $movements; $i++) {
         $isDistr = randomPercent($percentDistr);
         if ($isDistr) {
             $key = random_int(0, $countDistrs - 1);
@@ -332,9 +335,9 @@ function movePv($container, $date, $mapDistr, $mapCust)
             $key = random_int(0, $countCusts - 1);
             $clientId = $mapCust[$key];
         }
-        /* random amount of PV: 1.00 - 200.00 */
-        $amount = random_int(100, 20000) / 100;
-        $isAutoship = randomPercent(20); // 20% - is autoship
+        /* random amount of CV (15%: 30.00 - 100.00; 85%: 100.00 - 250.00) */
+        $amount = randomCvAmount();
+        $isAutoship = randomPercent(70); // 70% - is autoship
         $date = dateModify($date);
         $req = new \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request();
         $req->clientId = $clientId;
@@ -342,7 +345,7 @@ function movePv($container, $date, $mapDistr, $mapCust)
         $req->date = $date;
         if ($isAutoship)
             $req->isAutoship = true;
-        echo "\nPV move: $amount PV to $clientId";
+        echo "\nCV move: $amount CV to $clientId";
         $srvRegister->exec($req);
         echo ".";
         /* 5% for backward movement */
@@ -351,7 +354,7 @@ function movePv($container, $date, $mapDistr, $mapCust)
             $date = dateModify($date);
             $req->date = $date;
             $req->volume = 0 - $amount;
-            echo "\nPV backward move: $amount PV from $clientId";
+            echo "\nCV backward move: $amount CV from $clientId";
             $srvRegister->exec($req);
             echo ".";
         }
@@ -384,5 +387,27 @@ function dateModify($date)
 function randomPercent(int $percent): bool
 {
     $result = (random_int(0, 99) < $percent);
+    return $result;
+}
+
+/**
+ * CV amount:
+ *  * 15%: 30.00 - 100.00
+ *  * 85%: 100.00 - 250.00
+ *
+ * @return float
+ * @throws \Exception
+ */
+function randomCvAmount(): float
+{
+    $needSmallAmnt = randomPercent(15);
+    if ($needSmallAmnt) {
+        /* 15%: 30.00 - 100.00 */
+        $result = random_int(3000, 10000) / 100;
+    } else {
+        /* 85%: 100.00 - 250.00 */
+        $result = random_int(10000, 25000) / 100;
+    }
+
     return $result;
 }
