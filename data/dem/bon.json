@@ -131,6 +131,131 @@
         }
       }
     },
+    "qual": {
+      "rule": {
+        ".": {
+          "desc": "Registry for qualification rules.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Qualification rule ID."
+            },
+            "type": {
+              "type": "string",
+              "desc": "Qualification rule type (codified)."
+            }
+          }
+        },
+        "group": {
+          ".": {
+            "desc": "Grouping rule details.",
+            "attr": {
+              "ref": {
+                "type": "reference",
+                "desc": "Reference to the grouping rule (type: GROUP)."
+              },
+              "logic": {
+                "type": "string",
+                "desc": "Grouping logic (and, or, not).",
+                "size": 3
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["ref"]
+              }
+            },
+            "relation": {
+              "rule": {
+                "path": "/bon/base/qual/rule",
+                "own": ["ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          },
+          "ref": {
+            ".": {
+              "desc": "Grouped rules.",
+              "attr": {
+                "grouping_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the grouping rule."
+                },
+                "grouped_ref": {
+                  "type": "reference",
+                  "desc": "References to the rules are been grouped."
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["grouping_ref", "grouped_ref"]
+                }
+              },
+              "relation": {
+                "groupingRule": {
+                  "path": "/bon/base/qual/rule/group",
+                  "own": ["grouping_ref"],
+                  "foreign": ["ref"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                },
+                "groupedRule": {
+                  "path": "/bon/base/qual/rule",
+                  "own": ["grouped_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
+            }
+          }
+        },
+        "pv": {
+          ".": {
+            "desc": "PV rules details.",
+            "attr": {
+              "ref": {
+                "type": "reference",
+                "desc": "Reference to the PV rule (type: PV)."
+              },
+              "volume": {
+                "type": "decimal",
+                "desc": "Minimal qualification volume.",
+                "precision": 10,
+                "scale": 2
+              },
+              "autoship_only": {
+                "type": "boolean",
+                "default": false,
+                "desc": "'true' if Autoship PV only is applied to qualification."
+              },
+              "period": {
+                "type": "integer",
+                "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
+                "default": 0,
+                "small": true,
+                "unsigned": true
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["ref"]
+              }
+            },
+            "relation": {
+              "rule": {
+                "path": "/bon/base/qual/rule",
+                "own": ["ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        }
+      }
+    },
     "reg": {
       "cv": {
         ".": {
