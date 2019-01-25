@@ -17,7 +17,7 @@ class Cv
     extends \TeqFw\Lib\Data
 {
     /**
-     * @var int
+     * @var \DateTime
      * @Column(type="datetime")
      */
     public $date;

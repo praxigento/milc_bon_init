@@ -20,7 +20,7 @@ class Log
      */
     public $client_ref;
     /**
-     * @var int
+     * @var \DateTime
      * @Column(type="datetime")
      */
     public $date;

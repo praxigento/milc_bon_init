@@ -69,6 +69,12 @@
               "desc": "Calculation sequence (order) in the plan.",
               "small": true,
               "unsigned": true
+            },
+            "date_started": {
+              "type": "datetime",
+              "desc": "Date when first calculation was (will be) performed.",
+              "small": true,
+              "unsigned": true
             }
           },
           "relation": {
@@ -81,6 +87,43 @@
             "calcType": {
               "path": "/bon/base/calc/type",
               "own": ["type_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "restrict", "update": "cascade"}
+            }
+          }
+        }
+      },
+      "rank": {
+        ".": {
+          "desc": "Ranks are bound to the concrete plan.",
+          "attr": {
+            "rank_id": {
+              "type": "identity",
+              "desc": "Rank ID."
+            },
+            "plan_ref": {
+              "type": "reference",
+              "desc": "Reference to the plan."
+            },
+            "code": {
+              "type": "string",
+              "desc": "Small code for the rank."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Description of the rank for humans."
+            },
+            "sequence": {
+              "type": "integer",
+              "desc": "Calculation sequence (order) in the plan.",
+              "small": true,
+              "unsigned": true
+            }
+          },
+          "relation": {
+            "plan": {
+              "path": "/bon/base/plan",
+              "own": ["plan_ref"],
               "foreign": ["id"],
               "on": {"delete": "restrict", "update": "cascade"}
             }

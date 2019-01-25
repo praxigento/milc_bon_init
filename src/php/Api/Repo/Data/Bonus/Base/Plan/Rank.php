@@ -8,21 +8,24 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan;
 
 
 /**
- * Calculations are bound to the concrete plan.
+ * Ranks are bound to the concrete plan.
  *
  * @Entity
- * @Table(name="bon_base_plan_calc")
+ * @Table(name="bon_base_plan_rank")
  */
-class Calc
+class Rank
     extends \TeqFw\Lib\Data
 {
     /**
-     * @var int
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @var string
+     * @Column(type="string")
      */
-    public $calc_id;
+    public $code;
+    /**
+     * @var string
+     * @Column(type="string")
+     */
+    public $note;
     /**
      * @var int
      * @Column(type="integer")
@@ -30,17 +33,14 @@ class Calc
     public $plan_ref;
     /**
      * @var int
+     * @Id
+     * @GeneratedValue
      * @Column(type="integer")
      */
-    public $sequence;
-    /**
-     * @var \DateTime
-     * @Column(type="datetime")
-     */
-    public $date_started;
+    public $rank_id;
     /**
      * @var int
      * @Column(type="integer")
      */
-    public $type_ref;
+    public $sequence;
 }
