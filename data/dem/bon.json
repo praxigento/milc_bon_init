@@ -28,6 +28,66 @@
         }
       }
     },
+    "plan": {
+      ".": {
+        "desc": "Set of calculations related to one period.",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Plan ID."
+          },
+          "period": {
+            "type": "integer",
+            "desc": "Calculation period: 1 - day, 2 - week, 3 - month, 4 - year.",
+            "small": true,
+            "unsigned": true
+          },
+          "note": {
+            "type": "string",
+            "desc": "Plan description for humans."
+          }
+        }
+      },
+      "calc": {
+        ".": {
+          "desc": "Calculations are bound to the concrete plan.",
+          "attr": {
+            "calc_id": {
+              "type": "identity",
+              "desc": "Calculation ID."
+            },
+            "plan_ref": {
+              "type": "reference",
+              "desc": "Reference to the plan."
+            },
+            "type_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation type."
+            },
+            "sequence": {
+              "type": "integer",
+              "desc": "Calculation sequence (order) in the plan.",
+              "small": true,
+              "unsigned": true
+            }
+          },
+          "relation": {
+            "plan": {
+              "path": "/bon/base/plan",
+              "own": ["plan_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "restrict", "update": "cascade"}
+            },
+            "calcType": {
+              "path": "/bon/base/calc/type",
+              "own": ["type_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "restrict", "update": "cascade"}
+            }
+          }
+        }
+      }
+    },
     "reg": {
       "cv": {
         ".": {
