@@ -9,10 +9,15 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Calc\Type as EBonBaseCalcType;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan as EBonBasePlan;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Calc as EBonBasePlanCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Rank as EBonBasePlanRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Calc\Type as ECalcType;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan as EPlan;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Calc as EPlanCalc;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Qualification as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Rank as EPlanRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group as EQualRuleGroup;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Pv as EQualRulePv;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -29,6 +34,7 @@ try {
     $calcTypeId = init_bonus_calc_type($container);
     $calcId = init_bonus_plan_calcs($container, $planId, $calcTypeId);
 
+    init_bonus_qual_rules($container, $calcId, $ranks);
 
     echo "\nDone.";
 } catch (\Throwable $e) {
@@ -36,53 +42,76 @@ try {
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
 }
 
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
 function init_bonus_plan($container)
 {
-    $plan = new EBonBasePlan();
+    $plan = new EPlan();
     $plan->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
     $plan->note = 'Simple Unilevel plan for development.';
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    $em->persist($plan);
-    $em->flush();
+    $found = getByAttribute($container, EPlan::class, EPlan::NOTE, $plan->note);
+    if (!$found) {
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($plan);
+        $em->flush();
+    } else {
+        $data = reset($found);
+        $plan = new EPlan($data);
+    }
     return $plan->id;
 }
 
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $planId
+ * @return array
+ */
 function init_bonus_plan_ranks($container, $planId)
 {
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     /* Human */
-    $human = new EBonBasePlanRank();
+    $human = new EPlanRank();
     $human->plan_ref = $planId;
     $human->code = Cfg::RANK_HUMAN;
     $human->note = 'Human (lowest)';
     $human->sequence = 1;
-    $em->persist($human);
+    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $human->code);
+    if (!$found)
+        $em->persist($human);
     /* Hero */
-    $hero = new EBonBasePlanRank();
+    $hero = new EPlanRank();
     $hero->plan_ref = $planId;
     $hero->code = Cfg::RANK_HERO;
     $hero->note = 'Hero';
     $hero->sequence = 2;
-    $em->persist($hero);
+    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $hero->code);
+    if (!$found)
+        $em->persist($hero);
     /* Angel */
-    $angel = new EBonBasePlanRank();
+    $angel = new EPlanRank();
     $angel->plan_ref = $planId;
     $angel->code = Cfg::RANK_ANGEL;
     $angel->note = 'Angel';
     $angel->sequence = 3;
-    $em->persist($angel);
+    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $angel->code);
+    if (!$found)
+        $em->persist($angel);
     /* God */
-    $god = new EBonBasePlanRank();
+    $god = new EPlanRank();
     $god->plan_ref = $planId;
     $god->code = Cfg::RANK_GOD;
     $god->note = 'God (highest)';
     $god->sequence = 4;
-    $em->persist($god);
+    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $god->code);
+    if (!$found)
+        $em->persist($god);
     /**/
     $em->flush();
-    return [$human->rank_id, $hero->rank_id, $angel->rank_id, $god->rank_id];
+    return [$human->id, $hero->id, $angel->id, $god->id];
 }
 
 /**
@@ -91,25 +120,243 @@ function init_bonus_plan_ranks($container, $planId)
  */
 function init_bonus_calc_type($container)
 {
-    $calcType = new EBonBaseCalcType();
+    $calcType = new ECalcType();
     $calcType->code = 'LEVEL_BASED';
     $calcType->note = 'Levels Based Commissions';
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    $em->persist($calcType);
-    $em->flush();
+    $found = getByAttribute($container, ECalcType::class, ECalcType::CODE, $calcType->code);
+    if (!$found) {
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($calcType);
+        $em->flush();
+    } else {
+        $data = reset($found);
+        $calcType = new ECalcType($data);
+    }
     return $calcType->id;
 }
 
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $planId
+ * @param int $typeId
+ * @return int
+ * @throws \Exception
+ */
 function init_bonus_plan_calcs($container, $planId, $typeId)
 {
-    $calc = new EBonBasePlanCalc();
+    $calc = new EPlanCalc();
     $calc->plan_ref = $planId;
     $calc->type_ref = $typeId;
     $calc->date_started = new \DateTime();
     $calc->sequence = 1;
+    $found = getByAttribute($container, EPlanCalc::class, EPlanCalc::PLAN_REF, $calc->plan_ref);
+    if (!$found) {
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($calc);
+        $em->flush();
+    } else {
+        $data = reset($found);
+        $calc = new EPlanCalc($data);
+    }
+    return $calc->id;
+}
+
+/**
+ * Create root rules for rank qualifications.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $calcId
+ * @param int[] $ranks
+ */
+function init_bonus_qual_rules($container, $calcId, $ranks)
+{
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    $em->persist($calc);
+
+    $ruleIdHuman = init_bonus_qual_rules_create_rank_human($container);
+    $qual = new EPlanQual();
+    $qual->calc_ref = $calcId;
+    $qual->rank_ref = $ranks[0];
+    $qual->rule_ref = $ruleIdHuman;
+    $em->persist($qual);
+
+    $ruleIdHero = init_bonus_qual_rules_create_rank_hero($container);
+    $qual = new EPlanQual();
+    $qual->calc_ref = $calcId;
+    $qual->rank_ref = $ranks[1];
+    $qual->rule_ref = $ruleIdHero;
+    $em->persist($qual);
+
+    $ruleIdAngel = init_bonus_qual_rules_create_rank_angel($container);
+    $qual = new EPlanQual();
+    $qual->calc_ref = $calcId;
+    $qual->rank_ref = $ranks[2];
+    $qual->rule_ref = $ruleIdAngel;
+    $em->persist($qual);
+
+    $ruleIdGod = init_bonus_qual_rules_create_rank_god($container);
+    $qual = new EPlanQual();
+    $qual->calc_ref = $calcId;
+    $qual->rank_ref = $ranks[3];
+    $qual->rule_ref = $ruleIdGod;
+    $em->persist($qual);
+
     $em->flush();
+}
+
+/**
+ * Create qualification rules for rank 'Human'.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
+function init_bonus_qual_rules_create_rank_human($container)
+{
+    $rulePv = init_bonus_qual_rules_create_pv($container, 35, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 25, 1, true);
+    $ids = [$rulePv->ref, $ruleApv->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    return $result;
+}
+
+/**
+ * Create qualification rules for rank 'Hero'.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
+function init_bonus_qual_rules_create_rank_hero($container)
+{
+    $rulePv = init_bonus_qual_rules_create_pv($container, 70, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 50, 1, true);
+    $ids = [$rulePv->ref, $ruleApv->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    return $result;
+}
+
+/**
+ * Create qualification rules for rank 'Angel'.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
+function init_bonus_qual_rules_create_rank_angel($container)
+{
+    $rulePv = init_bonus_qual_rules_create_pv($container, 140, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 100, 1, true);
+    $ids = [$rulePv->ref, $ruleApv->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    return $result;
+}
+
+/**
+ * Create qualification rules for rank 'God'.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
+function init_bonus_qual_rules_create_rank_god($container)
+{
+    $rulePv = init_bonus_qual_rules_create_pv($container, 280, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 200, 1, true);
+    $ids = [$rulePv->ref, $ruleApv->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    return $result;
+}
+
+/**
+ * Create one PV rule.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param float $volume
+ * @param int $period
+ * @param bool $isAutship
+ * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Pv
+ */
+function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutship = false)
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+
+    /* register new rule in rule registry */
+    $rule = new  EQualRule();
+    $rule->type = Cfg::QUAL_RULE_TYPE_PV;
+    $em->persist($rule);
+    $em->flush();
+    $ruleId = $rule->id;
+
+    /* save rule details */
+    $result = new EQualRulePv();
+    $result->ref = $ruleId;
+    $result->volume = $volume;
+    $result->autoship_only = $isAutship;
+    $result->period = $period;
+    $em->persist($result);
+    $em->flush();
+    return $result;
+}
+
+/**
+ * Create grouping rule for set of rules with given IDs.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param string $logic AND, OR, ...
+ * @param int[] $otherIds
+ * @return int rule ID
+ */
+function init_bonus_qual_rules_create_group($container, $logic, $otherIds)
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+
+    /* register new rule in rule registry */
+    $root = new  EQualRule();
+    $root->type = Cfg::QUAL_RULE_TYPE_GROUP;
+    $em->persist($root);
+    $em->flush();
+    $result = $root->id;
+
+    /* add grouping rule */
+    $group = new  EQualRuleGroup();
+    $group->ref = $result;
+    $group->logic = $logic;
+    $em->persist($group);
+    $em->flush();
+
+    /*save references to grouping rules */
+    foreach ($otherIds as $one) {
+        $ref = new  EQualRuleGroupRef();
+        $ref->grouping_ref = $result;
+        $ref->grouped_ref = $one;
+        $em->persist($ref);
+        $em->flush();
+    }
+    return $result;
+}
+
+/**
+ * Find entities by attribute value.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param string $class
+ * @param string $attrName
+ * @param string $attrValue
+ * @return array
+ */
+function getByAttribute($container, $class, $attrName, $attrValue)
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    /** @var \Doctrine\ORM\QueryBuilder $qb */
+    $qb = $em->createQueryBuilder();
+    $as = 'main';
+    $qb->select($as);
+    $qb->from($class, $as);
+    $qb->andWhere("$as.$attrName=:param");
+    $qb->setParameters(['param' => $attrValue]);
+    $query = $qb->getQuery();
+    $result = $query->getArrayResult();
+    return $result;
 }

@@ -16,11 +16,24 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan;
 class Rank
     extends \TeqFw\Lib\Data
 {
+    const CODE = 'code';
+    const ID = 'id';
+    const NOTE = 'note';
+    const PLAN_REF = 'plan_ref';
+    const SEQUENCE = 'sequence';
+
     /**
      * @var string
      * @Column(type="string")
      */
     public $code;
+    /**
+     * @var int
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+     */
+    public $id;
     /**
      * @var string
      * @Column(type="string")
@@ -31,13 +44,6 @@ class Rank
      * @Column(type="integer")
      */
     public $plan_ref;
-    /**
-     * @var int
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
-     */
-    public $rank_id;
     /**
      * @var int
      * @Column(type="integer")

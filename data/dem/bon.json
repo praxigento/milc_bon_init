@@ -52,7 +52,7 @@
         ".": {
           "desc": "Calculations are bound to the concrete plan.",
           "attr": {
-            "calc_id": {
+            "id": {
               "type": "identity",
               "desc": "Calculation ID."
             },
@@ -82,13 +82,58 @@
               "path": "/bon/base/plan",
               "own": ["plan_ref"],
               "foreign": ["id"],
-              "on": {"delete": "restrict", "update": "cascade"}
+              "on": {"delete": "cascade", "update": "cascade"}
             },
             "calcType": {
               "path": "/bon/base/calc/type",
               "own": ["type_ref"],
               "foreign": ["id"],
-              "on": {"delete": "restrict", "update": "cascade"}
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
+      "qual": {
+        ".": {
+          "desc": "Rank qualification rules for the calculation.",
+          "attr": {
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation."
+            },
+            "rank_ref": {
+              "type": "reference",
+              "desc": "Reference to the rank."
+            },
+            "rule_ref": {
+              "type": "reference",
+              "desc": "Reference to the qualification rule."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_ref","rank_ref", "rule_ref"]
+            }
+          },
+          "relation": {
+            "calc": {
+              "path": "/bon/base/plan/calc",
+              "own": ["calc_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rank": {
+              "path": "/bon/base/plan/rank",
+              "own": ["rank_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rule": {
+              "path": "/bon/base/qual/rule",
+              "own": ["rule_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         }
@@ -97,7 +142,7 @@
         ".": {
           "desc": "Ranks are bound to the concrete plan.",
           "attr": {
-            "rank_id": {
+            "id": {
               "type": "identity",
               "desc": "Rank ID."
             },
@@ -125,7 +170,7 @@
               "path": "/bon/base/plan",
               "own": ["plan_ref"],
               "foreign": ["id"],
-              "on": {"delete": "restrict", "update": "cascade"}
+              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         }
@@ -295,7 +340,7 @@
               "path": "/client/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
-              "on": {"delete": "restrict", "update": "cascade"}
+              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         }

@@ -16,6 +16,10 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Calc;
 class Type
     extends \TeqFw\Lib\Data
 {
+    const CODE = 'code';
+    const ID = 'id';
+    const NOTE = 'note';
+
     /**
      * @var string
      * @Column(type="string")

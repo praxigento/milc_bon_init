@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification;
 
 
 /**
@@ -16,6 +16,9 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification;
 class Rule
     extends \TeqFw\Lib\Data
 {
+    const ID = 'id';
+    const TYPE = 'type';
+
     /**
      * @var int
      * @Id

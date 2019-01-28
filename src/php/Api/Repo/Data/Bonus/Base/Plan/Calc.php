@@ -16,13 +16,24 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan;
 class Calc
     extends \TeqFw\Lib\Data
 {
+    const DATE_STARTED= 'date_started';
+    const ID = 'id';
+    const PLAN_REF= 'plan_ref';
+    const SEQUENCE= 'sequence';
+    const TYPE_REF= 'type_ref';
+
+    /**
+     * @var \DateTime
+     * @Column(type="datetime")
+     */
+    public $date_started;
     /**
      * @var int
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
      */
-    public $calc_id;
+    public $id;
     /**
      * @var int
      * @Column(type="integer")
@@ -33,11 +44,6 @@ class Calc
      * @Column(type="integer")
      */
     public $sequence;
-    /**
-     * @var \DateTime
-     * @Column(type="datetime")
-     */
-    public $date_started;
     /**
      * @var int
      * @Column(type="integer")

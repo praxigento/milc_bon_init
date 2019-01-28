@@ -16,6 +16,10 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base;
 class Plan
     extends \TeqFw\Lib\Data
 {
+    const ID = 'id';
+    const NOTE = 'note';
+    const PERIOD = 'period';
+
     /**
      * @var int
      * @Id
