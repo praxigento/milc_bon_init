@@ -80,8 +80,12 @@ function init_bonus_plan_ranks($container, $planId)
     $human->note = 'Human (lowest)';
     $human->sequence = 1;
     $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $human->code);
-    if (!$found)
+    if (!$found) {
         $em->persist($human);
+    } else {
+        $data = reset($found);
+        $human = new EPlanRank($data);
+    }
     /* Hero */
     $hero = new EPlanRank();
     $hero->plan_ref = $planId;
@@ -89,8 +93,12 @@ function init_bonus_plan_ranks($container, $planId)
     $hero->note = 'Hero';
     $hero->sequence = 2;
     $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $hero->code);
-    if (!$found)
+    if (!$found) {
         $em->persist($hero);
+    } else {
+        $data = reset($found);
+        $hero = new EPlanRank($data);
+    }
     /* Angel */
     $angel = new EPlanRank();
     $angel->plan_ref = $planId;
@@ -98,8 +106,12 @@ function init_bonus_plan_ranks($container, $planId)
     $angel->note = 'Angel';
     $angel->sequence = 3;
     $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $angel->code);
-    if (!$found)
+    if (!$found) {
         $em->persist($angel);
+    } else {
+        $data = reset($found);
+        $angel = new EPlanRank($data);
+    }
     /* God */
     $god = new EPlanRank();
     $god->plan_ref = $planId;
@@ -107,8 +119,12 @@ function init_bonus_plan_ranks($container, $planId)
     $god->note = 'God (highest)';
     $god->sequence = 4;
     $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $god->code);
-    if (!$found)
+    if (!$found) {
         $em->persist($god);
+    } else {
+        $data = reset($found);
+        $god = new EPlanRank($data);
+    }
     /**/
     $em->flush();
     return [$human->id, $hero->id, $angel->id, $god->id];
