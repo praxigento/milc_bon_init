@@ -18,6 +18,7 @@ use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule as EQualRu
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group as EQualRuleGroup;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Pv as EQualRulePv;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Rank as EQualRuleRank;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -205,14 +206,14 @@ function init_bonus_qual_rules($container, $calcId, $ranks)
     $qual->rule_ref = $ruleIdHero;
     $em->persist($qual);
 
-    $ruleIdAngel = init_bonus_qual_rules_create_rank_angel($container);
+    $ruleIdAngel = init_bonus_qual_rules_create_rank_angel($container, $ranks);
     $qual = new EPlanQual();
     $qual->calc_ref = $calcId;
     $qual->rank_ref = $ranks[2];
     $qual->rule_ref = $ruleIdAngel;
     $em->persist($qual);
 
-    $ruleIdGod = init_bonus_qual_rules_create_rank_god($container);
+    $ruleIdGod = init_bonus_qual_rules_create_rank_god($container, $ranks);
     $qual = new EPlanQual();
     $qual->calc_ref = $calcId;
     $qual->rank_ref = $ranks[3];
@@ -256,14 +257,19 @@ function init_bonus_qual_rules_create_rank_hero($container)
  * Create qualification rules for rank 'Angel'.
  *
  * @param \Psr\Container\ContainerInterface $container
+ * @param int[] $ranks
  * @return int
  */
-function init_bonus_qual_rules_create_rank_angel($container)
+function init_bonus_qual_rules_create_rank_angel($container, $ranks)
 {
     $rulePv = init_bonus_qual_rules_create_pv($container, 140, 0, false);
     $ruleApv = init_bonus_qual_rules_create_pv($container, 100, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
-    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    $groupPv = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    $rankIdHero = $ranks[1];
+    $ruleRank = init_bonus_qual_rules_create_rank($container, $rankIdHero, 3, 0);
+    $ids = [$groupPv, $ruleRank->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_AND, $ids);
     return $result;
 }
 
@@ -271,14 +277,19 @@ function init_bonus_qual_rules_create_rank_angel($container)
  * Create qualification rules for rank 'God'.
  *
  * @param \Psr\Container\ContainerInterface $container
+ * @param int[] $ranks
  * @return int
  */
-function init_bonus_qual_rules_create_rank_god($container)
+function init_bonus_qual_rules_create_rank_god($container, $ranks)
 {
     $rulePv = init_bonus_qual_rules_create_pv($container, 280, 0, false);
     $ruleApv = init_bonus_qual_rules_create_pv($container, 200, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
-    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    $groupPv = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
+    $rankIdHero = $ranks[2];
+    $ruleRank = init_bonus_qual_rules_create_rank($container, $rankIdHero, 2, 1);
+    $ids = [$groupPv, $ruleRank->ref];
+    $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_AND, $ids);
     return $result;
 }
 
@@ -308,6 +319,38 @@ function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutshi
     $result->ref = $ruleId;
     $result->volume = $volume;
     $result->autoship_only = $isAutship;
+    $result->period = $period;
+    $em->persist($result);
+    $em->flush();
+    return $result;
+}
+
+/**
+ * Create one Rank rule.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param $rankId
+ * @param $count
+ * @param $period
+ * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Rank
+ */
+function init_bonus_qual_rules_create_rank($container, $rankId, $count, $period)
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+
+    /* register new rule in rule registry */
+    $rule = new  EQualRule();
+    $rule->type = Cfg::QUAL_RULE_TYPE_RANK;
+    $em->persist($rule);
+    $em->flush();
+    $ruleId = $rule->id;
+
+    /* save rule details */
+    $result = new EQualRuleRank();
+    $result->ref = $ruleId;
+    $result->rank_ref = $rankId;
+    $result->count = $count;
     $result->period = $period;
     $em->persist($result);
     $em->flush();

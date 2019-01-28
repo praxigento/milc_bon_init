@@ -197,7 +197,7 @@
             "attr": {
               "ref": {
                 "type": "reference",
-                "desc": "Reference to the grouping rule (type: GROUP)."
+                "desc": "Reference to the grouping rule (type: group)."
               },
               "logic": {
                 "type": "string",
@@ -262,7 +262,7 @@
             "attr": {
               "ref": {
                 "type": "reference",
-                "desc": "Reference to the PV rule (type: PV)."
+                "desc": "Reference to the PV rule (type: pv)."
               },
               "volume": {
                 "type": "decimal",
@@ -293,6 +293,53 @@
               "rule": {
                 "path": "/bon/base/qual/rule",
                 "own": ["ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        },
+        "rank": {
+          ".": {
+            "desc": "Rank rules details.",
+            "attr": {
+              "ref": {
+                "type": "reference",
+                "desc": "Reference to the rank rule (type: rank)."
+              },
+              "rank_ref": {
+                "type": "reference",
+                "desc": "Reference to the required rank."
+              },
+              "count": {
+                "type": "integer",
+                "small": true,
+                "desc": "Minimal count of the distributors with required rank."
+              },
+              "period": {
+                "type": "integer",
+                "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
+                "default": 0,
+                "small": true,
+                "unsigned": true
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["ref"]
+              }
+            },
+            "relation": {
+              "rule": {
+                "path": "/bon/base/qual/rule",
+                "own": ["ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "rank": {
+                "path": "/bon/base/plan/rank",
+                "own": ["rank_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               }

@@ -19,6 +19,7 @@ interface Config
 
     const QUAL_RULE_TYPE_GROUP = 'group';
     const QUAL_RULE_TYPE_PV = 'pv';
+    const QUAL_RULE_TYPE_RANK = 'rank';
 
     const RANK_ANGEL = 'ANG';
     const RANK_GOD = 'GOD';
