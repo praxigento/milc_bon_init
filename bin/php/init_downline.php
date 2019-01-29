@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use Praxigento\Milc\Bonus\Api\Repo\Data\Res\Partner as EResPartner;
 
 /** Maximal possible increment for date in seconds */
-const DATE_INC_MAX = 3600;
+const DATE_INC_MAX = 9000; //max random increment in seconds
 const PERCENT_DELETE = 16;
 const PERCENT_RESTORE = 8;
 const PERCENT_SET_TYPE = 20;
@@ -30,8 +30,7 @@ try {
     /**
      * Create customers.
      */
-    $date = new \DateTime();
-    $date->modify('-100 days');
+    $date = \DateTime::createFromFormat('Y/m/d H:i:s', '2019/01/01 00:00:00');
     /* IDs of the customers (all, active, inactive, deleted) */
     $mapAll = [];
     $mapDistr = [];
