@@ -4,23 +4,21 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc;
 
 
 /**
- * Ranks are bound to the concrete plan.
+ * Codifier for calculation types.
  *
  * @Entity
- * @Table(name="bon_base_plan_rank")
+ * @Table(name="bon_calc_type")
  */
-class Rank
+class Type
     extends \TeqFw\Lib\Data
 {
     const CODE = 'code';
     const ID = 'id';
     const NOTE = 'note';
-    const PLAN_REF = 'plan_ref';
-    const SEQUENCE = 'sequence';
 
     /**
      * @var string
@@ -39,14 +37,4 @@ class Rank
      * @Column(type="string")
      */
     public $note;
-    /**
-     * @var int
-     * @Column(type="integer")
-     */
-    public $plan_ref;
-    /**
-     * @var int
-     * @Column(type="integer")
-     */
-    public $sequence;
 }

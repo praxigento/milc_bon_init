@@ -5,6 +5,7 @@
  */
 
 namespace Praxigento\Milc\Bonus\Service\Client;
+
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Registry\Log\Type as ETypeLog;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree as ETree;

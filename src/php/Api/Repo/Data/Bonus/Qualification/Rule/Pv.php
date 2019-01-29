@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule;
 
 
 /**
  * PV based rules.
  *
  * @Entity
- * @Table(name="bon_base_qual_rule_pv")
+ * @Table(name="bon_qual_rule_pv")
  */
 class Pv
     extends \TeqFw\Lib\Data

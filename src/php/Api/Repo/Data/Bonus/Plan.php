@@ -4,23 +4,26 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus;
 
 
 /**
- * Set of calculations related to one period.
+ * Set of suites related to one set of ranks.
  *
  * @Entity
- * @Table(name="bon_base_plan")
+ * @Table(name="bon_plan")
  */
 class Plan
     extends \TeqFw\Lib\Data
 {
+    const DATE_CREATED = 'date_created';
     const ID = 'id';
     const NOTE = 'note';
-    const PERIOD = 'period';
-    const DATE_CREATED = 'date_created';
-
+    /**
+     * @var \DateTime
+     * @Column(type="date")
+     */
+    public $date_created;
     /**
      * @var int
      * @Id
@@ -33,14 +36,4 @@ class Plan
      * @Column(type="string")
      */
     public $note;
-    /**
-     * @var \DateTime
-     * @Column(type="date")
-     */
-    public $date_created;
-    /**
-     * @var int
-     * @Column(type="integer")
-     */
-    public $period;
 }

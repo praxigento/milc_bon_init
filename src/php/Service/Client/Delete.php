@@ -48,6 +48,22 @@ class Delete
         $this->manEntity->flush();
     }
 
+    private function changeParentForFrontLine($clientId, $parentId)
+    {
+        $qb = $this->manEntity->createQueryBuilder();
+        $as = 'tree';
+        $update = $qb->update(ETree::class, $as);
+        $update->set("$as." . ETree::PARENT_REF, ':parentId');
+        $update->where("$as." . ETree::PARENT_REF . '=:clientId');
+        $query = $update->getQuery();
+        $params = [
+            'clientId' => $clientId,
+            'parentId' => $parentId
+        ];
+        $updated = $query->execute($params);
+        $this->manEntity->flush();
+    }
+
     public function exec($req)
     {
         assert($req instanceof ARequest);
@@ -88,34 +104,6 @@ class Delete
         return $result;
     }
 
-    private function updateDescendants($clientId, $parentId, $date)
-    {
-        $frontLine = $this->selectByParentId($clientId);
-        if (count($frontLine)) {
-            $this->changeParentForFrontLine($clientId, $parentId);
-            foreach ($frontLine as $one) {
-                $childId = $one->client_ref;
-                $this->addToTreeLog($childId, $parentId, $date);
-            }
-        }
-    }
-
-    private function changeParentForFrontLine($clientId, $parentId)
-    {
-        $qb = $this->manEntity->createQueryBuilder();
-        $as = 'tree';
-        $update = $qb->update(ETree::class, $as);
-        $update->set("$as." . ETree::PARENT_REF, ':parentId');
-        $update->where("$as." . ETree::PARENT_REF . '=:clientId');
-        $query = $update->getQuery();
-        $params = [
-            'clientId' => $clientId,
-            'parentId' => $parentId
-        ];
-        $updated = $query->execute($params);
-        $this->manEntity->flush();
-    }
-
     private function selectByParentId($id)
     {
         $result = [];
@@ -133,5 +121,17 @@ class Delete
             $result[] = $entity;
         }
         return $result;
+    }
+
+    private function updateDescendants($clientId, $parentId, $date)
+    {
+        $frontLine = $this->selectByParentId($clientId);
+        if (count($frontLine)) {
+            $this->changeParentForFrontLine($clientId, $parentId);
+            foreach ($frontLine as $one) {
+                $childId = $one->client_ref;
+                $this->addToTreeLog($childId, $parentId, $date);
+            }
+        }
     }
 }

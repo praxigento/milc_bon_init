@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Registry;
 
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Registry\Cv as ECvReg;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Registry\Cv as ECvReg;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Response as AResponse;
 

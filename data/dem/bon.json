@@ -1,6 +1,6 @@
 {
   "DEM": {
-    ".": "/bon/base",
+    ".": "/bon",
     "calc": {
       "type": {
         ".": {
@@ -20,7 +20,7 @@
             }
           },
           "index": {
-            "uniqueCode": {
+            "unique": {
               "type": "unique",
               "attrs": ["code"]
             }
@@ -28,7 +28,83 @@
         }
       }
     },
-    "plan": {
+    "period": {
+      ".": {
+        "desc": "Bonus periods.",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Period ID."
+          },
+          "suite_ref": {
+            "type": "reference",
+            "desc": "Related bonus suite."
+          },
+          "date_begin": {
+            "type": "date",
+            "desc": "Begin date of the period."
+          },
+          "state": {
+            "type": "string",
+            "desc": "Period state: open, closed."
+          }
+        },
+        "index": {
+          "unique": {
+            "type": "unique",
+            "attrs": ["suite_ref", "date_begin"]
+          }
+        },
+        "relation": {
+          "suite": {
+            "path": "/bon/suite",
+            "own": ["suite_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          }
+        }
+      },
+      "calc": {
+        ".": {
+          "desc": "Bonus calculation inside of period.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Calculation ID."
+            },
+            "period_ref": {
+              "type": "reference",
+              "desc": "Related bonus period."
+            },
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Related bonus calculation."
+            }
+          },
+          "index": {
+            "unique": {
+              "type": "unique",
+              "attrs": ["period_ref", "calc_ref"]
+            }
+          },
+          "relation": {
+            "period": {
+              "path": "/bon/period",
+              "own": ["period_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "calc": {
+              "path": "/bon/suite/calc",
+              "own": ["calc_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      }
+    },
+    "suite": {
       ".": {
         "desc": "Set of calculations related to one period.",
         "attr": {
@@ -36,11 +112,13 @@
             "type": "identity",
             "desc": "Plan ID."
           },
-          "period": {
-            "type": "integer",
-            "desc": "Calculation period: 1 - day, 2 - week, 3 - month, 4 - year.",
-            "small": true,
-            "unsigned": true
+          "plan_ref": {
+            "type": "reference",
+            "desc": "Reference to the bonus plan."
+          },
+          "date_created": {
+            "type": "date",
+            "desc": "Date when plan was created."
           },
           "note": {
             "type": "string",
@@ -50,13 +128,13 @@
       },
       "calc": {
         ".": {
-          "desc": "Calculations are bound to the concrete plan.",
+          "desc": "Calculations being bound to the concrete suite.",
           "attr": {
             "id": {
               "type": "identity",
               "desc": "Calculation ID."
             },
-            "plan_ref": {
+            "suite_ref": {
               "type": "reference",
               "desc": "Reference to the plan."
             },
@@ -70,7 +148,7 @@
               "small": true,
               "unsigned": true
             },
-            "date_started": {
+            "date_created": {
               "type": "datetime",
               "desc": "Date when first calculation was (will be) performed.",
               "small": true,
@@ -78,18 +156,37 @@
             }
           },
           "relation": {
-            "plan": {
-              "path": "/bon/base/plan",
-              "own": ["plan_ref"],
+            "suite": {
+              "path": "/bon/suite",
+              "own": ["suite_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "calcType": {
-              "path": "/bon/base/calc/type",
+              "path": "/bon/calc/type",
               "own": ["type_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
+          }
+        }
+      }
+    },
+    "plan": {
+      ".": {
+        "desc": "Set of suites related to one set of ranks.",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Plan ID."
+          },
+          "date_created": {
+            "type": "date",
+            "desc": "Date when plan was created."
+          },
+          "note": {
+            "type": "string",
+            "desc": "Plan description for humans."
           }
         }
       },
@@ -118,19 +215,19 @@
           },
           "relation": {
             "calc": {
-              "path": "/bon/base/plan/calc",
+              "path": "/bon/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "rank": {
-              "path": "/bon/base/plan/rank",
+              "path": "/bon/plan/rank",
               "own": ["rank_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "rule": {
-              "path": "/bon/base/qual/rule",
+              "path": "/bon/qual/rule",
               "own": ["rule_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -167,7 +264,7 @@
           },
           "relation": {
             "plan": {
-              "path": "/bon/base/plan",
+              "path": "/bon/plan",
               "own": ["plan_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -213,7 +310,7 @@
             },
             "relation": {
               "rule": {
-                "path": "/bon/base/qual/rule",
+                "path": "/bon/qual/rule",
                 "own": ["ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
@@ -241,13 +338,13 @@
               },
               "relation": {
                 "groupingRule": {
-                  "path": "/bon/base/qual/rule/group",
+                  "path": "/bon/qual/rule/group",
                   "own": ["grouping_ref"],
                   "foreign": ["ref"],
                   "on": {"delete": "cascade", "update": "cascade"}
                 },
                 "groupedRule": {
-                  "path": "/bon/base/qual/rule",
+                  "path": "/bon/qual/rule",
                   "own": ["grouped_ref"],
                   "foreign": ["id"],
                   "on": {"delete": "cascade", "update": "cascade"}
@@ -291,7 +388,7 @@
             },
             "relation": {
               "rule": {
-                "path": "/bon/base/qual/rule",
+                "path": "/bon/qual/rule",
                 "own": ["ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
@@ -332,13 +429,13 @@
             },
             "relation": {
               "rule": {
-                "path": "/bon/base/qual/rule",
+                "path": "/bon/qual/rule",
                 "own": ["ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               },
               "rank": {
-                "path": "/bon/base/plan/rank",
+                "path": "/bon/plan/rank",
                 "own": ["rank_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}

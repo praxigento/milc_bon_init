@@ -4,27 +4,21 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Calc;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification;
 
 
 /**
- * Codifier for calculation types.
+ * Set of calculations related to one period.
  *
  * @Entity
- * @Table(name="bon_base_calc_type")
+ * @Table(name="bon_qual_rule")
  */
-class Type
+class Rule
     extends \TeqFw\Lib\Data
 {
-    const CODE = 'code';
     const ID = 'id';
-    const NOTE = 'note';
+    const TYPE = 'type';
 
-    /**
-     * @var string
-     * @Column(type="string")
-     */
-    public $code;
     /**
      * @var int
      * @Id
@@ -36,5 +30,5 @@ class Type
      * @var string
      * @Column(type="string")
      */
-    public $note;
+    public $type;
 }

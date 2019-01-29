@@ -4,23 +4,27 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Registry;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus;
 
 
 /**
- * Registry to save CV/ACV movements.
+ * Set of calculations related to one period.
  *
  * @Entity
- * @Table(name="bon_base_reg_cv")
+ * @Table(name="bon_suite")
  */
-class Cv
+class Suite
     extends \TeqFw\Lib\Data
 {
+    const DATE_CREATED = 'date_created';
+    const ID = 'id';
+    const NOTE = 'note';
+    const PLAN_REF = 'plan_ref';
     /**
      * @var \DateTime
-     * @Column(type="datetime")
+     * @Column(type="date")
      */
-    public $date;
+    public $date_created;
     /**
      * @var int
      * @Id
@@ -28,11 +32,6 @@ class Cv
      * @Column(type="integer")
      */
     public $id;
-    /**
-     * @var bool
-     * @Column(type="boolean")
-     */
-    public $is_autoship;
     /**
      * @var string
      * @Column(type="string")
@@ -42,10 +41,5 @@ class Cv
      * @var int
      * @Column(type="integer")
      */
-    public $client_ref;
-    /**
-     * @var float
-     * @Column(type="decimal", precision=10, scale=2)
-     */
-    public $volume;
+    public $plan_ref;
 }

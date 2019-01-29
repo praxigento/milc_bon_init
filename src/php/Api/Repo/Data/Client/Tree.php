@@ -14,22 +14,21 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Client;
 class Tree
     extends \TeqFw\Lib\Data
 {
-    const DEPTH = 'depth';
     const CLIENT_REF = 'client_ref';
+    const DEPTH = 'depth';
     const PARENT_REF = 'parent_ref';
     const PATH = 'path';
-
-    /**
-     * @var int
-     * @Column(type="integer")
-     */
-    public $depth;
     /**
      * @var int
      * @Id
      * @Column(type="integer")
      */
     public $client_ref;
+    /**
+     * @var int
+     * @Column(type="integer")
+     */
+    public $depth;
     /**
      * @var int
      * @Column(type="integer")

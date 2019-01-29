@@ -4,35 +4,31 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan;
 
 
 /**
- * Rank based rules.
+ * Rank qualification rules for the calculation.
  *
  * @Entity
- * @Table(name="bon_base_qual_rule_rank")
+ * @Table(name="bon_plan_qual")
  */
-class Rank
+class Qualification
     extends \TeqFw\Lib\Data
 {
-    const COUNT = 'count';
-    const PERIOD = 'period';
+    const CALC_REF = 'calc_ref';
     const RANK_REF = 'rank_ref';
-    const REF = 'ref';
+    const RULE_REF = 'rule_ref';
 
     /**
      * @var int
+     * @Id
      * @Column(type="integer")
      */
-    public $count;
+    public $calc_ref;
     /**
      * @var int
-     * @Column(type="integer")
-     */
-    public $period;
-    /**
-     * @var int
+     * @Id
      * @Column(type="integer")
      */
     public $rank_ref;
@@ -41,6 +37,6 @@ class Rank
      * @Id
      * @Column(type="integer")
      */
-    public $ref;
+    public $rule_ref;
 
 }

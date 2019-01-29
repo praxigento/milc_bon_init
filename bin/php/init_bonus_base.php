@@ -9,16 +9,17 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Calc\Type as ECalcType;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan as EPlan;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Calc as EPlanCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Qualification as EPlanQual;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Plan\Rank as EPlanRank;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group as EQualRuleGroup;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Pv as EQualRulePv;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Rank as EQualRuleRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as ECalcType;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan as EPlan;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Qualification as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Rank as EPlanRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group as EQualRuleGroup;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Pv as EQualRulePv;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Rank as EQualRuleRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as ESuite;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as ESuiteCalc;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -31,9 +32,10 @@ try {
     $container = $app->getContainer();
 
     $planId = init_bonus_plan($container);
+    $suiteId = init_bonus_suite($container, $planId);
     $ranks = init_bonus_plan_ranks($container, $planId);
     $calcTypeId = init_bonus_calc_type($container);
-    $calcId = init_bonus_plan_calcs($container, $planId, $calcTypeId);
+    $calcId = init_bonus_suite_calcs($container, $suiteId, $calcTypeId);
 
     init_bonus_qual_rules($container, $calcId, $ranks);
 
@@ -53,9 +55,8 @@ function init_bonus_plan($container)
     $format = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Format::class);
     $plan = new EPlan();
     $plan->date_created = $format->getDateNowUtc();
-    $plan->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
 
-    $plan->note = 'Simple Unilevel plan for development.';
+    $plan->note = 'Development plan.';
     $found = getByAttribute($container, EPlan::class, EPlan::NOTE, $plan->note);
     if (!$found) {
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
@@ -67,6 +68,34 @@ function init_bonus_plan($container)
         $plan = new EPlan($data);
     }
     return $plan->id;
+}
+
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $planId
+ * @return int
+ */
+function init_bonus_suite($container, $planId)
+{
+    /** @var \Praxigento\Milc\Bonus\Api\Helper\Format $format */
+    $format = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Format::class);
+    $suite = new ESuite();
+    $suite->plan_ref = $planId;
+    $suite->date_created = $format->getDateNowUtc();
+    $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
+
+    $suite->note = 'Monthly calculations for development.';
+    $found = getByAttribute($container, ESuite::class, ESuite::PLAN_REF, $planId);
+    if (!$found) {
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($suite);
+        $em->flush();
+    } else {
+        $data = reset($found);
+        $suite = new EPlan($data);
+    }
+    return $suite->id;
 }
 
 /**
@@ -159,19 +188,19 @@ function init_bonus_calc_type($container)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
- * @param int $planId
+ * @param int $suiteId
  * @param int $typeId
  * @return int
  * @throws \Exception
  */
-function init_bonus_plan_calcs($container, $planId, $typeId)
+function init_bonus_suite_calcs($container, $suiteId, $typeId)
 {
-    $calc = new EPlanCalc();
-    $calc->plan_ref = $planId;
+    $calc = new ESuiteCalc();
+    $calc->suite_ref = $suiteId;
     $calc->type_ref = $typeId;
-    $calc->date_started = new \DateTime();
+    $calc->date_created = new \DateTime();
     $calc->sequence = 1;
-    $found = getByAttribute($container, EPlanCalc::class, EPlanCalc::PLAN_REF, $calc->plan_ref);
+    $found = getByAttribute($container, ESuiteCalc::class, ESuiteCalc::SUITE_REF, $calc->suite_ref);
     if (!$found) {
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
@@ -179,7 +208,7 @@ function init_bonus_plan_calcs($container, $planId, $typeId)
         $em->flush();
     } else {
         $data = reset($found);
-        $calc = new EPlanCalc($data);
+        $calc = new ESuiteCalc($data);
     }
     return $calc->id;
 }
@@ -336,7 +365,7 @@ function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutshi
  * @param $rankId
  * @param $count
  * @param $period
- * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Base\Qualification\Rule\Rank
+ * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Rank
  */
 function init_bonus_qual_rules_create_rank($container, $rankId, $count, $period)
 {
