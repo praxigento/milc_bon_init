@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as ECalcType;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type\Deps\On as ECalcTypeDepsOn;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan as EPlan;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Qualification as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Rank as EPlanRank;
@@ -34,8 +35,8 @@ try {
     $planId = init_bonus_plan($container);
     $suiteId = init_bonus_suite($container, $planId);
     $ranks = init_bonus_plan_ranks($container, $planId);
-    $calcTypeId = init_bonus_calc_type($container);
-    $calcId = init_bonus_suite_calcs($container, $suiteId, $calcTypeId);
+    $typeIds = init_bonus_calc_type($container);
+    $calcId = init_bonus_suite_calcs($container, $suiteId, $typeIds);
 
     init_bonus_qual_rules($container, $calcId, $ranks);
 
@@ -170,15 +171,47 @@ function init_bonus_plan_ranks($container, $planId)
  */
 function init_bonus_calc_type($container)
 {
-    $calcType = new ECalcType();
-    $calcType->code = 'LEVEL_BASED';
-    $calcType->note = 'Levels Based Commissions';
-    $found = getByAttribute($container, ECalcType::class, ECalcType::CODE, $calcType->code);
+    $result = [];
+    //
+    $code = Cfg::CALC_TYPE_COLLECT_CV;
+    $id = init_bonus_calc_type_add($container, $code, 'CV collection.');
+    $result[$code] = $id;
+    //
+    $code = Cfg::CALC_TYPE_TREE_PLAIN;
+    $deps = [$id];
+    $id = init_bonus_calc_type_add($container, $code, 'Based on plain tree.', $deps);
+    $result[$code] = $id;
+    //
+    $code = Cfg::CALC_TYPE_QUALIFY_RANK;
+    $deps = [$id];
+    $id = init_bonus_calc_type_add($container, $code, 'Ranks qualification.', $deps);
+    $result[$code] = $id;
+    //
+    $code = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
+    $deps = [$id];
+    $id = init_bonus_calc_type_add($container, $code, 'Level based bonus calculation.', $deps);
+    $result[$code] = $id;
+    return $result;
+}
+
+function init_bonus_calc_type_add($container, $code, $note, $depsOn = [], $depsBefore = [])
+{
+    $found = getByAttribute($container, ECalcType::class, ECalcType::CODE, $code);
     if (!$found) {
+        $calcType = new ECalcType();
+        $calcType->code = $code;
+        $calcType->note = $note;
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
         $em->persist($calcType);
         $em->flush();
+        foreach ($depsOn as $one) {
+            $link = new ECalcTypeDepsOn();
+            $link->ref = $calcType->id;
+            $link->other_ref = $one;
+            $em->persist($link);
+            $em->flush();
+        }
     } else {
         $data = reset($found);
         $calcType = new ECalcType($data);
@@ -189,23 +222,26 @@ function init_bonus_calc_type($container)
 /**
  * @param \Psr\Container\ContainerInterface $container
  * @param int $suiteId
- * @param int $typeId
+ * @param int[] $typeIds
  * @return int
  * @throws \Exception
  */
-function init_bonus_suite_calcs($container, $suiteId, $typeId)
+function init_bonus_suite_calcs($container, $suiteId, $typeIds)
 {
-    $calc = new ESuiteCalc();
-    $calc->suite_ref = $suiteId;
-    $calc->type_ref = $typeId;
-    $calc->date_created = new \DateTime();
-    $calc->sequence = 1;
-    $found = getByAttribute($container, ESuiteCalc::class, ESuiteCalc::SUITE_REF, $calc->suite_ref);
+    $found = getByAttribute($container, ESuiteCalc::class, ESuiteCalc::SUITE_REF, $suiteId);
     if (!$found) {
-        /** @var \Doctrine\ORM\EntityManagerInterface $em */
-        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-        $em->persist($calc);
-        $em->flush();
+        $i = 1;
+        foreach ($typeIds as $typeId) {
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            /** @var \Doctrine\ORM\EntityManagerInterface $em */
+            $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+            $em->persist($calc);
+            $em->flush();
+        }
     } else {
         $data = reset($found);
         $calc = new ESuiteCalc($data);

@@ -25,6 +25,50 @@
               "attrs": ["code"]
             }
           }
+        },
+        "deps": {
+          "on": {
+            ".": {
+              "desc": "Calculations are based on other calculations (ref depends on other_ref).",
+              "attr": {
+                "ref": {
+                  "type": "reference",
+                  "desc": "Main calculation."
+                },
+                "other_ref": {
+                  "type": "reference",
+                  "desc": "Base calculation for main calculation."
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["ref", "other_ref"]
+                }
+              }
+            }
+          },
+          "before": {
+            ".": {
+              "desc": "Calculations that should be performed before other calcs.",
+              "attr": {
+                "ref": {
+                  "type": "reference",
+                  "desc": "Main calculation."
+                },
+                "other_ref": {
+                  "type": "reference",
+                  "desc": "Main calculation should be performed before this calc."
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["ref", "other_ref"]
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -210,7 +254,7 @@
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["calc_ref","rank_ref", "rule_ref"]
+              "attrs": ["calc_ref", "rank_ref", "rule_ref"]
             }
           },
           "relation": {
