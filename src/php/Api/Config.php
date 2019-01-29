@@ -9,6 +9,12 @@ namespace Praxigento\Milc\Bonus\Api;
 
 interface Config
 {
+    const BEGINNING_OF_AGES = '2019/01/01 00:00:00';
+    const BEGINNING_OF_AGES_FORMAT = 'Y/m/d H:i:s';
+
+    const BONUS_PERIOD_STATE_CLOSE = 'close';
+    const BONUS_PERIOD_STATE_OPEN = 'open';
+
     const BONUS_PERIOD_TYPE_DAY = 1;
     const BONUS_PERIOD_TYPE_MONTH = 3;
     const BONUS_PERIOD_TYPE_WEEK = 2;
@@ -30,4 +36,6 @@ interface Config
 
     const RULE_GROUP_LOGIC_AND = 'AND';
     const RULE_GROUP_LOGIC_OR = 'OR';
+
+    const SUITE_NOTE = 'Development calcs suite (monthly based).';
 }

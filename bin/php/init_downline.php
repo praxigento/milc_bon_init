@@ -8,14 +8,14 @@
 /* PHP Composer's autoloader (access to dependencies sources) */
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Res\Partner as EResPartner;
-
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = 9000; //max random increment in seconds
 const PERCENT_DELETE = 16;
 const PERCENT_RESTORE = 8;
 const PERCENT_SET_TYPE = 20;
-const TOTAL_ITEMS = 100;
+const TOTAL_ITEMS = 30;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -30,7 +30,7 @@ try {
     /**
      * Create customers.
      */
-    $date = \DateTime::createFromFormat('Y/m/d H:i:s', '2019/01/01 00:00:00');
+    $date = \DateTime::createFromFormat(Cfg::BEGINNING_OF_AGES_FORMAT, Cfg::BEGINNING_OF_AGES);
     /* IDs of the customers (all, active, inactive, deleted) */
     $mapAll = [];
     $mapDistr = [];
@@ -69,7 +69,7 @@ try {
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->flush();
 
-    echo "\n\nDone.\n";
+    echo "\nDone.\n";
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();

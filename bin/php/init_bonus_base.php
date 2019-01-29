@@ -7,6 +7,7 @@
  */
 /* PHP Composer's autoloader (access to dependencies sources) */
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as ECalcType;
@@ -40,7 +41,7 @@ try {
 
     init_bonus_qual_rules($container, $calcId, $ranks);
 
-    echo "\nDone.";
+    echo "\nDone.\n";
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
@@ -58,7 +59,7 @@ function init_bonus_plan($container)
     $plan->date_created = $format->getDateNowUtc();
 
     $plan->note = 'Development plan.';
-    $found = getByAttribute($container, EPlan::class, EPlan::NOTE, $plan->note);
+    $found = common_get_by_attr($container, EPlan::class, [EPlan::NOTE => $plan->note]);
     if (!$found) {
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
@@ -85,8 +86,8 @@ function init_bonus_suite($container, $planId)
     $suite->date_created = $format->getDateNowUtc();
     $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
 
-    $suite->note = 'Monthly calculations for development.';
-    $found = getByAttribute($container, ESuite::class, ESuite::PLAN_REF, $planId);
+    $suite->note = Cfg::SUITE_NOTE;
+    $found = common_get_by_attr($container, ESuite::class, [ESuite::PLAN_REF => $planId]);
     if (!$found) {
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
@@ -114,7 +115,7 @@ function init_bonus_plan_ranks($container, $planId)
     $human->code = Cfg::RANK_HUMAN;
     $human->note = 'Human (lowest)';
     $human->sequence = 1;
-    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $human->code);
+    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $human->code]);
     if (!$found) {
         $em->persist($human);
     } else {
@@ -127,7 +128,7 @@ function init_bonus_plan_ranks($container, $planId)
     $hero->code = Cfg::RANK_HERO;
     $hero->note = 'Hero';
     $hero->sequence = 2;
-    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $hero->code);
+    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $hero->code]);
     if (!$found) {
         $em->persist($hero);
     } else {
@@ -140,7 +141,7 @@ function init_bonus_plan_ranks($container, $planId)
     $angel->code = Cfg::RANK_ANGEL;
     $angel->note = 'Angel';
     $angel->sequence = 3;
-    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $angel->code);
+    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $angel->code]);
     if (!$found) {
         $em->persist($angel);
     } else {
@@ -153,7 +154,7 @@ function init_bonus_plan_ranks($container, $planId)
     $god->code = Cfg::RANK_GOD;
     $god->note = 'God (highest)';
     $god->sequence = 4;
-    $found = getByAttribute($container, EPlanRank::class, EPlanRank::CODE, $god->code);
+    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $god->code]);
     if (!$found) {
         $em->persist($god);
     } else {
@@ -196,7 +197,7 @@ function init_bonus_calc_type($container)
 
 function init_bonus_calc_type_add($container, $code, $note, $depsOn = [], $depsBefore = [])
 {
-    $found = getByAttribute($container, ECalcType::class, ECalcType::CODE, $code);
+    $found = common_get_by_attr($container, ECalcType::class, [ECalcType::CODE => $code]);
     if (!$found) {
         $calcType = new ECalcType();
         $calcType->code = $code;
@@ -228,7 +229,7 @@ function init_bonus_calc_type_add($container, $code, $note, $depsOn = [], $depsB
  */
 function init_bonus_suite_calcs($container, $suiteId, $typeIds)
 {
-    $found = getByAttribute($container, ESuiteCalc::class, ESuiteCalc::SUITE_REF, $suiteId);
+    $found = common_get_by_attr($container, ESuiteCalc::class, [ESuiteCalc::SUITE_REF => $suiteId]);
     if (!$found) {
         $i = 1;
         foreach ($typeIds as $typeId) {
@@ -464,27 +465,3 @@ function init_bonus_qual_rules_create_group($container, $logic, $otherIds)
     return $result;
 }
 
-/**
- * Find entities by attribute value.
- *
- * @param \Psr\Container\ContainerInterface $container
- * @param string $class
- * @param string $attrName
- * @param string $attrValue
- * @return array
- */
-function getByAttribute($container, $class, $attrName, $attrValue)
-{
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    /** @var \Doctrine\ORM\QueryBuilder $qb */
-    $qb = $em->createQueryBuilder();
-    $as = 'main';
-    $qb->select($as);
-    $qb->from($class, $as);
-    $qb->andWhere("$as.$attrName=:param");
-    $qb->setParameters(['param' => $attrValue]);
-    $query = $qb->getQuery();
-    $result = $query->getArrayResult();
-    return $result;
-}

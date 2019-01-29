@@ -4,7 +4,7 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period;
 
 
 /**

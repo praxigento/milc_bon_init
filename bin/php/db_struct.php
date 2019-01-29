@@ -69,7 +69,7 @@ try {
 
     $conn->commit();
 
-    echo "\nDone.";
+    echo "\nDone.\n";
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
