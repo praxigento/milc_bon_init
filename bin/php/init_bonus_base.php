@@ -49,8 +49,12 @@ try {
  */
 function init_bonus_plan($container)
 {
+    /** @var \Praxigento\Milc\Bonus\Api\Helper\Format $format */
+    $format = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Format::class);
     $plan = new EPlan();
+    $plan->date_created = $format->getDateNowUtc();
     $plan->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
+
     $plan->note = 'Simple Unilevel plan for development.';
     $found = getByAttribute($container, EPlan::class, EPlan::NOTE, $plan->note);
     if (!$found) {

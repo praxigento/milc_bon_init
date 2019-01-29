@@ -19,6 +19,7 @@ class Plan
     const ID = 'id';
     const NOTE = 'note';
     const PERIOD = 'period';
+    const DATE_CREATED = 'date_created';
 
     /**
      * @var int
@@ -32,6 +33,11 @@ class Plan
      * @Column(type="string")
      */
     public $note;
+    /**
+     * @var \DateTime
+     * @Column(type="date")
+     */
+    public $date_created;
     /**
      * @var int
      * @Column(type="integer")
