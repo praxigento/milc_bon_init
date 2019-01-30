@@ -10,6 +10,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Res\Partner as EResPartner;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Sale\Order as ESaleOrder;
+
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = 9000; //max random increment in seconds
 const PERCENT_DELETE = 16;
@@ -62,7 +64,7 @@ try {
 
         /* change client type (cust/distr) randomly (see const PERCENT_SET_TYPE) */
         [$date, $mapDistr, $mapCust, $mapDeleted] = changeType($container, $date, $mapDistr, $mapCust, $mapDeleted, $rootId);
-        [$date] = movePv($container, $date, $mapDistr, $mapCust);
+        [$date] = registerCv($container, $date, $mapDistr, $mapCust);
     }
 
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
@@ -291,7 +293,7 @@ function restoreDistr($container, $date, $mapDistr, $mapDeleted, $rootId)
 }
 
 /**
- * Create new partner in Odoo related table.
+ * Create new partner in Flectra related table.
  *
  * @param \Psr\Container\ContainerInterface $container
  * @return int
@@ -307,7 +309,24 @@ function createPartner(\Psr\Container\ContainerInterface $container): int
     return $result;
 }
 
-function movePv($container, $date, $mapDistr, $mapCust)
+/**
+ * Create new sale order in Flectra related table.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @return int
+ */
+function createSale(\Psr\Container\ContainerInterface $container): int
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    $sale = new ESaleOrder();
+    $em->persist($sale);
+    $em->flush($sale);
+    $result = $sale->id;
+    return $result;
+}
+
+function registerCv($container, $date, $mapDistr, $mapCust)
 {
     /** @var \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv $srvRegister */
     $srvRegister = $container->get(\Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv::class);
@@ -326,6 +345,10 @@ function movePv($container, $date, $mapDistr, $mapCust)
     $normCust = $countCusts * 25;
     $percentDistr = round(($normDistr / ($normDistr + $normCust)) * 100);
     for ($i = 0; $i < $movements; $i++) {
+        /* add source sale order */
+        $saleId = createSale($container);
+
+        /* register CV */
         $isDistr = randomPercent($percentDistr);
         if ($isDistr) {
             $key = random_int(0, $countDistrs - 1);
@@ -344,6 +367,8 @@ function movePv($container, $date, $mapDistr, $mapCust)
         $req->date = $date;
         if ($isAutoship)
             $req->isAutoship = true;
+        $req->sourceId = $saleId;
+        $req->sourceType = Cfg::CV_REG_SOURCE_SALE;
         echo "\nCV move: $amount CV to $clientId";
         $srvRegister->exec($req);
         echo ".";
@@ -353,6 +378,7 @@ function movePv($container, $date, $mapDistr, $mapCust)
             $date = dateModify($date);
             $req->date = $date;
             $req->volume = 0 - $amount;
+            $req->sourceType = Cfg::CV_REG_SOURCE_SALE_BACK;
             echo "\nCV backward move: $amount CV from $clientId";
             $srvRegister->exec($req);
             echo ".";

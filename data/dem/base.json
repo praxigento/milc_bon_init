@@ -6,7 +6,19 @@
           "attr": {
             "id": {
               "type": "identity",
-              "desc": "Reference to the customer itself."
+              "desc": "Internal ID for partners."
+            }
+          }
+        }
+      }
+    },
+    "sale": {
+      "order": {
+        ".": {
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Internal ID for sale orders."
             }
           }
         }

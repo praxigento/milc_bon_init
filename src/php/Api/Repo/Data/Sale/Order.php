@@ -4,15 +4,15 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Repo\Data\Res;
+namespace Praxigento\Milc\Bonus\Api\Repo\Data\Sale;
 
 /**
  * Ghost object from Flectra.
  *
  * @Entity
- * @Table(name="res_partner")
+ * @Table(name="sale_order")
  */
-class Partner
+class Order
     extends \TeqFw\Lib\Data
 {
     /**

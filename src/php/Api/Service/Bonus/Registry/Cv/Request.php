@@ -17,7 +17,9 @@ class Request
     /** @var bool */
     public $isAutoship;
     /** @var string */
-    public $note;
+    public $sourceId;
+    /** @var string  sale, sale_return */
+    public $sourceType;
     /** @var float */
     public $volume;
 }

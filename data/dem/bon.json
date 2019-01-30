@@ -216,74 +216,6 @@
         }
       }
     },
-    "suite": {
-      ".": {
-        "desc": "Set of calculations related to one period.",
-        "attr": {
-          "id": {
-            "type": "identity",
-            "desc": "Plan ID."
-          },
-          "plan_ref": {
-            "type": "reference",
-            "desc": "Reference to the bonus plan."
-          },
-          "date_created": {
-            "type": "date",
-            "desc": "Date when plan was created."
-          },
-          "note": {
-            "type": "string",
-            "desc": "Plan description for humans."
-          }
-        }
-      },
-      "calc": {
-        ".": {
-          "desc": "Calculations being bound to the concrete suite.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Calculation ID."
-            },
-            "suite_ref": {
-              "type": "reference",
-              "desc": "Reference to the plan."
-            },
-            "type_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation type."
-            },
-            "sequence": {
-              "type": "integer",
-              "desc": "Calculation sequence (order) in the plan.",
-              "small": true,
-              "unsigned": true
-            },
-            "date_created": {
-              "type": "datetime",
-              "desc": "Date when first calculation was (will be) performed.",
-              "small": true,
-              "unsigned": true
-            }
-          },
-          "relation": {
-            "suite": {
-              "path": "/bon/suite",
-              "own": ["suite_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "calcType": {
-              "path": "/bon/calc/type",
-              "own": ["type_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      }
-    },
     "plan": {
       ".": {
         "desc": "Set of suites related to one set of ranks.",
@@ -585,10 +517,10 @@
               "type": "datetime",
               "desc": "Timestamp to apply CV movement for client (used in bonus calculations)."
             },
-            "note": {
+            "type": {
               "type": "string",
-              "desc": "Movement reference for humans (sale #... or smth. like this).",
-              "nullable": true
+              "desc": "Type of the movement to link this record with source by ID (sale, clawback).",
+              "nullable": false
             }
           },
           "relation": {
@@ -597,6 +529,84 @@
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "sale": {
+          ".": {
+            "desc": "Links between records in CV registry and related sales orders.",
+            "attr": {
+              "registry_ref": {
+                "type": "reference",
+                "desc": "Reference to the registry record."
+              },
+              "source_ref": {
+                "type": "reference",
+                "desc": "Reference to the sale order."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["registry_ref"]
+              },
+              "unique": {
+                "type": "unique",
+                "attrs": ["source_ref"]
+              }
+            },
+            "relation": {
+              "registry": {
+                "path": "/bon/cv/reg",
+                "own": ["registry_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "sale": {
+                "path": "/sale/order",
+                "own": ["source_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          },
+          "back": {
+            ".": {
+              "desc": "Links between records in CV registry and related sales orders returns.",
+              "attr": {
+                "registry_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the registry record."
+                },
+                "source_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the sale order."
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["registry_ref"]
+                },
+                "unique": {
+                  "type": "unique",
+                  "attrs": ["source_ref"]
+                }
+              },
+              "relation": {
+                "registry": {
+                  "path": "/bon/cv/reg",
+                  "own": ["registry_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                },
+                "sale": {
+                  "path": "/bon/cv/reg/sale",
+                  "own": ["source_ref"],
+                  "foreign": ["source_ref"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
             }
           }
         }

@@ -20,7 +20,7 @@ class Registry
     const DATE = 'date';
     const ID = 'id';
     const IS_AUTOSHIP = 'is_autoship';
-    const NOTE = 'note';
+    const TYPE = 'type';
     const VOLUME = 'volume';
 
     /**
@@ -49,7 +49,7 @@ class Registry
      * @var string
      * @Column(type="string")
      */
-    public $note;
+    public $type;
     /**
      * @var float
      * @Column(type="decimal", precision=10, scale=2)

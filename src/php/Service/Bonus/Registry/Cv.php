@@ -6,7 +6,10 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Registry;
 
+use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry as ECvReg;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry\Sale as ECvRegSale;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry\Sale\Back as ECvRegSaleBack;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Response as AResponse;
 
@@ -32,9 +35,12 @@ class Cv
         $clientId = $req->clientId;
         $volume = $req->volume;
         $isAutoship = (bool)$req->isAutoship;
+        $sourceId = $req->sourceId;
+        $sourceType = $req->sourceType;
         $date = $req->date;
         if (!$date)
             $date = $this->hlpFormat->getDateNowUtc();
+
 
         /* save data into registry */
         $cvReg = new ECvReg();
@@ -42,10 +48,45 @@ class Cv
         $cvReg->volume = $volume;
         $cvReg->is_autoship = $isAutoship;
         $cvReg->date = $date;
+        $cvReg->type = $sourceType;
         $this->manEntity->persist($cvReg);
         $this->manEntity->flush();
+        $id = $cvReg->id;
+
+        /* save link to the CV source */
+        switch ($sourceType) {
+            case Cfg::CV_REG_SOURCE_SALE:
+                $this->saveLinkSale($id, $sourceId);
+                break;
+            case Cfg::CV_REG_SOURCE_SALE_BACK:
+                $this->saveLinkSaleBack($id, $sourceId);
+                break;
+            default:
+                throw new \Exception("Unknown CV source type: '$sourceType'.");
+        }
 
         $result = new AResponse();
+        $result->registryId = $id;
+        $result->sourceId = $sourceId;
+        $result->sourceType = $sourceType;
         return $result;
+    }
+
+    private function saveLinkSale($id, $sourceId)
+    {
+        $link = new ECvRegSale();
+        $link->registry_ref = $id;
+        $link->source_ref = $sourceId;
+        $this->manEntity->persist($link);
+        $this->manEntity->flush();
+    }
+
+    private function saveLinkSaleBack($id, $sourceId)
+    {
+        $link = new ECvRegSaleBack();
+        $link->registry_ref = $id;
+        $link->source_ref = $sourceId;
+        $this->manEntity->persist($link);
+        $this->manEntity->flush();
     }
 }
