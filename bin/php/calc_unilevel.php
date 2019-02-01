@@ -37,8 +37,10 @@ try {
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 1);
     /* get period related calc instance (CV collection) */
     $calcInstCvCollect = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
-
+    /* collect CV for the period */
     $collected = calc_cv_collect($container, $calcInstCvCollect->id, $period->date_begin);
+    /* compose tree (just copy plain tree for the end of the period) */
+
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {

@@ -14,6 +14,10 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree;
 class Log
     extends \TeqFw\Lib\Data
 {
+    public const CLIENT_REF = 'client_ref';
+    public const DATE = 'date';
+    public const ID = 'id';
+    public const PARENT_REF = 'parent_ref';
     /**
      * @var int
      * @Column(type="integer")

@@ -21,8 +21,8 @@ try {
     /**
      * Init DB connection & start transaction.
      */
-    /** @var \TeqFw\Lib\Db\Api\Connection\Schema $conn */
-    $conn = $container->get(\TeqFw\Lib\Db\Api\Connection\Schema::class);
+    /** @var \TeqFw\Lib\Db\Api\Connection\Main $conn */
+    $conn = $container->get(\TeqFw\Lib\Db\Api\Connection\Main::class);
     $conn->beginTransaction();
 
     /**
