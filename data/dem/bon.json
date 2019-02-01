@@ -750,7 +750,13 @@
           },
           "pv": {
             "type": "decimal",
-            "desc": "Personal Volume.",
+            "desc": "Personal Volume (autoship is included).",
+            "precision": 10,
+            "scale": 2
+          },
+          "apv": {
+            "type": "decimal",
+            "desc": "Personal Volume (autoship only).",
             "precision": 10,
             "scale": 2
           }

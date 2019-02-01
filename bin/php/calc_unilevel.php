@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
+use Praxigento\Milc\Bonus\Api\Helper\Map as HMap;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as EBonCalcType;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Collected as EBonCvColect;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry as EBonCvReg;
@@ -58,7 +59,7 @@ try {
     $typeCode = Cfg::CALC_TYPE_TREE_PLAIN;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 2);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
-    $tree = calc_tree_plain($container, $period, $calcInst->id);
+    $tree = calc_tree_plain($container, $period, $calcInst->id, $collected);
     /**
      * Step 3: Qualification.
      */
@@ -66,8 +67,8 @@ try {
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
 
-    $em->rollback();
-    $conn->rollBack();
+    $em->commit();
+    $conn->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
@@ -172,6 +173,7 @@ function calc_bonus_get_calc_instance($container, $periodId, $calcId)
  * @param \Psr\Container\ContainerInterface $container
  * @param int $calcInstId
  * @param \DateTime $datePeriod
+ * @return EBonCvColect[]
  */
 function calc_cv_collect($container, $calcInstId, $datePeriod)
 {
@@ -204,6 +206,11 @@ function calc_cv_collect($container, $calcInstId, $datePeriod)
     return $result;
 }
 
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param $datePeriod
+ * @return array
+ */
 function calc_cv_collect_get_movements($container, $datePeriod)
 {
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
@@ -241,12 +248,27 @@ function calc_cv_collect_get_movements($container, $datePeriod)
     return $result;
 }
 
-function calc_tree_plain($container, EBonPeriod $period, $calcInstId)
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period $period
+ * @param int $calcInstId
+ * @param EBonCvColect[] $collected
+ */
+function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected)
 {
 
     $lastDate = clone $period->date_begin;
     $lastDate->modify("last day of");
     $formatted = $lastDate->format("Y-m-d");
+    /** @var HMap $map */
+    $map = $container->get(HMap::class);
+    /* map CV by client/autoship */
+    $mapById = [];
+    foreach ($collected as $item) {
+        $clientId = $item->client_ref;
+        $isAutoship = (bool)$item->is_autoship;
+        $mapById[$clientId][$isAutoship] = $item->volume;
+    }
 
     /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get $srv */
     $srv = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get::class);
@@ -259,10 +281,14 @@ function calc_tree_plain($container, EBonPeriod $period, $calcInstId)
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
         foreach ($entries as $entry) {
+            $ownPv = (isset($mapById[$entry->client_id][false])) ? $mapById[$entry->client_id][false] : 0;
+            $apv = (isset($mapById[$entry->client_id][true])) ? $mapById[$entry->client_id][true] : 0;
             $item = new EBonTree();
             $item->calc_inst_ref = $calcInstId;
             $item->client_ref = $entry->client_id;
             $item->parent_ref = $entry->parent_id;
+            $item->apv = $apv;
+            $item->pv = ($apv + $ownPv);
             $em->persist($item);
         }
         $em->flush();

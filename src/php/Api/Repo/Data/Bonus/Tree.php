@@ -16,9 +16,16 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus;
 class Tree
     extends \TeqFw\Lib\Data
 {
+    public const APV = 'apv';
     public const CALC_INST_REF = 'calc_inst_ref';
     public const CLIENT_REF = 'client_ref';
     public const PARENT_REF = 'parent_ref';
+    public const PV = 'pv';
+    /**
+     * @var float
+     * @Column(type="decimal", precision=10, scale=2)
+     */
+    public $apv;
     /**
      * @var int
      * @Id
@@ -36,4 +43,9 @@ class Tree
      * @Column(type="integer")
      */
     public $parent_ref;
+    /**
+     * @var float
+     * @Column(type="decimal", precision=10, scale=2)
+     */
+    public $pv;
 }
