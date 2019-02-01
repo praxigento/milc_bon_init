@@ -11,7 +11,7 @@ class Entry
     extends \TeqFw\Lib\Data
 {
     /** @var int */
-    public $clientId;
+    public $client_id;
     /** @var int */
-    public $parentId;
+    public $parent_id;
 }
