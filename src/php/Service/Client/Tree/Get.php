@@ -33,12 +33,12 @@ class Get
         assert($req instanceof ARequest);
         $clientId = $req->clientId;
         $date = $req->date;
-        if (!$date)
-            $date = $this->hlpFormat->getDateNowUtc();
-
-        $formatted = $date->format('Y-m-d');
+        if (!$date) {
+            $now = $this->hlpFormat->getDateNowUtc();
+            $date = $now->format('Y-m-d');
+        }
         $qb = $this->aQuery->build();
-        $qb->setParameters([AQuery::BND_DATE => $formatted]);
+        $qb->setParameters([AQuery::BND_DATE => $date]);
         $stmt = $qb->execute();
         $entries = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, DTreeEntry::class);
 

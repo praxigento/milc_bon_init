@@ -17,6 +17,9 @@ use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period as EBonPeriod;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EBonPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as EBonSuiteCalc;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree as EBonTree;
+use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
+use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -28,19 +31,37 @@ try {
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
 
+    /** @var \TeqFw\Lib\Db\Api\Connection\Main $conn */
+    $conn = $container->get(\TeqFw\Lib\Db\Api\Connection\Main::class);
+    $conn->beginTransaction();
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    $em->beginTransaction();
+
     /* Create/get first period for the first suite */
+    /** @var EBonPeriod $period */
     $period = calc_bonus_period_register($container);
     $periodId = $period->id;
     $suiteId = $period->suite_ref;
-    /* get CV collection calc data from the suite */
+    /**
+     * STEP 1: Collect CV for period.
+     */
     $typeCode = Cfg::CALC_TYPE_COLLECT_CV;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 1);
     /* get period related calc instance (CV collection) */
-    $calcInstCvCollect = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
     /* collect CV for the period */
-    $collected = calc_cv_collect($container, $calcInstCvCollect->id, $period->date_begin);
-    /* compose tree (just copy plain tree for the end of the period) */
+    $collected = calc_cv_collect($container, $calcInst->id, $period->date_begin);
+    /**
+     * STEP 2: Compose tree (just copy plain tree for the end of the period).
+     */
+    $typeCode = Cfg::CALC_TYPE_TREE_PLAIN;
+    $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 2);
+    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $tree = calc_tree_plain($container, $period, $calcInst->id);
 
+    $em->commit();
+    $conn->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
@@ -212,4 +233,32 @@ function calc_cv_collect_get_movements($container, $datePeriod)
     /* create collected items and compose result */
     $result = $query->getArrayResult();
     return $result;
+}
+
+function calc_tree_plain($container, EBonPeriod $period, $calcInstId)
+{
+
+    $lastDate = clone $period->date_begin;
+    $lastDate->modify("last day of");
+    $formatted = $lastDate->format("Y-m-d");
+
+    /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get $srv */
+    $srv = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get::class);
+    $req = new ATreeGetRequest();
+    $req->date = $formatted;
+    /** @var ATreeGetResponse $resp */
+    $resp = $srv->exec($req);
+    $entries = $resp->entries;
+    if (is_array($entries)) {
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        foreach ($entries as $entry) {
+            $item = new EBonTree();
+            $item->calc_inst_ref = $calcInstId;
+            $item->client_ref = $entry->client_id;
+            $item->parent_ref = $entry->parent_id;
+            $em->persist($item);
+        }
+        $em->flush();
+    }
 }

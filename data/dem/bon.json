@@ -72,6 +72,175 @@
         }
       }
     },
+    "cv": {
+      "reg": {
+        ".": {
+          "desc": "Registry to save (Autoship) Commissionable Volumes (CV/ACV) movements.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Registry entry ID."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client."
+            },
+            "volume": {
+              "type": "decimal",
+              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
+              "precision": 10,
+              "scale": 2
+            },
+            "is_autoship": {
+              "type": "boolean",
+              "default": false,
+              "desc": "'true' if this is an Autoship CV."
+            },
+            "date": {
+              "type": "datetime",
+              "desc": "Timestamp to apply CV movement for client (used in bonus calculations)."
+            },
+            "type": {
+              "type": "string",
+              "desc": "Type of the movement to link this record with source by ID (sale, clawback).",
+              "nullable": false
+            }
+          },
+          "relation": {
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "sale": {
+          ".": {
+            "desc": "Links between records in CV registry and related sales orders.",
+            "attr": {
+              "registry_ref": {
+                "type": "reference",
+                "desc": "Reference to the registry record."
+              },
+              "source_ref": {
+                "type": "reference",
+                "desc": "Reference to the sale order."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["registry_ref"]
+              },
+              "unique": {
+                "type": "unique",
+                "attrs": ["source_ref"]
+              }
+            },
+            "relation": {
+              "registry": {
+                "path": "/bon/cv/reg",
+                "own": ["registry_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "sale": {
+                "path": "/sale/order",
+                "own": ["source_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          },
+          "back": {
+            ".": {
+              "desc": "Links between records in CV registry and related sales orders returns.",
+              "attr": {
+                "registry_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the registry record."
+                },
+                "source_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the sale order."
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["registry_ref"]
+                },
+                "unique": {
+                  "type": "unique",
+                  "attrs": ["source_ref"]
+                }
+              },
+              "relation": {
+                "registry": {
+                  "path": "/bon/cv/reg",
+                  "own": ["registry_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                },
+                "sale": {
+                  "path": "/bon/cv/reg/sale",
+                  "own": ["source_ref"],
+                  "foreign": ["source_ref"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "collect": {
+        ".": {
+          "desc": "CV/ACV are collected for period.",
+          "attr": {
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation in period."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client."
+            },
+            "is_autoship": {
+              "type": "boolean",
+              "default": false,
+              "desc": "'true' if this is an Autoship CV."
+            },
+            "volume": {
+              "type": "decimal",
+              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
+              "precision": 10,
+              "scale": 2
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_ref", "client_ref", "is_autoship"]
+            }
+          },
+          "relation": {
+            "period": {
+              "path": "/bon/period/calc",
+              "own": ["calc_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      }
+    },
     "period": {
       ".": {
         "desc": "Bonus periods.",
@@ -141,74 +310,6 @@
             "calc": {
               "path": "/bon/suite/calc",
               "own": ["calc_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      }
-    },
-    "suite": {
-      ".": {
-        "desc": "Set of calculations related to one period.",
-        "attr": {
-          "id": {
-            "type": "identity",
-            "desc": "Plan ID."
-          },
-          "plan_ref": {
-            "type": "reference",
-            "desc": "Reference to the bonus plan."
-          },
-          "date_created": {
-            "type": "date",
-            "desc": "Date when plan was created."
-          },
-          "note": {
-            "type": "string",
-            "desc": "Plan description for humans."
-          }
-        }
-      },
-      "calc": {
-        ".": {
-          "desc": "Calculations being bound to the concrete suite.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Calculation ID."
-            },
-            "suite_ref": {
-              "type": "reference",
-              "desc": "Reference to the plan."
-            },
-            "type_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation type."
-            },
-            "sequence": {
-              "type": "integer",
-              "desc": "Calculation sequence (order) in the plan.",
-              "small": true,
-              "unsigned": true
-            },
-            "date_created": {
-              "type": "datetime",
-              "desc": "Date when first calculation was (will be) performed.",
-              "small": true,
-              "unsigned": true
-            }
-          },
-          "relation": {
-            "suite": {
-              "path": "/bon/suite",
-              "own": ["suite_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "calcType": {
-              "path": "/bon/calc/type",
-              "own": ["type_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
@@ -489,171 +590,116 @@
         }
       }
     },
-    "cv": {
-      "reg": {
-        ".": {
-          "desc": "Registry to save (Autoship) Commissionable Volumes (CV/ACV) movements.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Registry entry ID."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "volume": {
-              "type": "decimal",
-              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
-              "precision": 10,
-              "scale": 2
-            },
-            "is_autoship": {
-              "type": "boolean",
-              "default": false,
-              "desc": "'true' if this is an Autoship CV."
-            },
-            "date": {
-              "type": "datetime",
-              "desc": "Timestamp to apply CV movement for client (used in bonus calculations)."
-            },
-            "type": {
-              "type": "string",
-              "desc": "Type of the movement to link this record with source by ID (sale, clawback).",
-              "nullable": false
-            }
+    "suite": {
+      ".": {
+        "desc": "Set of calculations related to one period.",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Plan ID."
           },
-          "relation": {
-            "client": {
-              "path": "/client/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        },
-        "sale": {
-          ".": {
-            "desc": "Links between records in CV registry and related sales orders.",
-            "attr": {
-              "registry_ref": {
-                "type": "reference",
-                "desc": "Reference to the registry record."
-              },
-              "source_ref": {
-                "type": "reference",
-                "desc": "Reference to the sale order."
-              }
-            },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["registry_ref"]
-              },
-              "unique": {
-                "type": "unique",
-                "attrs": ["source_ref"]
-              }
-            },
-            "relation": {
-              "registry": {
-                "path": "/bon/cv/reg",
-                "own": ["registry_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "sale": {
-                "path": "/sale/order",
-                "own": ["source_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
-            }
+          "plan_ref": {
+            "type": "reference",
+            "desc": "Reference to the bonus plan."
           },
-          "back": {
-            ".": {
-              "desc": "Links between records in CV registry and related sales orders returns.",
-              "attr": {
-                "registry_ref": {
-                  "type": "reference",
-                  "desc": "Reference to the registry record."
-                },
-                "source_ref": {
-                  "type": "reference",
-                  "desc": "Reference to the sale order."
-                }
-              },
-              "index": {
-                "pk": {
-                  "type": "primary",
-                  "attrs": ["registry_ref"]
-                },
-                "unique": {
-                  "type": "unique",
-                  "attrs": ["source_ref"]
-                }
-              },
-              "relation": {
-                "registry": {
-                  "path": "/bon/cv/reg",
-                  "own": ["registry_ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                },
-                "sale": {
-                  "path": "/bon/cv/reg/sale",
-                  "own": ["source_ref"],
-                  "foreign": ["source_ref"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                }
-              }
-            }
+          "date_created": {
+            "type": "date",
+            "desc": "Date when plan was created."
+          },
+          "note": {
+            "type": "string",
+            "desc": "Plan description for humans."
           }
         }
       },
-      "collect": {
+      "calc": {
         ".": {
-          "desc": "CV/ACV are collected for period.",
+          "desc": "Calculations being bound to the concrete suite.",
           "attr": {
-            "calc_ref": {
+            "id": {
+              "type": "identity",
+              "desc": "Calculation ID."
+            },
+            "suite_ref": {
               "type": "reference",
-              "desc": "Reference to the calculation in period."
+              "desc": "Reference to the plan."
             },
-            "client_ref": {
+            "type_ref": {
               "type": "reference",
-              "desc": "Reference to the client."
+              "desc": "Reference to the calculation type."
             },
-            "is_autoship": {
-              "type": "boolean",
-              "default": false,
-              "desc": "'true' if this is an Autoship CV."
+            "sequence": {
+              "type": "integer",
+              "desc": "Calculation sequence (order) in the plan.",
+              "small": true,
+              "unsigned": true
             },
-            "volume": {
-              "type": "decimal",
-              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
-              "precision": 10,
-              "scale": 2
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_ref", "client_ref", "is_autoship"]
+            "date_created": {
+              "type": "datetime",
+              "desc": "Date when first calculation was (will be) performed.",
+              "small": true,
+              "unsigned": true
             }
           },
           "relation": {
-            "period": {
-              "path": "/bon/period/calc",
-              "own": ["calc_ref"],
+            "suite": {
+              "path": "/bon/suite",
+              "own": ["suite_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
-            "client": {
-              "path": "/client/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
+            "calcType": {
+              "path": "/bon/calc/type",
+              "own": ["type_ref"],
+              "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
+          }
+        }
+      }
+    },
+    "tree": {
+      ".": {
+        "desc": "Downline tree data bound to bonus calculations.",
+        "attr": {
+          "calc_inst_ref": {
+            "type": "reference",
+            "desc": "Reference to the calculation inside period (plain & compressed, for example)."
+          },
+          "client_ref": {
+            "type": "reference",
+            "desc": "Reference to the client itself."
+          },
+          "parent_ref": {
+            "type": "reference",
+            "desc": "Reference to the client's parent.",
+            "nullable": false
+          }
+        },
+        "index": {
+          "pk": {
+            "type": "primary",
+            "attrs": ["calc_inst_ref", "client_ref"]
+          }
+        },
+        "relation": {
+          "calcInstance": {
+            "path": "/bon/period/calc",
+            "own": ["calc_inst_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          },
+          "client": {
+            "path": "/client/reg",
+            "own": ["client_ref"],
+            "foreign": ["client_ref"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          },
+          "parent": {
+            "path": "/client/reg",
+            "own": ["parent_ref"],
+            "foreign": ["client_ref"],
+            "on": {"delete": "cascade", "update": "cascade"}
           }
         }
       }

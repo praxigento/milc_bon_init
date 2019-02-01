@@ -50,6 +50,8 @@ class Query
         $qbInit = $this->getQueryInit();
         $qbMiddle = $this->getQueryMiddle($qbInit);
         $result = $this->getQueryOuter($qbMiddle);
+        $notDeleted = self::AS_RESULT . '.' . ETreeLog::PARENT_REF . ' IS NOT NULL';
+        $result->andWhere($notDeleted);
         return $result;
     }
 
