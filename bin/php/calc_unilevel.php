@@ -59,9 +59,15 @@ try {
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 2);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
     $tree = calc_tree_plain($container, $period, $calcInst->id);
+    /**
+     * Step 3: Qualification.
+     */
+    $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK;
+    $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
+    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
 
-    $em->commit();
-    $conn->commit();
+    $em->rollback();
+    $conn->rollBack();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
