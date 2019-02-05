@@ -23,7 +23,7 @@ interface Config
     /**/
     const CALC_TYPE_BONUS_LEVEL_BASED = 'BONUS_LEVEL_BASED';
     const CALC_TYPE_COLLECT_CV = 'COLLECT_CV';
-    const CALC_TYPE_QUALIFY_RANK = 'QUALIFY_RANK';
+    const CALC_TYPE_QUALIFY_RANK_SIMPLE = 'QUALIFY_RANK_SIMPLE';
     const CALC_TYPE_TREE_PLAIN = 'TREE_PLAIN';
     /**/
     const CV_REG_SOURCE_SALE = 'sale';

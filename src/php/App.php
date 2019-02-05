@@ -68,15 +68,15 @@ class App
         $dbCfg->user = $appCfg->db_user;
         $dbCfg->password = $appCfg->db_pass;
         $this->container->share(\TeqFw\Lib\Db\Api\Data\Cfg\Db::class, $dbCfg);
-        /* Configure Doctrine Entity Manager */
-        $isDevMode = true;
-        $config = DoctrineSetup::createAnnotationMetadataConfiguration(array(__DIR__ . '/Api/Repo/Data'), $isDevMode);
-        $connectionParams = (array)$dbCfg;
-        $em = DoctrineEntityMgr::create($connectionParams, $config);
-        $this->container->share(\Doctrine\ORM\EntityManagerInterface::class, $em);
         /* add module's IoC objects to container */
         \TeqFw\Lib\Db\Api\ContainerBuilder::populate($this->container);
         \TeqFw\Lib\Db\Repo3\Api\ContainerBuilder::populate($this->container);
+        /* Configure Doctrine Entity Manager */
+        $isDevMode = true;
+        $config = DoctrineSetup::createAnnotationMetadataConfiguration(array(__DIR__ . '/Api/Repo/Data'), $isDevMode);
+        $conn = $this->container->get(\Doctrine\DBAL\Connection::class);
+        $em = DoctrineEntityMgr::create($conn, $config);
+        $this->container->share(\Doctrine\ORM\EntityManagerInterface::class, $em);
     }
 
     /** Create application level container. */

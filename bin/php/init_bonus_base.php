@@ -37,9 +37,9 @@ try {
     $suiteId = init_bonus_suite($container, $planId);
     $ranks = init_bonus_plan_ranks($container, $planId);
     $typeIds = init_bonus_calc_type($container);
-    $calcId = init_bonus_suite_calcs($container, $suiteId, $typeIds);
-
-    init_bonus_qual_rules($container, $calcId, $ranks);
+    $calcIds = init_bonus_suite_calcs($container, $suiteId, $typeIds);
+    $calcIdQual = $calcIds[Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE];
+    init_bonus_qual_rules($container, $calcIdQual, $ranks);
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
@@ -183,9 +183,9 @@ function init_bonus_calc_type($container)
     $id = init_bonus_calc_type_add($container, $code, 'Based on plain tree.', $deps);
     $result[$code] = $id;
     //
-    $code = Cfg::CALC_TYPE_QUALIFY_RANK;
+    $code = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $deps = [$id];
-    $id = init_bonus_calc_type_add($container, $code, 'Ranks qualification.', $deps);
+    $id = init_bonus_calc_type_add($container, $code, 'Simple qualification calculation (based on PV, ...).', $deps);
     $result[$code] = $id;
     //
     $code = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
@@ -229,10 +229,11 @@ function init_bonus_calc_type_add($container, $code, $note, $depsOn = [], $depsB
  */
 function init_bonus_suite_calcs($container, $suiteId, $typeIds)
 {
+    $result = [];
     $found = common_get_by_attr($container, ESuiteCalc::class, [ESuiteCalc::SUITE_REF => $suiteId]);
     if (!$found) {
         $i = 1;
-        foreach ($typeIds as $typeId) {
+        foreach ($typeIds as $typeCode => $typeId) {
             $calc = new ESuiteCalc();
             $calc->suite_ref = $suiteId;
             $calc->type_ref = $typeId;
@@ -242,12 +243,13 @@ function init_bonus_suite_calcs($container, $suiteId, $typeIds)
             $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
             $em->persist($calc);
             $em->flush();
+            $result[$typeCode] = $calc->id;
         }
     } else {
         $data = reset($found);
         $calc = new ESuiteCalc($data);
     }
-    return $calc->id;
+    return $result;
 }
 
 /**

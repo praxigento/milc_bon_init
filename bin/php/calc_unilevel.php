@@ -32,9 +32,6 @@ try {
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
 
-    /** @var \TeqFw\Lib\Db\Api\Connection\Main $conn */
-    $conn = $container->get(\TeqFw\Lib\Db\Api\Connection\Main::class);
-    $conn->beginTransaction();
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->beginTransaction();
@@ -63,12 +60,12 @@ try {
     /**
      * Step 3: Qualification.
      */
-    $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK;
+    $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $ranks = calc_qual_get_ranks($container, $calcInst->id, $tree);
 
-    $em->commit();
-    $conn->commit();
+    $em->rollback();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
@@ -250,13 +247,30 @@ function calc_cv_collect_get_movements($container, $datePeriod)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
+ * @param int $calcInstId
+ * @param EBonTree[] $tree
+ */
+function calc_qual_get_ranks($container, $calcInstId, $tree)
+{
+
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple $srvProc */
+    $srvProc = $container->get(\Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple::class);
+    $req = new \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Request();
+    $req->calcInstId = $calcInstId;
+    $req->tree = $tree;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Response $resp */
+    $resp = $srvProc->exec($req);
+}
+
+/**
+ * @param \Psr\Container\ContainerInterface $container
  * @param \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period $period
  * @param int $calcInstId
  * @param EBonCvColect[] $collected
  */
 function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected)
 {
-
+    $result = [];
     $lastDate = clone $period->date_begin;
     $lastDate->modify("last day of");
     $formatted = $lastDate->format("Y-m-d");
@@ -290,7 +304,9 @@ function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected
             $item->apv = $apv;
             $item->pv = ($apv + $ownPv);
             $em->persist($item);
+            $result[] = $item;
         }
         $em->flush();
     }
+    return $result;
 }
