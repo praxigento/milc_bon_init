@@ -63,9 +63,9 @@ try {
     $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
-    $ranks = calc_qual_get_ranks($container, $calcInst->id, $tree);
+    $ranks = calc_qual_save_ranks($container, $calcInst->id, $tree);
 
-    $em->rollback();
+    $em->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
@@ -250,7 +250,7 @@ function calc_cv_collect_get_movements($container, $datePeriod)
  * @param int $calcInstId
  * @param EBonTree[] $tree
  */
-function calc_qual_get_ranks($container, $calcInstId, $tree)
+function calc_qual_save_ranks($container, $calcInstId, $tree)
 {
 
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple $srvProc */
@@ -260,6 +260,13 @@ function calc_qual_get_ranks($container, $calcInstId, $tree)
     $req->tree = $tree;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Response $resp */
     $resp = $srvProc->exec($req);
+    $entries = $resp->entries;
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    foreach ($entries as $entry) {
+        $em->persist($entry);
+    }
+    $em->flush();
 }
 
 /**
