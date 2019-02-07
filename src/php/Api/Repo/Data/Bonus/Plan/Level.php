@@ -8,18 +8,18 @@ namespace Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan;
 
 
 /**
- * Configuration for ranks qualification rules.
+ * Configuration for level based commission calculations.
  *
  * @Entity
- * @Table(name="bon_plan_qual")
+ * @Table(name="bon_plan_level")
  */
-class Qualification
+class Level
     extends \TeqFw\Lib\Data
 {
     const CALC_REF = 'calc_ref';
+    const LEVEL = 'level';
+    const PERCENT = 'percent';
     const RANK_REF = 'rank_ref';
-    const RULE_REF = 'rule_ref';
-
     /**
      * @var int
      * @Id
@@ -31,12 +31,17 @@ class Qualification
      * @Id
      * @Column(type="integer")
      */
-    public $rank_ref;
+    public $level;
+    /**
+     * @var float
+     * @Column(type="decimal", precision=5, scale=4)
+     */
+    public $percent;
     /**
      * @var int
      * @Id
      * @Column(type="integer")
      */
-    public $rule_ref;
+    public $rank_ref;
 
 }

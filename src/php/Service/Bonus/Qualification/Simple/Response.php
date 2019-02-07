@@ -6,11 +6,11 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple;
 
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rank as EQualRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Rank as EPeriodRank;
 
 class Response
     extends \TeqFw\Lib\Data
 {
-    /** @var EQualRank[] */
+    /** @var EPeriodRank[] */
     public $entries;
 }

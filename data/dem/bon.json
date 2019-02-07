@@ -343,6 +343,51 @@
             }
           }
         }
+      },
+      "rank": {
+        ".": {
+          "desc": "Qualifications on rank for calculation instances.",
+          "attr": {
+            "calc_inst_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation inside period."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client itself."
+            },
+            "rank_ref": {
+              "type": "reference",
+              "desc": "Reference to the qualification rank."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_inst_ref", "client_ref"]
+            }
+          },
+          "relation": {
+            "calcInstance": {
+              "path": "/bon/period/calc",
+              "own": ["calc_inst_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rank": {
+              "path": "/bon/plan/rank",
+              "own": ["rank_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
       }
     },
     "plan": {
@@ -363,9 +408,54 @@
           }
         }
       },
+      "level": {
+        ".": {
+          "desc": "Configuration for level based commission calculations.",
+          "attr": {
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation."
+            },
+            "rank_ref": {
+              "type": "reference",
+              "desc": "Reference to the rank."
+            },
+            "level": {
+              "type": "integer",
+              "desc": "Level in downline tree (1, 2, ...)."
+            },
+            "percent": {
+              "type": "decimal",
+              "desc": "Commission percent from the level for the rank.",
+              "precision": 5,
+              "scale": 4
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_ref", "rank_ref", "level"]
+            }
+          },
+          "relation": {
+            "calc": {
+              "path": "/bon/suite/calc",
+              "own": ["calc_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rank": {
+              "path": "/bon/plan/rank",
+              "own": ["rank_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
       "qual": {
         ".": {
-          "desc": "Rank qualification rules for the calculation.",
+          "desc": "Configuration for ranks qualification rules.",
           "attr": {
             "calc_ref": {
               "type": "reference",
@@ -447,51 +537,6 @@
       }
     },
     "qual": {
-      "rank": {
-        ".": {
-          "desc": "Qualifications on rank for calculation instances.",
-          "attr": {
-            "calc_inst_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation inside period."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client itself."
-            },
-            "rank_ref": {
-              "type": "reference",
-              "desc": "Reference to the qualification rank."
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_inst_ref", "client_ref"]
-            }
-          },
-          "relation": {
-            "calcInstance": {
-              "path": "/bon/period/calc",
-              "own": ["calc_inst_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "client": {
-              "path": "/client/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "rank": {
-              "path": "/bon/plan/rank",
-              "own": ["rank_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      },
       "rule": {
         ".": {
           "desc": "Registry for qualification rules.",

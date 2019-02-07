@@ -7,7 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rank as EQualRank;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Rank as EPeriodRank;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree as ETree;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Request as ARuleLoadRequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Response as ARuleLoadResponse;
@@ -57,7 +57,7 @@ class Simple
             $clientId = $one->client_ref;
             $rankId = $this->qualify($one, $ranks, $rules);
             if ($rankId) {
-                $entry = new EQualRank();
+                $entry = new EPeriodRank();
                 $entry->calc_inst_ref = $calcInstId;
                 $entry->client_ref = $clientId;
                 $entry->rank_ref = $rankId;

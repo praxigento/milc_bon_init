@@ -13,6 +13,7 @@ use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as ECalcType;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type\Deps\On as ECalcTypeDepsOn;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan as EPlan;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Level as EPlanLevel;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Qualification as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Rank as EPlanRank;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule as EQualRule;
@@ -33,6 +34,10 @@ try {
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
 
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    $em->beginTransaction();
+
     $planId = init_bonus_plan($container);
     $suiteId = init_bonus_suite($container, $planId);
     $ranks = init_bonus_plan_ranks($container, $planId);
@@ -40,11 +45,45 @@ try {
     $calcIds = init_bonus_suite_calcs($container, $suiteId, $typeIds);
     $calcIdQual = $calcIds[Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE];
     init_bonus_qual_rules($container, $calcIdQual, $ranks);
+    $calcIdLevels = $calcIds[Cfg::CALC_TYPE_BONUS_LEVEL_BASED];
+    init_bonus_levels($container, $calcIdLevels, $ranks);
+
+    $em->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $calcId
+ * @param int[] $ranks
+ */
+function init_bonus_levels($container, $calcId, $ranks)
+{
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    $cfg = [
+        [1 => 0.20],    // HUM
+        [1 => 0.20, 2 => 0.15], // HER
+        [1 => 0.20, 2 => 0.15, 3 => 0.10], // ANG
+        [1 => 0.20, 2 => 0.15, 3 => 0.10, 4 => 0.05] //GOD
+    ];
+    $i = 0;
+    foreach ($ranks as $rankId) {
+        $levels = $cfg[$i++];
+        foreach ($levels as $level => $percent) {
+            $entity = new EPlanLevel();
+            $entity->calc_ref = $calcId;
+            $entity->rank_ref = $rankId;
+            $entity->level = $level;
+            $entity->percent = $percent;
+            $em->persist($entity);
+        }
+    }
+    $em->flush();
 }
 
 /**
