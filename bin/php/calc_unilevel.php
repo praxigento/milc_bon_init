@@ -18,7 +18,7 @@ use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period as EBonPeriod;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EBonPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as EBonSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree as EBonTree;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
@@ -63,7 +63,14 @@ try {
     $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
-    $ranks = calc_qual_save_ranks($container, $calcInst->id, $tree);
+    calc_qual_save_ranks($container, $calcInst->id, $tree);
+    /**
+     * Step 4: Level Based Commissions.
+     */
+    $typeCode = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
+    $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 4);
+    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+//    calc_bonus_comm_level_based($container);
 
     $em->commit();
 
@@ -71,6 +78,19 @@ try {
 } catch (\Throwable $e) {
     /** catch all exceptions and just print out the message */
     echo $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+
+/**
+ * @param \Psr\Container\ContainerInterface $container
+ */
+function calc_bonus_comm_level_based($container)
+{
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srv */
+    $srv = $container->get(\Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased::class);
+    $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response $resp */
+    $resp = $srv->exec($req);
+
 }
 
 /**
@@ -248,7 +268,7 @@ function calc_cv_collect_get_movements($container, $datePeriod)
 /**
  * @param \Psr\Container\ContainerInterface $container
  * @param int $calcInstId
- * @param EBonTree[] $tree
+ * @param EPeriodTree[] $tree
  */
 function calc_qual_save_ranks($container, $calcInstId, $tree)
 {
@@ -304,7 +324,7 @@ function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected
         foreach ($entries as $entry) {
             $ownPv = (isset($mapById[$entry->client_id][false])) ? $mapById[$entry->client_id][false] : 0;
             $apv = (isset($mapById[$entry->client_id][true])) ? $mapById[$entry->client_id][true] : 0;
-            $item = new EBonTree();
+            $item = new EPeriodTree();
             $item->calc_inst_ref = $calcInstId;
             $item->client_ref = $entry->client_id;
             $item->parent_ref = $entry->parent_id;

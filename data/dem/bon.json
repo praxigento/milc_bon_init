@@ -344,9 +344,68 @@
           }
         }
       },
+      "level": {
+        ".": {
+          "desc": "Commission values for period calculation.",
+          "attr": {
+            "calc_inst_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation instance."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client."
+            },
+            "level": {
+              "type": "integer",
+              "unsigned": true,
+              "small": true,
+              "desc": "Appropriate level in the configuration."
+            },
+            "cv": {
+              "type": "decimal",
+              "desc": "Total volume of commission points.",
+              "precision": 5,
+              "scale": 4
+            },
+            "percent": {
+              "type": "decimal",
+              "desc": "Commission percent from the level for the client.",
+              "precision": 5,
+              "scale": 4
+            },
+            "commission": {
+              "type": "decimal",
+              "desc": "Commission amount from CV for the level.",
+              "precision": 10,
+              "scale": 2
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_inst_ref", "client_ref", "level"]
+            }
+          },
+          "relation": {
+            "calcInstance": {
+              "path": "/bon/period/calc",
+              "own": ["calc_inst_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
       "rank": {
         ".": {
-          "desc": "Qualifications on rank for calculation instances.",
+          "desc": "Qualifications on rank for period calculation.",
           "attr": {
             "calc_inst_ref": {
               "type": "reference",
@@ -388,6 +447,64 @@
             }
           }
         }
+      },
+      "tree": {
+        ".": {
+          "desc": "Downline tree data bound to bonus calculations.",
+          "attr": {
+            "calc_inst_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation inside period (plain & compressed, for example)."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client itself."
+            },
+            "parent_ref": {
+              "type": "reference",
+              "desc": "Reference to the client's parent.",
+              "nullable": false
+            },
+            "pv": {
+              "type": "decimal",
+              "desc": "Personal Volume (autoship is included).",
+              "precision": 10,
+              "scale": 2
+            },
+            "apv": {
+              "type": "decimal",
+              "desc": "Personal Volume (autoship only).",
+              "precision": 10,
+              "scale": 2
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_inst_ref", "client_ref"]
+            }
+          },
+          "relation": {
+            "calcInstance": {
+              "path": "/bon/period/calc",
+              "own": ["calc_inst_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "parent": {
+              "path": "/client/reg",
+              "own": ["parent_ref"],
+              "foreign": ["client_ref"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
       }
     },
     "plan": {
@@ -422,6 +539,8 @@
             },
             "level": {
               "type": "integer",
+              "unsigned": true,
+              "small": true,
               "desc": "Level in downline tree (1, 2, ...)."
             },
             "percent": {
@@ -772,64 +891,6 @@
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
-          }
-        }
-      }
-    },
-    "tree": {
-      ".": {
-        "desc": "Downline tree data bound to bonus calculations.",
-        "attr": {
-          "calc_inst_ref": {
-            "type": "reference",
-            "desc": "Reference to the calculation inside period (plain & compressed, for example)."
-          },
-          "client_ref": {
-            "type": "reference",
-            "desc": "Reference to the client itself."
-          },
-          "parent_ref": {
-            "type": "reference",
-            "desc": "Reference to the client's parent.",
-            "nullable": false
-          },
-          "pv": {
-            "type": "decimal",
-            "desc": "Personal Volume (autoship is included).",
-            "precision": 10,
-            "scale": 2
-          },
-          "apv": {
-            "type": "decimal",
-            "desc": "Personal Volume (autoship only).",
-            "precision": 10,
-            "scale": 2
-          }
-        },
-        "index": {
-          "pk": {
-            "type": "primary",
-            "attrs": ["calc_inst_ref", "client_ref"]
-          }
-        },
-        "relation": {
-          "calcInstance": {
-            "path": "/bon/period/calc",
-            "own": ["calc_inst_ref"],
-            "foreign": ["id"],
-            "on": {"delete": "cascade", "update": "cascade"}
-          },
-          "client": {
-            "path": "/client/reg",
-            "own": ["client_ref"],
-            "foreign": ["client_ref"],
-            "on": {"delete": "cascade", "update": "cascade"}
-          },
-          "parent": {
-            "path": "/client/reg",
-            "own": ["parent_ref"],
-            "foreign": ["client_ref"],
-            "on": {"delete": "cascade", "update": "cascade"}
           }
         }
       }

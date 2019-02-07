@@ -342,8 +342,8 @@ function init_bonus_qual_rules($container, $calcId, $ranks)
  */
 function init_bonus_qual_rules_create_rank_human($container)
 {
-    $rulePv = init_bonus_qual_rules_create_pv($container, 35, 0, false);
-    $ruleApv = init_bonus_qual_rules_create_pv($container, 25, 1, true);
+    $rulePv = init_bonus_qual_rules_create_pv($container, 100, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 75, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
     $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
     return $result;
@@ -357,8 +357,8 @@ function init_bonus_qual_rules_create_rank_human($container)
  */
 function init_bonus_qual_rules_create_rank_hero($container)
 {
-    $rulePv = init_bonus_qual_rules_create_pv($container, 70, 0, false);
-    $ruleApv = init_bonus_qual_rules_create_pv($container, 50, 1, true);
+    $rulePv = init_bonus_qual_rules_create_pv($container, 200, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 150, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
     $result = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
     return $result;
@@ -373,8 +373,8 @@ function init_bonus_qual_rules_create_rank_hero($container)
  */
 function init_bonus_qual_rules_create_rank_angel($container, $ranks)
 {
-    $rulePv = init_bonus_qual_rules_create_pv($container, 140, 0, false);
-    $ruleApv = init_bonus_qual_rules_create_pv($container, 100, 1, true);
+    $rulePv = init_bonus_qual_rules_create_pv($container, 400, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 300, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
     $groupPv = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
     $rankIdHero = $ranks[1];
@@ -393,8 +393,8 @@ function init_bonus_qual_rules_create_rank_angel($container, $ranks)
  */
 function init_bonus_qual_rules_create_rank_god($container, $ranks)
 {
-    $rulePv = init_bonus_qual_rules_create_pv($container, 280, 0, false);
-    $ruleApv = init_bonus_qual_rules_create_pv($container, 200, 1, true);
+    $rulePv = init_bonus_qual_rules_create_pv($container, 800, 0, false);
+    $ruleApv = init_bonus_qual_rules_create_pv($container, 600, 1, true);
     $ids = [$rulePv->ref, $ruleApv->ref];
     $groupPv = init_bonus_qual_rules_create_group($container, Cfg::RULE_GROUP_LOGIC_OR, $ids);
     $rankIdHero = $ranks[2];

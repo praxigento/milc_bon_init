@@ -9,12 +9,12 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Data;
 
 class RankEntry
 {
-    const RANK_CODE = 'rankCode';
-    const RANK_ID = 'rankId';
-    const RULE_ID = 'ruleId';
+    const RANK_CODE = 'rank_code';
+    const RANK_ID = 'rank_id';
+    const RULE_ID = 'rule_id';
     const SEQUENCE = 'sequence';
-    public $rankCode;
-    public $rankId;
-    public $ruleId;
+    public $rank_code;
+    public $rank_id;
+    public $rule_id;
     public $sequence;
 }

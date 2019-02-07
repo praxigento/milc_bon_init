@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Rank as EPeriodRank;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree as ETree;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Request as ARuleLoadRequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Response as ARuleLoadResponse;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Data\RankEntry as DRankEntry;
@@ -52,7 +52,7 @@ class Simple
         $rules = $this->getRulesTree($ranks);
 
         $entries = [];
-        /** @var \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree $one */
+        /** @var \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree $one */
         foreach ($tree as $one) {
             $clientId = $one->client_ref;
             $rankId = $this->qualify($one, $ranks, $rules);
@@ -93,7 +93,7 @@ class Simple
     {
         $rootRules = [];
         foreach ($ranks as $rank) {
-            $rootRules[] = $rank->ruleId;
+            $rootRules[] = $rank->rule_id;
         }
 
         $req = new ARuleLoadRequest();
@@ -105,7 +105,7 @@ class Simple
     }
 
     /**
-     * @param ETree $one
+     * @param EPeriodTree $one
      * @param DRankEntry[] $ranks
      * @param array $rules
      * @return null
@@ -114,11 +114,11 @@ class Simple
     {
         $result = null;
         foreach ($ranks as $rank) {
-            $ruleId = $rank->ruleId;
+            $ruleId = $rank->rule_id;
             $chain = $rules[$ruleId];
             $isValid = $this->validateRules($one, $chain);
             if ($isValid) {
-                $result = $rank->rankId;
+                $result = $rank->rank_id;
             } else {
                 break;
             }
@@ -127,7 +127,7 @@ class Simple
     }
 
     /**
-     * @param ETree $client
+     * @param EPeriodTree $client
      * @param $chain
      * @return bool
      */
@@ -147,7 +147,7 @@ class Simple
     }
 
     /**
-     * @param ETree $client
+     * @param EPeriodTree $client
      * @param DGroup $chain
      * @return bool
      */
@@ -181,7 +181,7 @@ class Simple
     }
 
     /**
-     * @param ETree $treeNode
+     * @param EPeriodTree $treeNode
      * @param DPv $rule
      * @return bool
      */
@@ -210,7 +210,7 @@ class Simple
     }
 
     /**
-     * @param ETree $client
+     * @param EPeriodTree $client
      * @param DRank $chain
      * @return bool
      */

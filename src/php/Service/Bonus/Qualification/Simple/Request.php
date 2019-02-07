@@ -12,6 +12,6 @@ class Request
 {
     /** @var int ID of the calculation in the period. */
     public $calcInstId;
-    /** @var \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Tree[] */
+    /** @var \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree[] */
     public $tree;
 }

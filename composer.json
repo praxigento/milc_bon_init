@@ -17,6 +17,9 @@
     "teqfw/back-db-repo3-php": "dev-master as 0.1.0",
     "doctrine/orm": "2.7.x-dev"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^7"
+  },
   "autoload": {
     "psr-4": {
       "Praxigento\\Milc\\Bonus\\": "src/php"

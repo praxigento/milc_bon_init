@@ -41,7 +41,10 @@ interface Config
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';
     const DB_TBL_BON_PERIOD = 'bon_period';
     const DB_TBL_BON_PERIOD_CALC = 'bon_period_calc';
+    const DB_TBL_BON_PERIOD_RANK = 'bon_period_rank';
+    const DB_TBL_BON_PERIOD_TREE = 'bon_period_tree';
     const DB_TBL_BON_PLAN = 'bon_plan';
+    const DB_TBL_BON_PLAN_LEVEL = 'bon_plan_level';
     const DB_TBL_BON_PLAN_QUAL = 'bon_plan_qual';
     const DB_TBL_BON_PLAN_RANK = 'bon_plan_rank';
     const DB_TBL_BON_QUAL_RULE = 'bon_qual_rule';
