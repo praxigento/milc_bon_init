@@ -10,15 +10,14 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Helper\Map as HMap;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as EBonCalcType;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Collected as EBonCvColect;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry as EBonCvReg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period as EBonPeriod;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as EBonSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
@@ -56,6 +55,7 @@ try {
     $typeCode = Cfg::CALC_TYPE_TREE_PLAIN;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 2);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcTreeId = $calcInst->id;
     $tree = calc_tree_plain($container, $period, $calcInst->id, $collected);
     /**
      * Step 3: Qualification.
@@ -63,6 +63,7 @@ try {
     $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcRanksId = $calcInst->id;
     calc_qual_save_ranks($container, $calcInst->id, $tree);
     /**
      * Step 4: Level Based Commissions.
@@ -70,7 +71,8 @@ try {
     $typeCode = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 4);
     $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
-//    calc_bonus_comm_level_based($container);
+    $calcCommId = $calcInst->id;
+    calc_bonus_comm_level_based($container, $calcCommId, $calcTreeId, $calcRanksId);
 
     $em->commit();
 
@@ -82,15 +84,28 @@ try {
 
 /**
  * @param \Psr\Container\ContainerInterface $container
+ * @param int $calcThis
+ * @param int $calcTree
+ * @param int $calcRanks
  */
-function calc_bonus_comm_level_based($container)
+function calc_bonus_comm_level_based($container, $calcThis, $calcTree, $calcRanks)
 {
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srv */
     $srv = $container->get(\Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased::class);
     $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
+    $req->thisCalcInstId = $calcThis;
+    $req->treeCalcInstId = $calcTree;
+    $req->ranksCalcInstId = $calcRanks;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response $resp */
     $resp = $srv->exec($req);
-
+    /* save commissions */
+    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+    $entries = $resp->commissions;
+    foreach ($entries as $entry) {
+        $em->persist($entry);
+    }
+    $em->flush();
 }
 
 /**
@@ -301,8 +316,6 @@ function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected
     $lastDate = clone $period->date_begin;
     $lastDate->modify("last day of");
     $formatted = $lastDate->format("Y-m-d");
-    /** @var HMap $map */
-    $map = $container->get(HMap::class);
     /* map CV by client/autoship */
     $mapById = [];
     foreach ($collected as $item) {
