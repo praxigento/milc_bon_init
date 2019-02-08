@@ -75,4 +75,10 @@ interface Config
     const RULE_GROUP_LOGIC_AND = 'AND';
     const RULE_GROUP_LOGIC_OR = 'OR';
     const SUITE_NOTE = 'Development calcs suite (monthly based).';
+    /**/
+    const TREE_DEPTH_INIT = 1;
+    const TREE_PS = ':'; // path separator
+    /**/
+    const ZERO = 0.00001;
+
 }

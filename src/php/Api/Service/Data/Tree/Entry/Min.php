@@ -4,10 +4,12 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Service\Data\Tree;
+namespace Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry;
 
-
-class Entry
+/**
+ * Tree entry with required data only.
+ */
+class Min
     extends \TeqFw\Lib\Data
 {
     /** @var int */

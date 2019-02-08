@@ -8,6 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Commission;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Level as EPeriodLevel;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Rank as EPeriodRank;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Level as EPlanLevel;
@@ -20,13 +21,92 @@ class LevelBased
     private $conn;
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Map */
     private $hlpMap;
+    /** @var \Praxigento\Milc\Bonus\Api\Helper\Tree */
+    private $hlpTree;
 
     public function __construct(
         \TeqFw\Lib\Db\Api\Connection\Main $conn,
-        \Praxigento\Milc\Bonus\Api\Helper\Map $hlpMap
+        \Praxigento\Milc\Bonus\Api\Helper\Map $hlpMap,
+        \Praxigento\Milc\Bonus\Api\Helper\Tree $hlpTree
     ) {
         $this->conn = $conn;
         $this->hlpMap = $hlpMap;
+        $this->hlpTree = $hlpTree;
+    }
+
+    private function collectCommission($calcInstId, $ranks, $commByRanks, $mapCvByLevel)
+    {
+        $result = [];
+        foreach ($ranks as $clientId => $rank) {
+            if (
+                !isset($commByRanks[$rank]) ||
+                !isset($mapCvByLevel[$clientId])
+            ) {
+                continue;
+            }
+            $commByLevels = $commByRanks[$rank];
+            $cvByLevels = $mapCvByLevel[$clientId];
+            foreach ($commByLevels as $level => $percent) {
+                if (isset($cvByLevels[$level])) {
+                    $cv = $cvByLevels[$level];
+                    $comm = round($cv * $percent, 2);
+                    $entry = new EPeriodLevel();
+                    $entry->calc_inst_ref = $calcInstId;
+                    $entry->client_ref = $clientId;
+                    $entry->level = $level;
+                    $entry->cv = $cv;
+                    $entry->percent = $percent;
+                    $entry->commission = $comm;
+                    $result[] = $entry;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $treeCalcInstId
+     * @return array [nodeId][level]=>sumCv
+     * @throws \Exception
+     */
+    private function collectCvByLevel($treeCalcInstId)
+    {
+        $result = [];
+        $tree = $this->getTree($treeCalcInstId);
+        $fullTree = $this->hlpTree->expandMinimal($tree, EPeriodTree::CLIENT_REF, EPeriodTree::PARENT_REF);
+        $treeByDepthDesc = $this->hlpTree->mapByDepthDesc($fullTree);
+
+        foreach ($treeByDepthDesc as $level) {
+            foreach ($level as $nodeId) {
+                if (!isset($tree[$nodeId]))
+                    throw new \Exception("Node with ID $nodeId is not found in the tree (CV collection).");
+                /** @var EPeriodTree $node */
+                $node = $tree[$nodeId];
+                $pv = $node->pv;
+                if (abs($pv) > Cfg::ZERO) {
+                    /* propagate PV up in the tree by levels */
+                    $currentId = $nodeId;
+                    $parentId = $node->parent_ref;
+                    $level = 1;
+                    while ($parentId != $currentId) {
+                        if (!isset($result[$parentId][$level])) {
+                            $result[$parentId][$level] = $pv;
+                        } else {
+                            $result[$parentId][$level] += $pv;
+                        }
+                        /* move one step up */
+                        if (!isset($tree[$parentId]))
+                            throw new \Exception("Node with ID $parentId is not found in the tree (CV collection, parent).");
+                        /** @var EPeriodTree $parent */
+                        $parent = $tree[$parentId];
+                        $currentId = $parentId;
+                        $parentId = $parent->parent_ref;
+                        $level++;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     public function exec($req)
@@ -37,11 +117,14 @@ class LevelBased
         $treeCalcInstId = $req->treeCalcInstId;
 
         $calcId = $this->getCalcId($thisCalcInstId);
-        $levels = $this->getLevels($calcId);
+        $commByRanks = $this->getLevels($calcId);
         $ranks = $this->getRanks($ranksCalcInstId);
-        $tree = $this->getTree($treeCalcInstId);
+        $mapCvByLevel = $this->collectCvByLevel($treeCalcInstId);
+
+        $comm = $this->collectCommission($thisCalcInstId, $ranks, $commByRanks, $mapCvByLevel);
 
         $result = new AResponse();
+        $result->commissions = $comm;
         return $result;
     }
 

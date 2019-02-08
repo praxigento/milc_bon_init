@@ -346,7 +346,7 @@
       },
       "level": {
         ".": {
-          "desc": "Commission values for period calculation.",
+          "desc": "Level based bonus commission values for period calculation.",
           "attr": {
             "calc_inst_ref": {
               "type": "reference",
@@ -365,8 +365,8 @@
             "cv": {
               "type": "decimal",
               "desc": "Total volume of commission points.",
-              "precision": 5,
-              "scale": 4
+              "precision": 10,
+              "scale": 2
             },
             "percent": {
               "type": "decimal",

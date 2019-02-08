@@ -23,8 +23,8 @@ class Query
     const A_BY_CLIENT_REF = 'by_client_ref';
     const A_BY_DATE_CLIENT_REF = 'by_date_client_ref';
     const A_BY_DATE_ID = 'by_date_id';
-    const A_RES_CLIENT_ID = 'client_id'; // see \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry
-    const A_RES_PARENT_ID = 'parent_id'; // see \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry
+    const A_RES_CLIENT_ID = 'client_id'; // see \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min
+    const A_RES_PARENT_ID = 'parent_id'; // see \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min
     /**/
     const BND_DATE = 'date';
 

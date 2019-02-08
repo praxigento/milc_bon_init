@@ -11,7 +11,7 @@ class Response
     extends \TeqFw\Lib\Data
 {
     /**
-     * @var \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry[]
+     * @var \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min[]
      */
     public $entries;
 }

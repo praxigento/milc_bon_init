@@ -9,5 +9,6 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased;
 class Response
     extends \TeqFw\Lib\Data
 {
-
+    /** @var \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Level[] */
+    public $commissions;
 }

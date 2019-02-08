@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Client\Tree;
 
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as AResponse;
-use Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry as DTreeEntry;
+use Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min as DTreeEntry;
 use Praxigento\Milc\Bonus\Service\Client\Tree\Get\A\Query as AQuery;
 
 class Get
