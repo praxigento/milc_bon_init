@@ -7,10 +7,10 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Commission;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc as EPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Level as EPeriodLevel;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Rank as EPeriodRank;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Calc as EPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Level as EPeriodLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Rank as EPeriodRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Level as EPlanLevel;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response as AResponse;
@@ -140,7 +140,7 @@ class LevelBased
         $bndId = 'id';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_PERIOD_CALC, $as);
+        $qb->from(Cfg::DB_TBL_BON_RESULT_CALC, $as);
         $qb->select("$as.*");
         $qb->where(EPeriodCalc::ID . "=:$bndId");
         $qb->setParameters([$bndId => $calcInstId]);
@@ -192,7 +192,7 @@ class LevelBased
         $bndId = 'id';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_PERIOD_RANK, $as);
+        $qb->from(Cfg::DB_TBL_BON_RESULT_RANK, $as);
         $qb->select("$as.*");
         $qb->where(EPeriodRank::CALC_INST_REF . "=:$bndId");
         $qb->setParameters([$bndId => $calcInstId]);
@@ -218,7 +218,7 @@ class LevelBased
         $bndId = 'id';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_PERIOD_TREE, $as);
+        $qb->from(Cfg::DB_TBL_BON_RESULT_TREE, $as);
         $qb->select("$as.*");
         $qb->where(EPeriodTree::CALC_INST_REF . "=:$bndId");
         $qb->setParameters([$bndId => $calcInstId]);

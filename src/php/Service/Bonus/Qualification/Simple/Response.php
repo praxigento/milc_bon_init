@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Rank as EPeriodRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Rank as EPeriodRank;
 
 class Response
     extends \TeqFw\Lib\Data

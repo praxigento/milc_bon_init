@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 
 
 /**
  * Level based bonus commission values for period calculation.
  *
  * @Entity
- * @Table(name="bon_period_level")
+ * @Table(name="bon_res_level")
  */
 class Level
     extends \TeqFw\Lib\Data

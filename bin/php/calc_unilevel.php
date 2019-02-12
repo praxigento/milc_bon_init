@@ -11,11 +11,11 @@ require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EBonCalcType;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Collected as EBonCvColect;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EBonCvColect;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as EBonCvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period as EBonPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc as EBonPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result as EBonPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EBonSuiteCalc;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
@@ -177,7 +177,7 @@ function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
  * @param \Psr\Container\ContainerInterface $container
  * @param int $periodId
  * @param int $calcId
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Calc
  */
 function calc_bonus_get_calc_instance($container, $periodId, $calcId)
 {
@@ -211,7 +211,7 @@ function calc_cv_collect($container, $calcInstId, $datePeriod)
 {
     $result = [];
     $bind = [
-        EBonCvColect::CALC_REF => $calcInstId
+        EBonCvColect::CALC_INST_REF => $calcInstId
     ];
     $found = common_get_by_attr($container, EBonCvColect::class, $bind);
     if (!$found) {
@@ -223,7 +223,7 @@ function calc_cv_collect($container, $calcInstId, $datePeriod)
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
         foreach ($all as $data) {
             $entry = new EBonCvColect($data);
-            $entry->calc_ref = $calcInstId;
+            $entry->calc_inst_ref = $calcInstId;
             $em->persist($entry);
             $em->flush();
             $result[] = $entry;
@@ -306,7 +306,7 @@ function calc_qual_save_ranks($container, $calcInstId, $tree)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
- * @param \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period $period
+ * @param \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result $period
  * @param int $calcInstId
  * @param EBonCvColect[] $collected
  */

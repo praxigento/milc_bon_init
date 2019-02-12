@@ -7,11 +7,11 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group as ERuleGroup;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group\Ref as ERuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv as ERulePv;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank as ERuleRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group as ERuleGroup;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group\Ref as ERuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Pv as ERulePv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank as ERuleRank;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Response as AResponse;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Z\Data\Rule\Group as DGroup;
@@ -104,7 +104,7 @@ class Loader
         $as = 'rule';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_QUAL_RULE, $as);
+        $qb->from(Cfg::DB_TBL_BON_CALC_QUAL_RULE, $as);
         $qb->select("$as.*");
         $stmt = $qb->execute();
         /** @var EQualRule[] $all */
@@ -120,7 +120,7 @@ class Loader
         $asOther = 'other';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_QUAL_RULE_GROUP, $asMain);
+        $qb->from(Cfg::DB_TBL_BON_CALC_QUAL_RULE_GROUP, $asMain);
         $qb->select([
             "$asMain." . ERuleGroup::REF . " as " . DGroup::ID,
             "$asMain." . ERuleGroup::LOGIC . " as " . DGroup::LOGIC,
@@ -128,7 +128,7 @@ class Loader
         ]);
         /* LEFT JOIN bon_plan_qual */
         $on = "$asOther." . ERuleGroupRef::GROUPING_REF . "=$asMain." . ERuleGroup::REF;
-        $qb->leftJoin($asMain, Cfg::DB_TBL_BON_QUAL_RULE_GROUP_REF, $asOther, $on);
+        $qb->leftJoin($asMain, Cfg::DB_TBL_BON_CALC_QUAL_RULE_GROUP_REF, $asOther, $on);
 
         $stmt = $qb->execute();
         /** @var EQualRule[] $all */
@@ -157,7 +157,7 @@ class Loader
         $as = 'main';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_QUAL_RULE_PV, $as);
+        $qb->from(Cfg::DB_TBL_BON_CALC_QUAL_RULE_PV, $as);
         $qb->select('*');
         $stmt = $qb->execute();
         /** @var ERulePv[] $all */
@@ -175,7 +175,7 @@ class Loader
         $as = 'main';
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
         $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_QUAL_RULE_RANK, $as);
+        $qb->from(Cfg::DB_TBL_BON_CALC_QUAL_RULE_RANK, $as);
         $qb->select('*');
         $stmt = $qb->execute();
         /** @var ERuleRank[] $all */

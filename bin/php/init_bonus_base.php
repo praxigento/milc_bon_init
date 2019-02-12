@@ -16,11 +16,11 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan as EPlan;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Level as EPlanLevel;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Qualification as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group as EQualRuleGroup;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv as EQualRulePv;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank as EQualRuleRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group as EQualRuleGroup;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group\Ref as EQualRuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Pv as EQualRulePv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank as EQualRuleRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as ESuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as ESuiteCalc;
 
@@ -411,7 +411,7 @@ function init_bonus_qual_rules_create_rank_god($container, $ranks)
  * @param float $volume
  * @param int $period
  * @param bool $isAutship
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Pv
  */
 function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutship = false)
 {
@@ -443,7 +443,7 @@ function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutshi
  * @param $rankId
  * @param $count
  * @param $period
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank
  */
 function init_bonus_qual_rules_create_rank($container, $rankId, $count, $period)
 {

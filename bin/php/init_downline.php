@@ -17,7 +17,7 @@ const DATE_INC_MAX = 9000; //max random increment in seconds
 const PERCENT_DELETE = 16;
 const PERCENT_RESTORE = 8;
 const PERCENT_SET_TYPE = 20;
-const TOTAL_ITEMS = 100;
+const TOTAL_ITEMS = 40;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.

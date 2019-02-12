@@ -1,6 +1,180 @@
 {
   "DEM": {
     ".": "/bon",
+    "calc": {
+      "qual": {
+        "rule": {
+          ".": {
+            "desc": "Registry for qualification rules.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Qualification rule ID."
+              },
+              "type": {
+                "type": "string",
+                "desc": "Qualification rule type (codified)."
+              }
+            }
+          },
+          "group": {
+            ".": {
+              "desc": "Grouping rule details.",
+              "attr": {
+                "ref": {
+                  "type": "reference",
+                  "desc": "Reference to the grouping rule (type: group)."
+                },
+                "logic": {
+                  "type": "string",
+                  "desc": "Grouping logic (and, or, not).",
+                  "size": 3
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["ref"]
+                }
+              },
+              "relation": {
+                "rule": {
+                  "path": "/bon/calc/qual/rule",
+                  "own": ["ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
+            },
+            "ref": {
+              ".": {
+                "desc": "Grouped rules.",
+                "attr": {
+                  "grouping_ref": {
+                    "type": "reference",
+                    "desc": "Reference to the grouping rule."
+                  },
+                  "grouped_ref": {
+                    "type": "reference",
+                    "desc": "References to the rules are been grouped."
+                  }
+                },
+                "index": {
+                  "pk": {
+                    "type": "primary",
+                    "attrs": ["grouping_ref", "grouped_ref"]
+                  }
+                },
+                "relation": {
+                  "groupingRule": {
+                    "path": "/bon/calc/qual/rule/group",
+                    "own": ["grouping_ref"],
+                    "foreign": ["ref"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  },
+                  "groupedRule": {
+                    "path": "/bon/calc/qual/rule",
+                    "own": ["grouped_ref"],
+                    "foreign": ["id"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  }
+                }
+              }
+            }
+          },
+          "pv": {
+            ".": {
+              "desc": "PV rules details.",
+              "attr": {
+                "ref": {
+                  "type": "reference",
+                  "desc": "Reference to the PV rule (type: pv)."
+                },
+                "volume": {
+                  "type": "decimal",
+                  "desc": "Minimal qualification volume.",
+                  "precision": 10,
+                  "scale": 2
+                },
+                "autoship_only": {
+                  "type": "boolean",
+                  "default": false,
+                  "desc": "'true' if Autoship PV only is applied to qualification."
+                },
+                "period": {
+                  "type": "integer",
+                  "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
+                  "default": 0,
+                  "small": true,
+                  "unsigned": true
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["ref"]
+                }
+              },
+              "relation": {
+                "rule": {
+                  "path": "/bon/calc/qual/rule",
+                  "own": ["ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
+            }
+          },
+          "rank": {
+            ".": {
+              "desc": "Rank rules details.",
+              "attr": {
+                "ref": {
+                  "type": "reference",
+                  "desc": "Reference to the rank rule (type: rank)."
+                },
+                "rank_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the required rank."
+                },
+                "count": {
+                  "type": "integer",
+                  "small": true,
+                  "desc": "Minimal count of the distributors with required rank."
+                },
+                "period": {
+                  "type": "integer",
+                  "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
+                  "default": 0,
+                  "small": true,
+                  "unsigned": true
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["ref"]
+                }
+              },
+              "relation": {
+                "rule": {
+                  "path": "/bon/calc/qual/rule",
+                  "own": ["ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                },
+                "rank": {
+                  "path": "/bon/plan/rank",
+                  "own": ["rank_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "cv": {
       "reg": {
         ".": {
@@ -122,55 +296,9 @@
             }
           }
         }
-      },
-      "collect": {
-        ".": {
-          "desc": "CV/ACV are collected for period.",
-          "attr": {
-            "calc_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation in period."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "is_autoship": {
-              "type": "boolean",
-              "default": false,
-              "desc": "'true' if this is an Autoship CV."
-            },
-            "volume": {
-              "type": "decimal",
-              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
-              "precision": 10,
-              "scale": 2
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_ref", "client_ref", "is_autoship"]
-            }
-          },
-          "relation": {
-            "period": {
-              "path": "/bon/period/calc",
-              "own": ["calc_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "client": {
-              "path": "/client/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
       }
     },
-    "period": {
+    "res": {
       ".": {
         "desc": "Bonus periods.",
         "attr": {
@@ -231,7 +359,7 @@
           },
           "relation": {
             "period": {
-              "path": "/bon/period",
+              "path": "/bon/res",
               "own": ["period_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -240,6 +368,52 @@
               "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
+      "cv": {
+        ".": {
+          "desc": "CV/ACV are collected for period.",
+          "attr": {
+            "calc_inst_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation instance."
+            },
+            "client_ref": {
+              "type": "reference",
+              "desc": "Reference to the client."
+            },
+            "is_autoship": {
+              "type": "boolean",
+              "default": false,
+              "desc": "'true' if this is an Autoship CV."
+            },
+            "volume": {
+              "type": "decimal",
+              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
+              "precision": 10,
+              "scale": 2
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_inst_ref", "client_ref", "is_autoship"]
+            }
+          },
+          "relation": {
+            "period": {
+              "path": "/bon/res/calc",
+              "own": ["calc_inst_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "client": {
+              "path": "/client/reg",
+              "own": ["client_ref"],
+              "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
           }
@@ -290,7 +464,7 @@
           },
           "relation": {
             "calcInstance": {
-              "path": "/bon/period/calc",
+              "path": "/bon/res/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -329,7 +503,7 @@
           },
           "relation": {
             "calcInstance": {
-              "path": "/bon/period/calc",
+              "path": "/bon/res/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -387,7 +561,7 @@
           },
           "relation": {
             "calcInstance": {
-              "path": "/bon/period/calc",
+              "path": "/bon/res/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -609,7 +783,7 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "rule": {
-              "path": "/bon/qual/rule",
+              "path": "/bon/calc/qual/rule",
               "own": ["rule_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -723,178 +897,6 @@
               "calcType": {
                 "path": "/bon/plan/calc/type",
                 "own": ["type_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
-            }
-          }
-        }
-      }
-    },
-    "qual": {
-      "rule": {
-        ".": {
-          "desc": "Registry for qualification rules.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Qualification rule ID."
-            },
-            "type": {
-              "type": "string",
-              "desc": "Qualification rule type (codified)."
-            }
-          }
-        },
-        "group": {
-          ".": {
-            "desc": "Grouping rule details.",
-            "attr": {
-              "ref": {
-                "type": "reference",
-                "desc": "Reference to the grouping rule (type: group)."
-              },
-              "logic": {
-                "type": "string",
-                "desc": "Grouping logic (and, or, not).",
-                "size": 3
-              }
-            },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["ref"]
-              }
-            },
-            "relation": {
-              "rule": {
-                "path": "/bon/qual/rule",
-                "own": ["ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
-            }
-          },
-          "ref": {
-            ".": {
-              "desc": "Grouped rules.",
-              "attr": {
-                "grouping_ref": {
-                  "type": "reference",
-                  "desc": "Reference to the grouping rule."
-                },
-                "grouped_ref": {
-                  "type": "reference",
-                  "desc": "References to the rules are been grouped."
-                }
-              },
-              "index": {
-                "pk": {
-                  "type": "primary",
-                  "attrs": ["grouping_ref", "grouped_ref"]
-                }
-              },
-              "relation": {
-                "groupingRule": {
-                  "path": "/bon/qual/rule/group",
-                  "own": ["grouping_ref"],
-                  "foreign": ["ref"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                },
-                "groupedRule": {
-                  "path": "/bon/qual/rule",
-                  "own": ["grouped_ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                }
-              }
-            }
-          }
-        },
-        "pv": {
-          ".": {
-            "desc": "PV rules details.",
-            "attr": {
-              "ref": {
-                "type": "reference",
-                "desc": "Reference to the PV rule (type: pv)."
-              },
-              "volume": {
-                "type": "decimal",
-                "desc": "Minimal qualification volume.",
-                "precision": 10,
-                "scale": 2
-              },
-              "autoship_only": {
-                "type": "boolean",
-                "default": false,
-                "desc": "'true' if Autoship PV only is applied to qualification."
-              },
-              "period": {
-                "type": "integer",
-                "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
-                "default": 0,
-                "small": true,
-                "unsigned": true
-              }
-            },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["ref"]
-              }
-            },
-            "relation": {
-              "rule": {
-                "path": "/bon/qual/rule",
-                "own": ["ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
-            }
-          }
-        },
-        "rank": {
-          ".": {
-            "desc": "Rank rules details.",
-            "attr": {
-              "ref": {
-                "type": "reference",
-                "desc": "Reference to the rank rule (type: rank)."
-              },
-              "rank_ref": {
-                "type": "reference",
-                "desc": "Reference to the required rank."
-              },
-              "count": {
-                "type": "integer",
-                "small": true,
-                "desc": "Minimal count of the distributors with required rank."
-              },
-              "period": {
-                "type": "integer",
-                "desc": "0 - PV from current period is applied; 1 - one period ago PV is applied; 2 - two periods ago ...",
-                "default": 0,
-                "small": true,
-                "unsigned": true
-              }
-            },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["ref"]
-              }
-            },
-            "relation": {
-              "rule": {
-                "path": "/bon/qual/rule",
-                "own": ["ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "rank": {
-                "path": "/bon/plan/rank",
-                "own": ["rank_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               }

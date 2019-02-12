@@ -4,19 +4,19 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 
 
 /**
  * CV/ACV are collected for period.
  *
  * @Entity
- * @Table(name="bon_cv_collect")
+ * @Table(name="bon_res_cv")
  */
-class Collected
+class Cv
     extends \TeqFw\Lib\Data
 {
-    const CALC_REF = 'calc_ref';
+    const CALC_INST_REF = 'calc_inst_ref';
     const CLIENT_REF = 'client_ref';
     const IS_AUTOSHIP = 'is_autoship';
     const VOLUME = 'volume';
@@ -25,7 +25,7 @@ class Collected
      * @Id
      * @Column(type="integer")
      */
-    public $calc_ref;
+    public $calc_inst_ref;
     /**
      * @var int
      * @Id

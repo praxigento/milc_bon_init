@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule;
 
 
 /**
  * Rank based rules.
  *
  * @Entity
- * @Table(name="bon_qual_rule_rank")
+ * @Table(name="bon_calc_qual_rule_rank")
  */
 class Rank
     extends \TeqFw\Lib\Data

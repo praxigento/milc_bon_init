@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual;
 
 
 /**
  * Set of calculations related to one period.
  *
  * @Entity
- * @Table(name="bon_qual_rule")
+ * @Table(name="bon_calc_qual_rule")
  */
 class Rule
     extends \TeqFw\Lib\Data

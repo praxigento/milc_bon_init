@@ -11,9 +11,9 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus;
  * Bonus periods.
  *
  * @Entity
- * @Table(name="bon_period")
+ * @Table(name="bon_res")
  */
-class Period
+class Result
     extends \TeqFw\Lib\Data
 {
     const DATE_BEGIN = 'date_begin';

@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 
 
 /**
  * Qualifications on rank for calculation instances.
  *
  * @Entity
- * @Table(name="bon_period_rank")
+ * @Table(name="bon_res_rank")
  */
 class Rank
     extends \TeqFw\Lib\Data

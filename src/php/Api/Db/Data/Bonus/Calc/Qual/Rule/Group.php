@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule;
 
 
 /**
  * Grouping rules.
  *
  * @Entity
- * @Table(name="bon_qual_rule_group")
+ * @Table(name="bon_calc_qual_rule_group")
  */
 class Group
     extends \TeqFw\Lib\Data

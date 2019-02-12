@@ -32,14 +32,14 @@ interface Config
     const DB_DRIVER_MYSQL = 'pdo_mysql';
     const DB_DRIVER_POSTGRES = 'pdo_pgsql';
     /**/
-    const DB_TBL_BON_CV_COLLECT = 'bon_cv_collect';
+    const DB_TBL_BON_CALC_QUAL_RULE = 'bon_calc_qual_rule';
+    const DB_TBL_BON_CALC_QUAL_RULE_GROUP = 'bon_calc_qual_rule_group';
+    const DB_TBL_BON_CALC_QUAL_RULE_GROUP_REF = 'bon_calc_qual_rule_group_ref';
+    const DB_TBL_BON_CALC_QUAL_RULE_PV = 'bon_calc_qual_rule_pv';
+    const DB_TBL_BON_CALC_QUAL_RULE_RANK = 'bon_calc_qual_rule_rank';
     const DB_TBL_BON_CV_REG = 'bon_cv_reg';
     const DB_TBL_BON_CV_REG_SALE = 'bon_cv_reg_sale';
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';
-    const DB_TBL_BON_PERIOD = 'bon_period';
-    const DB_TBL_BON_PERIOD_CALC = 'bon_period_calc';
-    const DB_TBL_BON_PERIOD_RANK = 'bon_period_rank';
-    const DB_TBL_BON_PERIOD_TREE = 'bon_period_tree';
     const DB_TBL_BON_PLAN = 'bon_plan';
     const DB_TBL_BON_PLAN_CALC_TYPE = 'bon_plan_calc_type';
     const DB_TBL_BON_PLAN_CALC_TYPE_DEPS_BEFORE = 'bon_plan_calc_type_deps_before';
@@ -49,11 +49,11 @@ interface Config
     const DB_TBL_BON_PLAN_RANK = 'bon_plan_rank';
     const DB_TBL_BON_PLAN_SUITE = 'bon_plan_suite';
     const DB_TBL_BON_PLAN_SUITE_CALC = 'bon_plan_suite_calc';
-    const DB_TBL_BON_QUAL_RULE = 'bon_qual_rule';
-    const DB_TBL_BON_QUAL_RULE_GROUP = 'bon_qual_rule_group';
-    const DB_TBL_BON_QUAL_RULE_GROUP_REF = 'bon_qual_rule_group_ref';
-    const DB_TBL_BON_QUAL_RULE_PV = 'bon_qual_rule_pv';
-    const DB_TBL_BON_QUAL_RULE_RANK = 'bon_qual_rule_rank';
+    const DB_TBL_BON_RESULT = 'bon_res';
+    const DB_TBL_BON_RESULT_CALC = 'bon_res_calc';
+    const DB_TBL_BON_RESULT_CV = 'bon_res_cv';
+    const DB_TBL_BON_RESULT_RANK = 'bon_res_rank';
+    const DB_TBL_BON_RESULT_TREE = 'bon_res_tree';
     const DB_TBL_CLIENT_REG = 'client_reg';
     const DB_TBL_CLIENT_REG_LOG_DEL = 'client_reg_log_del';
     const DB_TBL_CLIENT_REG_LOG_TYPE = 'client_reg_log_type';
