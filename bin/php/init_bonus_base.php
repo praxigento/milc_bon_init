@@ -10,19 +10,19 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as ECalcType;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type\Deps\On as ECalcTypeDepsOn;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan as EPlan;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Level as EPlanLevel;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Qualification as EPlanQual;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Rank as EPlanRank;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group as EQualRuleGroup;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Pv as EQualRulePv;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Rank as EQualRuleRank;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as ESuite;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as ESuiteCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as ECalcType;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type\Deps\On as ECalcTypeDepsOn;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan as EPlan;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Level as EPlanLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Qualification as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group as EQualRuleGroup;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group\Ref as EQualRuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv as EQualRulePv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank as EQualRuleRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as ESuite;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as ESuiteCalc;
 
 /**
  * Get DI container then populate database schema with DEM'ed entities.
@@ -411,7 +411,7 @@ function init_bonus_qual_rules_create_rank_god($container, $ranks)
  * @param float $volume
  * @param int $period
  * @param bool $isAutship
- * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Pv
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv
  */
 function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutship = false)
 {
@@ -443,7 +443,7 @@ function init_bonus_qual_rules_create_pv($container, $volume, $period, $isAutshi
  * @param $rankId
  * @param $count
  * @param $period
- * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Rank
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank
  */
 function init_bonus_qual_rules_create_rank($container, $rankId, $count, $period)
 {

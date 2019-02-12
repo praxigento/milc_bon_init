@@ -7,9 +7,9 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Qualification as EPlanQual;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Rank as EPlanRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc as EPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Qualification as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Data\RankEntry as DRankEntry;
 
 /**

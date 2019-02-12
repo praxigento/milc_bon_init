@@ -7,7 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Client\Tree\Get\A;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Client\Tree\Log as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Client\Tree\Log as ETreeLog;
 
 /**
  * Build query to get

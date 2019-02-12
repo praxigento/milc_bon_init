@@ -7,11 +7,11 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group as ERuleGroup;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Group\Ref as ERuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Pv as ERulePv;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Qualification\Rule\Rank as ERuleRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group as ERuleGroup;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Group\Ref as ERuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Pv as ERulePv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Qualification\Rule\Rank as ERuleRank;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader\Response as AResponse;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Z\Data\Rule\Group as DGroup;

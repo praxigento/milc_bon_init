@@ -10,14 +10,14 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Calc\Type as EBonCalcType;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Collected as EBonCvColect;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry as EBonCvReg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period as EBonPeriod;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EBonPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite as EBonSuite;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc as EBonSuiteCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EBonCalcType;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Collected as EBonCvColect;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as EBonCvReg;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period as EBonPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EBonSuite;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EBonSuiteCalc;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
@@ -142,7 +142,7 @@ function calc_bonus_period_register($container)
  * @param int $suiteId
  * @param string $typeCode
  * @param int $sequence
- * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Suite\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc
  * @throws \Exception
  */
 function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
@@ -177,7 +177,7 @@ function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
  * @param \Psr\Container\ContainerInterface $container
  * @param int $periodId
  * @param int $calcId
- * @return \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc
  */
 function calc_bonus_get_calc_instance($container, $periodId, $calcId)
 {
@@ -306,7 +306,7 @@ function calc_qual_save_ranks($container, $calcInstId, $tree)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
- * @param \Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period $period
+ * @param \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period $period
  * @param int $calcInstId
  * @param EBonCvColect[] $collected
  */

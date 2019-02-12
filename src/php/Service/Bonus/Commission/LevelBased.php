@@ -7,11 +7,11 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Commission;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Calc as EPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Level as EPeriodLevel;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Rank as EPeriodRank;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Period\Tree as EPeriodTree;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Plan\Level as EPlanLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Calc as EPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Level as EPeriodLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Rank as EPeriodRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Period\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Level as EPlanLevel;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response as AResponse;
 

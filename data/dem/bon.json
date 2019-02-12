@@ -1,105 +1,6 @@
 {
   "DEM": {
     ".": "/bon",
-    "calc": {
-      "type": {
-        ".": {
-          "desc": "Codifier for calculation types.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Calculation type ID."
-            },
-            "code": {
-              "type": "string",
-              "desc": "Calculation code to be referenced from programs/scripts."
-            },
-            "note": {
-              "type": "string",
-              "desc": "Calculation type reference for humans."
-            }
-          },
-          "index": {
-            "unique": {
-              "type": "unique",
-              "attrs": ["code"]
-            }
-          }
-        },
-        "deps": {
-          "on": {
-            ".": {
-              "desc": "Calculations are based on other calculations (ref depends on other_ref).",
-              "attr": {
-                "ref": {
-                  "type": "reference",
-                  "desc": "Main calculation."
-                },
-                "other_ref": {
-                  "type": "reference",
-                  "desc": "Base calculation for main calculation."
-                }
-              },
-              "index": {
-                "pk": {
-                  "type": "primary",
-                  "attrs": ["ref", "other_ref"]
-                }
-              },
-              "relation": {
-                "ref": {
-                  "path": "/bon/calc/type",
-                  "own": ["ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                },
-                "otherRef": {
-                  "path": "/bon/calc/type",
-                  "own": ["other_ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                }
-              }
-            }
-          },
-          "before": {
-            ".": {
-              "desc": "Calculations that should be performed before other calcs.",
-              "attr": {
-                "ref": {
-                  "type": "reference",
-                  "desc": "Main calculation."
-                },
-                "other_ref": {
-                  "type": "reference",
-                  "desc": "Main calculation should be performed before this calc."
-                }
-              },
-              "index": {
-                "pk": {
-                  "type": "primary",
-                  "attrs": ["ref", "other_ref"]
-                }
-              },
-              "relation": {
-                "ref": {
-                  "path": "/bon/calc/type",
-                  "own": ["ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                },
-                "otherRef": {
-                  "path": "/bon/calc/type",
-                  "own": ["other_ref"],
-                  "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "cv": {
       "reg": {
         ".": {
@@ -298,7 +199,7 @@
         },
         "relation": {
           "suite": {
-            "path": "/bon/suite",
+            "path": "/bon/plan/suite",
             "own": ["suite_ref"],
             "foreign": ["id"],
             "on": {"delete": "cascade", "update": "cascade"}
@@ -336,7 +237,7 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "calc": {
-              "path": "/bon/suite/calc",
+              "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -525,6 +426,105 @@
           }
         }
       },
+      "calc": {
+        "type": {
+          ".": {
+            "desc": "Codifier for calculation types.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Calculation type ID."
+              },
+              "code": {
+                "type": "string",
+                "desc": "Calculation code to be referenced from programs/scripts."
+              },
+              "note": {
+                "type": "string",
+                "desc": "Calculation type reference for humans."
+              }
+            },
+            "index": {
+              "unique": {
+                "type": "unique",
+                "attrs": ["code"]
+              }
+            }
+          },
+          "deps": {
+            "on": {
+              ".": {
+                "desc": "Calculations are based on other calculations (ref depends on other_ref).",
+                "attr": {
+                  "ref": {
+                    "type": "reference",
+                    "desc": "Main calculation."
+                  },
+                  "other_ref": {
+                    "type": "reference",
+                    "desc": "Base calculation for main calculation."
+                  }
+                },
+                "index": {
+                  "pk": {
+                    "type": "primary",
+                    "attrs": ["ref", "other_ref"]
+                  }
+                },
+                "relation": {
+                  "ref": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["ref"],
+                    "foreign": ["id"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  },
+                  "otherRef": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["other_ref"],
+                    "foreign": ["id"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  }
+                }
+              }
+            },
+            "before": {
+              ".": {
+                "desc": "Calculations that should be performed before other calcs.",
+                "attr": {
+                  "ref": {
+                    "type": "reference",
+                    "desc": "Main calculation."
+                  },
+                  "other_ref": {
+                    "type": "reference",
+                    "desc": "Main calculation should be performed before this calc."
+                  }
+                },
+                "index": {
+                  "pk": {
+                    "type": "primary",
+                    "attrs": ["ref", "other_ref"]
+                  }
+                },
+                "relation": {
+                  "ref": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["ref"],
+                    "foreign": ["id"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  },
+                  "otherRef": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["other_ref"],
+                    "foreign": ["id"],
+                    "on": {"delete": "cascade", "update": "cascade"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "level": {
         ".": {
           "desc": "Configuration for level based commission calculations.",
@@ -558,7 +558,7 @@
           },
           "relation": {
             "calc": {
-              "path": "/bon/suite/calc",
+              "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -597,7 +597,7 @@
           },
           "relation": {
             "calc": {
-              "path": "/bon/suite/calc",
+              "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -650,6 +650,82 @@
               "own": ["plan_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
+      "suite": {
+        ".": {
+          "desc": "Set of calculations related to one period.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Plan ID."
+            },
+            "plan_ref": {
+              "type": "reference",
+              "desc": "Reference to the bonus plan."
+            },
+            "date_created": {
+              "type": "date",
+              "desc": "Date when plan was created."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Plan description for humans."
+            }
+          },
+          "relation": {
+            "suite": {
+              "path": "/bon/plan",
+              "own": ["plan_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "calc": {
+          ".": {
+            "desc": "Calculations being bound to the concrete suite.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Calculation ID."
+              },
+              "suite_ref": {
+                "type": "reference",
+                "desc": "Reference to the plan."
+              },
+              "type_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation type."
+              },
+              "sequence": {
+                "type": "integer",
+                "desc": "Calculation sequence (order) in the plan.",
+                "small": true,
+                "unsigned": true
+              },
+              "date_created": {
+                "type": "datetime",
+                "desc": "Date when first calculation was (will be) performed.",
+                "small": true,
+                "unsigned": true
+              }
+            },
+            "relation": {
+              "suite": {
+                "path": "/bon/plan/suite",
+                "own": ["suite_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "calcType": {
+                "path": "/bon/plan/calc/type",
+                "own": ["type_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
             }
           }
         }
@@ -822,74 +898,6 @@
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               }
-            }
-          }
-        }
-      }
-    },
-    "suite": {
-      ".": {
-        "desc": "Set of calculations related to one period.",
-        "attr": {
-          "id": {
-            "type": "identity",
-            "desc": "Plan ID."
-          },
-          "plan_ref": {
-            "type": "reference",
-            "desc": "Reference to the bonus plan."
-          },
-          "date_created": {
-            "type": "date",
-            "desc": "Date when plan was created."
-          },
-          "note": {
-            "type": "string",
-            "desc": "Plan description for humans."
-          }
-        }
-      },
-      "calc": {
-        ".": {
-          "desc": "Calculations being bound to the concrete suite.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Calculation ID."
-            },
-            "suite_ref": {
-              "type": "reference",
-              "desc": "Reference to the plan."
-            },
-            "type_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation type."
-            },
-            "sequence": {
-              "type": "integer",
-              "desc": "Calculation sequence (order) in the plan.",
-              "small": true,
-              "unsigned": true
-            },
-            "date_created": {
-              "type": "datetime",
-              "desc": "Date when first calculation was (will be) performed.",
-              "small": true,
-              "unsigned": true
-            }
-          },
-          "relation": {
-            "suite": {
-              "path": "/bon/suite",
-              "own": ["suite_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "calcType": {
-              "path": "/bon/calc/type",
-              "own": ["type_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         }

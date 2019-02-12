@@ -7,9 +7,9 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Registry;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry\Sale as ECvRegSale;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Bonus\Cv\Registry\Sale\Back as ECvRegSaleBack;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry\Sale as ECvRegSale;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry\Sale\Back as ECvRegSaleBack;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv\Response as AResponse;
 

@@ -9,8 +9,8 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Res\Partner as EResPartner;
-use Praxigento\Milc\Bonus\Api\Repo\Data\Sale\Order as ESaleOrder;
+use Praxigento\Milc\Bonus\Api\Db\Data\Res\Partner as EResPartner;
+use Praxigento\Milc\Bonus\Api\Db\Data\Sale\Order as ESaleOrder;
 
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = 9000; //max random increment in seconds
