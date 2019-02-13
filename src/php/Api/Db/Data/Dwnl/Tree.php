@@ -4,12 +4,12 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Client;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl;
 
 
 /**
  * @Entity
- * @Table(name="client_tree")
+ * @Table(name="dwnl_tree")
  */
 class Tree
     extends \TeqFw\Lib\Data

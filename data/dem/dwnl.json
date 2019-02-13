@@ -1,9 +1,9 @@
 {
   "DEM": {
-    ".": "client",
+    ".": "dwnl",
     "reg": {
       ".": {
-        "desc": "Registry to save client data.",
+        "desc": "Registry to save client data (downline tree nodes).",
         "attr": {
           "client_ref": {
             "type": "reference",
@@ -48,7 +48,7 @@
       "log": {
         "del": {
           ".": {
-            "desc": "Log to save 'delete' events in clients registry.",
+            "desc": "Log to save 'delete/restore' events in clients registry.",
             "attr": {
               "id": {
                 "type": "identity",
@@ -70,7 +70,7 @@
             },
             "relation": {
               "client": {
-                "path": "/client/reg",
+                "path": "/dwnl/reg",
                 "own": ["client_ref"],
                 "foreign": ["client_ref"],
                 "on": {"delete": "cascade", "update": "cascade"}
@@ -102,7 +102,7 @@
             },
             "relation": {
               "client": {
-                "path": "/client/reg",
+                "path": "/dwnl/reg",
                 "own": ["client_ref"],
                 "foreign": ["client_ref"],
                 "on": {"delete": "cascade", "update": "cascade"}
@@ -141,13 +141,14 @@
         },
         "relation": {
           "client": {
-            "path": "/client/reg",
+            "path": "/dwnl/reg",
             "own": ["client_ref"],
             "foreign": ["client_ref"],
             "on": {"delete": "restrict", "update": "cascade"}
           },
           "parent": {
-            "path": "/client/tree",
+            ".comment": "Parent must exist in the current tree.",
+            "path": "/dwnl/tree",
             "own": ["parent_ref"],
             "foreign": ["client_ref"],
             "on": {"delete": "restrict", "update": "cascade"}
@@ -178,13 +179,13 @@
           },
           "relation": {
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "parent": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["parent_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}

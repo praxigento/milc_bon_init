@@ -92,7 +92,7 @@ function readJsonBase()
  */
 function readJsonClient()
 {
-    $file = __DIR__ . '/../../data/dem/client.json';
+    $file = __DIR__ . '/../../data/dem/dwnl.json';
     $result = file_get_contents($file);
     return $result;
 }

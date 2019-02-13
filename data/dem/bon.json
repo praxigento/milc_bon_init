@@ -2,7 +2,101 @@
   "DEM": {
     ".": "/bon",
     "calc": {
+      "comm": {
+        "level": {
+          ".": {
+            "desc": "Configuration for level based commission calculations.",
+            "attr": {
+              "calc_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation."
+              },
+              "rank_ref": {
+                "type": "reference",
+                "desc": "Reference to the rank."
+              },
+              "level": {
+                "type": "integer",
+                "unsigned": true,
+                "small": true,
+                "desc": "Level in downline tree (1, 2, ...)."
+              },
+              "percent": {
+                "type": "decimal",
+                "desc": "Commission percent from the level for the rank.",
+                "precision": 5,
+                "scale": 4
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["calc_ref", "rank_ref", "level"]
+              }
+            },
+            "relation": {
+              "calc": {
+                "path": "/bon/plan/suite/calc",
+                "own": ["calc_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "rank": {
+                "path": "/bon/plan/rank",
+                "own": ["rank_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        }
+      },
       "qual": {
+        "rank": {
+          ".": {
+            "desc": "Configuration for ranks qualification rules.",
+            "attr": {
+              "calc_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation."
+              },
+              "rank_ref": {
+                "type": "reference",
+                "desc": "Reference to the rank."
+              },
+              "rule_ref": {
+                "type": "reference",
+                "desc": "Reference to the qualification rule."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["calc_ref", "rank_ref", "rule_ref"]
+              }
+            },
+            "relation": {
+              "calc": {
+                "path": "/bon/plan/suite/calc",
+                "own": ["calc_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "rank": {
+                "path": "/bon/plan/rank",
+                "own": ["rank_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "rule": {
+                "path": "/bon/calc/qual/rule",
+                "own": ["rule_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        },
         "rule": {
           ".": {
             "desc": "Registry for qualification rules.",
@@ -211,7 +305,7 @@
           },
           "relation": {
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -411,7 +505,7 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -470,7 +564,7 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -509,7 +603,7 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -567,13 +661,13 @@
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "client": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
             "parent": {
-              "path": "/client/reg",
+              "path": "/dwnl/reg",
               "own": ["parent_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -695,98 +789,6 @@
                   }
                 }
               }
-            }
-          }
-        }
-      },
-      "level": {
-        ".": {
-          "desc": "Configuration for level based commission calculations.",
-          "attr": {
-            "calc_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation."
-            },
-            "rank_ref": {
-              "type": "reference",
-              "desc": "Reference to the rank."
-            },
-            "level": {
-              "type": "integer",
-              "unsigned": true,
-              "small": true,
-              "desc": "Level in downline tree (1, 2, ...)."
-            },
-            "percent": {
-              "type": "decimal",
-              "desc": "Commission percent from the level for the rank.",
-              "precision": 5,
-              "scale": 4
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_ref", "rank_ref", "level"]
-            }
-          },
-          "relation": {
-            "calc": {
-              "path": "/bon/plan/suite/calc",
-              "own": ["calc_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "rank": {
-              "path": "/bon/plan/rank",
-              "own": ["rank_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      },
-      "qual": {
-        ".": {
-          "desc": "Configuration for ranks qualification rules.",
-          "attr": {
-            "calc_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation."
-            },
-            "rank_ref": {
-              "type": "reference",
-              "desc": "Reference to the rank."
-            },
-            "rule_ref": {
-              "type": "reference",
-              "desc": "Reference to the qualification rule."
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_ref", "rank_ref", "rule_ref"]
-            }
-          },
-          "relation": {
-            "calc": {
-              "path": "/bon/plan/suite/calc",
-              "own": ["calc_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "rank": {
-              "path": "/bon/plan/rank",
-              "own": ["rank_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "rule": {
-              "path": "/bon/calc/qual/rule",
-              "own": ["rule_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         }

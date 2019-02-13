@@ -126,7 +126,7 @@ class Loader
             "$asMain." . ERuleGroup::LOGIC . " as " . DGroup::LOGIC,
             "$asOther." . ERuleGroupRef::GROUPED_REF . " as " . DGroup::RULES
         ]);
-        /* LEFT JOIN bon_plan_qual */
+        /* LEFT JOIN bon_calc_qual_rank */
         $on = "$asOther." . ERuleGroupRef::GROUPING_REF . "=$asMain." . ERuleGroup::REF;
         $qb->leftJoin($asMain, Cfg::DB_TBL_BON_CALC_QUAL_RULE_GROUP_REF, $asOther, $on);
 

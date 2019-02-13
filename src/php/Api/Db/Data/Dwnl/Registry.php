@@ -4,12 +4,12 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Client;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl;
 
 
 /**
  * @Entity
- * @Table(name="client_reg")
+ * @Table(name="dwnl_reg")
  */
 class Registry
     extends \TeqFw\Lib\Data

@@ -4,12 +4,12 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Client\Registry\Log;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry\Log;
 
 
 /**
  * @Entity
- * @Table(name="client_reg_log_type")
+ * @Table(name="dwnl_reg_log_type")
  */
 class Type
     extends \TeqFw\Lib\Data
