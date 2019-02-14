@@ -49,6 +49,7 @@ interface Config
     const DB_TBL_BON_PLAN_RANK = 'bon_plan_rank';
     const DB_TBL_BON_PLAN_SUITE = 'bon_plan_suite';
     const DB_TBL_BON_PLAN_SUITE_CALC = 'bon_plan_suite_calc';
+    const DB_TBL_BON_RESULT_COMM_LEVEL = 'bon_res_comm_level';
     const DB_TBL_BON_RESULT_CV = 'bon_res_cv';
     const DB_TBL_BON_RESULT_PERIOD = 'bon_res_period';
     const DB_TBL_BON_RESULT_RACE = 'bon_res_race';

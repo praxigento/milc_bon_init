@@ -430,6 +430,67 @@
           }
         }
       },
+      "comm": {
+        "level": {
+          ".": {
+            "desc": "Level based bonus commission values for race calculation.",
+            "attr": {
+              "calc_inst_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation instance."
+              },
+              "client_ref": {
+                "type": "reference",
+                "desc": "Reference to the client."
+              },
+              "level": {
+                "type": "integer",
+                "unsigned": true,
+                "small": true,
+                "desc": "Appropriate level in the configuration."
+              },
+              "cv": {
+                "type": "decimal",
+                "desc": "Total volume of commission points.",
+                "precision": 10,
+                "scale": 2
+              },
+              "percent": {
+                "type": "decimal",
+                "desc": "Commission percent from the level for the client.",
+                "precision": 5,
+                "scale": 4
+              },
+              "commission": {
+                "type": "decimal",
+                "desc": "Commission amount from CV for the level.",
+                "precision": 10,
+                "scale": 2
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["calc_inst_ref", "client_ref", "level"]
+              }
+            },
+            "relation": {
+              "raceCalc": {
+                "path": "/bon/res/race/calc",
+                "own": ["calc_inst_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "client": {
+                "path": "/dwnl/reg",
+                "own": ["client_ref"],
+                "foreign": ["client_ref"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          }
+        }
+      },
       "cv": {
         ".": {
           "desc": "CV/ACV are collected for period in one race.",
@@ -458,65 +519,6 @@
             "pk": {
               "type": "primary",
               "attrs": ["calc_inst_ref", "client_ref", "is_autoship"]
-            }
-          },
-          "relation": {
-            "raceCalc": {
-              "path": "/bon/res/race/calc",
-              "own": ["calc_inst_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "client": {
-              "path": "/dwnl/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      },
-      "level": {
-        ".": {
-          "desc": "Level based bonus commission values for period calculation.",
-          "attr": {
-            "calc_inst_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation instance."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "level": {
-              "type": "integer",
-              "unsigned": true,
-              "small": true,
-              "desc": "Appropriate level in the configuration."
-            },
-            "cv": {
-              "type": "decimal",
-              "desc": "Total volume of commission points.",
-              "precision": 10,
-              "scale": 2
-            },
-            "percent": {
-              "type": "decimal",
-              "desc": "Commission percent from the level for the client.",
-              "precision": 5,
-              "scale": 4
-            },
-            "commission": {
-              "type": "decimal",
-              "desc": "Commission amount from CV for the level.",
-              "precision": 10,
-              "scale": 2
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["calc_inst_ref", "client_ref", "level"]
             }
           },
           "relation": {
@@ -603,7 +605,7 @@
       },
       "rank": {
         ".": {
-          "desc": "Qualifications on rank for period calculation.",
+          "desc": "Qualifications on rank for race calculation.",
           "attr": {
             "calc_inst_ref": {
               "type": "reference",
