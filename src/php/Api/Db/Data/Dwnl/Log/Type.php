@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry\Log;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log;
 
 
 /**
  * @Entity
- * @Table(name="dwnl_reg_log_del")
+ * @Table(name="dwnl_log_type")
  */
-class Delete
+class Type
     extends \TeqFw\Lib\Data
 {
     /**
@@ -35,5 +35,5 @@ class Delete
      * @var boolean
      * @Column(type="boolean")
      */
-    public $is_deleted;
+    public $is_customer;
 }

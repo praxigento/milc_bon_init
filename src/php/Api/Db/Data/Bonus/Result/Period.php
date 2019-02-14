@@ -4,16 +4,16 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 
 
 /**
  * Bonus periods.
  *
  * @Entity
- * @Table(name="bon_res")
+ * @Table(name="bon_res_period")
  */
-class Result
+class Period
     extends \TeqFw\Lib\Data
 {
     const DATE_BEGIN = 'date_begin';

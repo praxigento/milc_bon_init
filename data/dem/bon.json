@@ -54,7 +54,7 @@
       "qual": {
         "rank": {
           ".": {
-            "desc": "Configuration for ranks qualification rules.",
+            "desc": "Relations between ranks and qualification rules.",
             "attr": {
               "calc_ref": {
                 "type": "reference",
@@ -99,7 +99,7 @@
         },
         "rule": {
           ".": {
-            "desc": "Registry for qualification rules.",
+            "desc": "Qualification rules registry.",
             "attr": {
               "id": {
                 "type": "identity",
@@ -142,7 +142,7 @@
             },
             "ref": {
               ".": {
-                "desc": "Grouped rules.",
+                "desc": "Grouped rules in grouping rules.",
                 "attr": {
                   "grouping_ref": {
                     "type": "reference",
@@ -314,7 +314,7 @@
         },
         "sale": {
           ".": {
-            "desc": "Links between records in CV registry and related sales orders.",
+            "desc": "Links between entries in CV registry and related sales orders.",
             "attr": {
               "registry_ref": {
                 "type": "reference",
@@ -352,7 +352,7 @@
           },
           "back": {
             ".": {
-              "desc": "Links between records in CV registry and related sales orders returns.",
+              "desc": "Links between records in CV registry and related sales orders clawbacks.",
               "attr": {
                 "registry_ref": {
                   "type": "reference",
@@ -393,74 +393,37 @@
       }
     },
     "res": {
-      ".": {
-        "desc": "Bonus periods.",
-        "attr": {
-          "id": {
-            "type": "identity",
-            "desc": "Period ID."
-          },
-          "suite_ref": {
-            "type": "reference",
-            "desc": "Related bonus suite."
-          },
-          "date_begin": {
-            "type": "date",
-            "desc": "Begin date of the period."
-          },
-          "state": {
-            "type": "string",
-            "desc": "Period state: open, closed."
-          }
-        },
-        "index": {
-          "unique": {
-            "type": "unique",
-            "attrs": ["suite_ref", "date_begin"]
-          }
-        },
-        "relation": {
-          "suite": {
-            "path": "/bon/plan/suite",
-            "own": ["suite_ref"],
-            "foreign": ["id"],
-            "on": {"delete": "cascade", "update": "cascade"}
-          }
-        }
-      },
-      "calc": {
+      "period": {
         ".": {
-          "desc": "Bonus calculation inside of period.",
+          "desc": "Registry for instances of bonus suites calculations (bound to period data and state).",
           "attr": {
             "id": {
               "type": "identity",
-              "desc": "Calculation ID."
+              "desc": "Period ID."
             },
-            "period_ref": {
+            "suite_ref": {
               "type": "reference",
-              "desc": "Related bonus period."
+              "desc": "Related bonus suite."
             },
-            "calc_ref": {
-              "type": "reference",
-              "desc": "Related bonus calculation."
+            "date_begin": {
+              "type": "date",
+              "desc": "Begin date of the period."
+            },
+            "state": {
+              "type": "string",
+              "desc": "Period state: open, closed"
             }
           },
           "index": {
             "unique": {
               "type": "unique",
-              "attrs": ["period_ref", "calc_ref"]
+              "attrs": ["suite_ref", "date_begin"]
             }
           },
           "relation": {
-            "period": {
-              "path": "/bon/res",
-              "own": ["period_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "calc": {
-              "path": "/bon/plan/suite/calc",
-              "own": ["calc_ref"],
+            "suite": {
+              "path": "/bon/plan/suite",
+              "own": ["suite_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
@@ -469,7 +432,7 @@
       },
       "cv": {
         ".": {
-          "desc": "CV/ACV are collected for period.",
+          "desc": "CV/ACV are collected for period in one race.",
           "attr": {
             "calc_inst_ref": {
               "type": "reference",
@@ -498,8 +461,8 @@
             }
           },
           "relation": {
-            "period": {
-              "path": "/bon/res/calc",
+            "raceCalc": {
+              "path": "/bon/res/race/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -557,8 +520,8 @@
             }
           },
           "relation": {
-            "calcInstance": {
-              "path": "/bon/res/calc",
+            "raceCalc": {
+              "path": "/bon/res/race/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -568,6 +531,72 @@
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        }
+      },
+      "race": {
+        ".": {
+          "desc": "Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Calculations race ID."
+            },
+            "period_ref": {
+              "type": "reference",
+              "desc": "Related period (bound to bonus suite)."
+            },
+            "date_started": {
+              "type": "datetime",
+              "desc": "Date when plan was created."
+            }
+          },
+          "relation": {
+            "result": {
+              "path": "/bon/res/period",
+              "own": ["period_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "calc": {
+          ".": {
+            "desc": "Instance of the calculation inside of period race.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Calculation ID."
+              },
+              "race_ref": {
+                "type": "reference",
+                "desc": "Related race (bound to period)."
+              },
+              "calc_ref": {
+                "type": "reference",
+                "desc": "Related bonus calculation."
+              }
+            },
+            "index": {
+              "unique": {
+                "type": "unique",
+                "attrs": ["race_ref", "calc_ref"]
+              }
+            },
+            "relation": {
+              "race": {
+                "path": "/bon/res/race",
+                "own": ["race_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "calc": {
+                "path": "/bon/plan/suite/calc",
+                "own": ["calc_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
             }
           }
         }
@@ -596,8 +625,8 @@
             }
           },
           "relation": {
-            "calcInstance": {
-              "path": "/bon/res/calc",
+            "raceCalc": {
+              "path": "/bon/res/race/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -654,8 +683,8 @@
             }
           },
           "relation": {
-            "calcInstance": {
-              "path": "/bon/res/calc",
+            "raceCalc": {
+              "path": "/bon/res/race/calc",
               "own": ["calc_inst_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -678,7 +707,7 @@
     },
     "plan": {
       ".": {
-        "desc": "Set of suites related to one set of ranks.",
+        "desc": "Set of bonus suites related to one set of ranks.",
         "attr": {
           "id": {
             "type": "identity",
@@ -697,7 +726,7 @@
       "calc": {
         "type": {
           ".": {
-            "desc": "Codifier for calculation types.",
+            "desc": "Calculations types codifier.",
             "attr": {
               "id": {
                 "type": "identity",
@@ -720,7 +749,7 @@
             }
           },
           "deps": {
-            "on": {
+            "after": {
               ".": {
                 "desc": "Calculations are based on other calculations (ref depends on other_ref).",
                 "attr": {
@@ -757,7 +786,7 @@
             },
             "before": {
               ".": {
-                "desc": "Calculations that should be performed before other calcs.",
+                "desc": "Calculations that should be performed before other calculations.",
                 "attr": {
                   "ref": {
                     "type": "reference",
@@ -795,7 +824,7 @@
       },
       "rank": {
         ".": {
-          "desc": "Ranks are bound to the concrete plan.",
+          "desc": "Ranks bound to the concrete plan.",
           "attr": {
             "id": {
               "type": "identity",
@@ -832,7 +861,7 @@
       },
       "suite": {
         ".": {
-          "desc": "Set of calculations related to one period.",
+          "desc": "Set of calculations related to one period type (day, week, month, year).",
           "attr": {
             "id": {
               "type": "identity",
@@ -841,6 +870,10 @@
             "plan_ref": {
               "type": "reference",
               "desc": "Reference to the bonus plan."
+            },
+            "period": {
+              "type": "string",
+              "desc": "Period type (D)AY, (W)EEK, (M)ONTH, (Y)EAR)."
             },
             "date_created": {
               "type": "date",

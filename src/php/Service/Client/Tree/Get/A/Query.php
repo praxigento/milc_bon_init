@@ -7,7 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Client\Tree\Get\A;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree\Log as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
 
 /**
  * Build query to get
@@ -80,7 +80,7 @@ class Query
         $expForDate = $this->expForDate();
         /* compose query using builder */
         $result = $this->conn->createQueryBuilder();
-        $result->from(Cfg::DB_TBL_DWNL_TREE_LOG, self::AS_INIT);
+        $result->from(Cfg::DB_TBL_DWNL_LOG_TREE, self::AS_INIT);
         $result->select([
             self::AS_INIT . '.' . ETreeLog::CLIENT_REF . ' as ' . self::A_BY_DATE_CLIENT_REF,
             'MAX(' . self::AS_INIT . '.' . ETreeLog::ID . ') as ' . self::A_BY_DATE_ID
@@ -128,7 +128,7 @@ class Query
         $on = $expr->eq(self::AS_RESULT . '.' . ETreeLog::ID, self::AS_BY_CLIENT . '.' . self::A_BY_CLIENT_REF);
         $result->leftJoin(
             self::AS_BY_CLIENT,
-            Cfg::DB_TBL_DWNL_TREE_LOG,
+            Cfg::DB_TBL_DWNL_LOG_TREE,
             self::AS_RESULT,
             $on
         );

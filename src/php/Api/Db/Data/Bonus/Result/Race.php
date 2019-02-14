@@ -8,22 +8,23 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 
 
 /**
- * Bonus calculation inside of period.
+ * Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).
  *
  * @Entity
- * @Table(name="bon_res_calc")
+ * @Table(name="bon_res_race")
  */
-class Calc
+class Race
     extends \TeqFw\Lib\Data
 {
-    const CALC_REF = 'calc_ref';
+    const DATE_STARTED = 'date_started';
     const ID = 'id';
     const PERIOD_REF = 'period_ref';
+
     /**
-     * @var int
-     * @Column(type="integer")
+     * @var \DateTime
+     * @Column(type="datetime")
      */
-    public $calc_ref;
+    public $date_started;
     /**
      * @var int
      * @Id

@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Client;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree\Log as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
 use Praxigento\Milc\Bonus\Api\Service\Client\Add\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Add\Response as AResponse;
 

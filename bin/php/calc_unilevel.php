@@ -10,14 +10,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EBonCalcType;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EBonCvColect;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as EBonCvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result as EBonPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Calc as EBonPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EBonCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EBonSuiteCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EBonCvColect;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EBonPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race as EBonRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
@@ -37,16 +38,19 @@ try {
 
     /* Create/get first period for the first suite */
     /** @var EBonPeriod $period */
-    $period = calc_bonus_period_register($container);
+    $period = calc_bonus_register_period($container);
     $periodId = $period->id;
     $suiteId = $period->suite_ref;
+    /* create/get calculation race for the period */
+    $race = calc_bonus_register_race($container, $periodId);
+    $raceId = $race->id;
     /**
      * STEP 1: Collect CV for period.
      */
     $typeCode = Cfg::CALC_TYPE_COLLECT_CV;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 1);
-    /* get period related calc instance (CV collection) */
-    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    /* get period race related calc instance (CV collection) */
+    $calcInst = calc_bonus_get_calc_instance($container, $raceId, $calc->id);
     /* collect CV for the period */
     $collected = calc_cv_collect($container, $calcInst->id, $period->date_begin);
     /**
@@ -54,7 +58,7 @@ try {
      */
     $typeCode = Cfg::CALC_TYPE_TREE_PLAIN;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 2);
-    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcInst = calc_bonus_get_calc_instance($container, $raceId, $calc->id);
     $calcTreeId = $calcInst->id;
     $tree = calc_tree_plain($container, $period, $calcInst->id, $collected);
     /**
@@ -62,7 +66,7 @@ try {
      */
     $typeCode = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 3);
-    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcInst = calc_bonus_get_calc_instance($container, $raceId, $calc->id);
     $calcRanksId = $calcInst->id;
     calc_qual_save_ranks($container, $calcInst->id, $tree);
     /**
@@ -70,7 +74,7 @@ try {
      */
     $typeCode = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 4);
-    $calcInst = calc_bonus_get_calc_instance($container, $periodId, $calc->id);
+    $calcInst = calc_bonus_get_calc_instance($container, $raceId, $calc->id);
     $calcCommId = $calcInst->id;
     calc_bonus_comm_level_based($container, $calcCommId, $calcTreeId, $calcRanksId);
 
@@ -112,7 +116,7 @@ function calc_bonus_comm_level_based($container, $calcThis, $calcTree, $calcRank
  * @param \Psr\Container\ContainerInterface $container
  * @return EBonPeriod
  */
-function calc_bonus_period_register($container)
+function calc_bonus_register_period($container)
 {
     $found = common_get_by_attr($container, EBonSuite::class, [EBonSuite::NOTE => Cfg::SUITE_NOTE]);
     $data = reset($found);
@@ -133,6 +137,32 @@ function calc_bonus_period_register($container)
     } else {
         $data = reset($found);
         $result = new EBonPeriod($data);
+    }
+    return $result;
+}
+
+/**
+ * Create/get period race for the given period.
+ *
+ * @param \Psr\Container\ContainerInterface $container
+ * @param int $periodId
+ * @return EBonRace
+ */
+function calc_bonus_register_race($container, $periodId)
+{
+    $found = common_get_by_attr($container, EBonRace::class, [EBonRace::PERIOD_REF => $periodId]);
+    if (!$found) {
+        $dateStarted = new \DateTime();
+        $result = new EBonRace();
+        $result->period_ref = $periodId;
+        $result->date_started = $dateStarted;
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist($result);
+        $em->flush();
+    } else {
+        $data = reset($found);
+        $result = new EBonRace($data);
     }
     return $result;
 }
@@ -175,20 +205,20 @@ function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
- * @param int $periodId
+ * @param int $raceId
  * @param int $calcId
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc
  */
-function calc_bonus_get_calc_instance($container, $periodId, $calcId)
+function calc_bonus_get_calc_instance($container, $raceId, $calcId)
 {
     $bind = [
-        EBonPeriodCalc::PERIOD_REF => $periodId,
+        EBonPeriodCalc::RACE_REF => $raceId,
         EBonPeriodCalc::CALC_REF => $calcId
     ];
     $found = common_get_by_attr($container, EBonPeriodCalc::class, $bind);
     if (!$found) {
         $result = new EBonPeriodCalc();
-        $result->period_ref = $periodId;
+        $result->race_ref = $raceId;
         $result->calc_ref = $calcId;
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);

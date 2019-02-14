@@ -16,10 +16,10 @@ interface Config
     const BONUS_PERIOD_STATE_CLOSE = 'close';
     const BONUS_PERIOD_STATE_OPEN = 'open';
     /**/
-    const BONUS_PERIOD_TYPE_DAY = 1;
-    const BONUS_PERIOD_TYPE_MONTH = 3;
-    const BONUS_PERIOD_TYPE_WEEK = 2;
-    const BONUS_PERIOD_TYPE_YEAR = 4;
+    const BONUS_PERIOD_TYPE_DAY = 'D';
+    const BONUS_PERIOD_TYPE_MONTH = 'M';
+    const BONUS_PERIOD_TYPE_WEEK = 'W';
+    const BONUS_PERIOD_TYPE_YEAR = 'Y';
     /**/
     const CALC_TYPE_BONUS_LEVEL_BASED = 'BONUS_LEVEL_BASED';
     const CALC_TYPE_COLLECT_CV = 'COLLECT_CV';
@@ -44,21 +44,22 @@ interface Config
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';
     const DB_TBL_BON_PLAN = 'bon_plan';
     const DB_TBL_BON_PLAN_CALC_TYPE = 'bon_plan_calc_type';
+    const DB_TBL_BON_PLAN_CALC_TYPE_DEPS_AFTER = 'bon_plan_calc_type_deps_after';
     const DB_TBL_BON_PLAN_CALC_TYPE_DEPS_BEFORE = 'bon_plan_calc_type_deps_before';
-    const DB_TBL_BON_PLAN_CALC_TYPE_DEPS_ON = 'bon_plan_calc_type_deps_on';
     const DB_TBL_BON_PLAN_RANK = 'bon_plan_rank';
     const DB_TBL_BON_PLAN_SUITE = 'bon_plan_suite';
     const DB_TBL_BON_PLAN_SUITE_CALC = 'bon_plan_suite_calc';
-    const DB_TBL_BON_RESULT = 'bon_res';
-    const DB_TBL_BON_RESULT_CALC = 'bon_res_calc';
     const DB_TBL_BON_RESULT_CV = 'bon_res_cv';
+    const DB_TBL_BON_RESULT_PERIOD = 'bon_res_period';
+    const DB_TBL_BON_RESULT_RACE = 'bon_res_race';
+    const DB_TBL_BON_RESULT_RACE_CALC = 'bon_res_race_calc';
     const DB_TBL_BON_RESULT_RANK = 'bon_res_rank';
     const DB_TBL_BON_RESULT_TREE = 'bon_res_tree';
+    const DB_TBL_DWNL_LOG_DEL = 'dwnl_log_del';
+    const DB_TBL_DWNL_LOG_TREE = 'dwnl_log_tree';
+    const DB_TBL_DWNL_LOG_TYPE = 'dwnl_log_type';
     const DB_TBL_DWNL_REG = 'dwnl_reg';
-    const DB_TBL_DWNL_REG_LOG_DEL = 'dwnl_reg_log_del';
-    const DB_TBL_DWNL_REG_LOG_TYPE = 'dwnl_reg_log_type';
     const DB_TBL_DWNL_TREE = 'dwnl_tree';
-    const DB_TBL_DWNL_TREE_LOG = 'dwnl_tree_log';
     const DB_TBL_RES_PARTNER = 'res_partner';
     const DB_TBL_SALE_ORDER = 'sale_order';
     /**/

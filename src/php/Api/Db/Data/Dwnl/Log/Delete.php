@@ -4,20 +4,16 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log;
 
 
 /**
  * @Entity
- * @Table(name="dwnl_tree_log")
+ * @Table(name="dwnl_log_del")
  */
-class Log
+class Delete
     extends \TeqFw\Lib\Data
 {
-    public const CLIENT_REF = 'client_ref';
-    public const DATE = 'date';
-    public const ID = 'id';
-    public const PARENT_REF = 'parent_ref';
     /**
      * @var int
      * @Column(type="integer")
@@ -36,9 +32,8 @@ class Log
      */
     public $id;
     /**
-     * @var int
-     * @Column(type="integer")
+     * @var boolean
+     * @Column(type="boolean")
      */
-    public $parent_ref;
-
+    public $is_deleted;
 }

@@ -89,13 +89,13 @@ try {
 function downlineAddTo($container, $date, $mapDistr, $customerId, $rootId)
 {
     /* prepare working data */
+    $count = count($mapDistr) - 1;
     if (is_null($rootId)) {
         $rootId = $customerId;
         $parentId = $customerId;
     } else {
         /* parent ID should not be equal to customer ID - we have a failures when we delete customers */
         do {
-            $count = count($mapDistr) - 1;
             $key = random_int(0, $count);
             $parentId = $mapDistr[$key];
         } while ($parentId == $customerId);

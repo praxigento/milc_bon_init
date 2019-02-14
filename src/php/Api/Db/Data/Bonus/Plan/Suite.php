@@ -19,6 +19,7 @@ class Suite
     const DATE_CREATED = 'date_created';
     const ID = 'id';
     const NOTE = 'note';
+    const PERIOD = 'period';
     const PLAN_REF = 'plan_ref';
     /**
      * @var \DateTime
@@ -37,6 +38,11 @@ class Suite
      * @Column(type="string")
      */
     public $note;
+    /**
+     * @var string
+     * @Column(type="string")
+     */
+    public $period;
     /**
      * @var int
      * @Column(type="integer")
