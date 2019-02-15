@@ -12,7 +12,7 @@ use Praxigento\Milc\Bonus\Api\Config as Cfg;
 
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = Cfg::BEGINNING_OF_AGES_INC_MAX; //max random increment in seconds
-const PERCENT_CLAWBACK = 90;
+const PERCENT_CLAWBACK = 10;
 const PERCENT_DELETE = 16;
 const PERCENT_NEW_CLIENT_IS_NOT_DISTR = 5;
 const PERCENT_PARENT_CHANGE = 20;
@@ -107,7 +107,7 @@ try {
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->flush();
 
-    $conn->rollBack();
+    $conn->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
