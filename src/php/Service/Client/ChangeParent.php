@@ -6,8 +6,8 @@
 
 namespace Praxigento\Milc\Bonus\Service\Client;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Response as AResponse;
 
@@ -44,9 +44,11 @@ class ChangeParent
         /** @var ETree $found */
         $found = $this->manEntity->find(ETree::class, $clientId);
         if ($found) {
-            $parentId = $found->parent_ref;
-            $result->parentIdOld = $parentId;
-            if ($parentId != $parentIdNew) {
+            $parentIdOld = $found->parent_ref;
+            $result->parentIdOld = $parentIdOld;
+            $isDiffer = $this->validateNewParentIsDiffer($parentIdOld, $parentIdNew);
+            $isNotInDwnl = $this->validateNewParentIsNotInDownline($clientId, $parentIdOld, $parentIdNew);
+            if ($isDiffer && $isNotInDwnl) {
                 /* save data into downline tree trace */
                 $log = new ETreeLog();
                 $log->client_ref = $clientId;
@@ -61,6 +63,35 @@ class ChangeParent
             }
         }
 
+        return $result;
+    }
+
+    private function validateNewParentIsDiffer($parentIdOld, $parentIdNew)
+    {
+        $result = $parentIdOld != $parentIdNew;
+        return $result;
+    }
+
+    private function validateNewParentIsNotInDownline($clientId, $parentIdOld, $parentIdNew)
+    {
+        $result = false;
+        $nodeId = $parentIdNew;
+        $log = ":$nodeId";
+        do {
+            /** @var ETree $entity */
+            $entity = $this->manEntity->find(ETree::class, $nodeId);
+            $this->manEntity->refresh($entity);
+            $nodeFatherId = $entity->parent_ref;
+            if ($nodeFatherId == $clientId)
+                break;
+            if ($nodeFatherId == $nodeId) {
+                /* this is root node*/
+                $result = true;
+                break;
+            }
+            $nodeId = $nodeFatherId;
+            $log .= ":$nodeId";
+        } while (true);
         return $result;
     }
 }

@@ -10,8 +10,9 @@ namespace Praxigento\Milc\Bonus\Api;
 interface Config
 {
     /**/
-    const BEGINNING_OF_AGES = '2019/01/01 00:00:00';
+    const BEGINNING_OF_AGES = '2018/01/01 00:00:00';
     const BEGINNING_OF_AGES_FORMAT = 'Y/m/d H:i:s';
+    const BEGINNING_OF_AGES_INC_MAX = 9000; //max random increment on events (in seconds)
     /**/
     const BONUS_PERIOD_STATE_CLOSE = 'close';
     const BONUS_PERIOD_STATE_OPEN = 'open';

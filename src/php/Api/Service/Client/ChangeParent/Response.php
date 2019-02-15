@@ -10,5 +10,8 @@ namespace Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent;
 class Response
     extends \TeqFw\Lib\Data
 {
+    /** @var int */
     public $parentIdOld;
+    /** @var bool */
+    public $success;
 }
