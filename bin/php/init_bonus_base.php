@@ -11,17 +11,12 @@ require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Comm\Level as ECalcLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rank as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule as EQualRule;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group as EQualRuleGroup;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group\Ref as EQualRuleGroupRef;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Pv as EQualRulePv;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank as EQualRuleRank;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan as EPlan;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as ECalcType;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type\Deps\After as ECalcTypeDepsOn;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rank as EPlanQual;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as ESuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as ESuiteCalc;
 
 /**
@@ -34,15 +29,19 @@ try {
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
 
+    /** @var \Praxigento\Milc\Bonus\Helper\Init\Bonus $hlpInit */
+    $hlpInit = $container->get(\Praxigento\Milc\Bonus\Helper\Init\Bonus::class);
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->beginTransaction();
 
-    $planId = init_bonus_plan($container);
-    $suiteId = init_bonus_suite($container, $planId);
-    $ranks = init_bonus_plan_ranks($container, $planId);
-    $typeIds = init_bonus_calc_type($container);
-    $calcIds = init_bonus_suite_calcs($container, $suiteId, $typeIds);
+    $plan = $hlpInit->plan();
+    $planId = $plan->id;
+    $suite = $hlpInit->suite($planId);
+    $suiteId = $suite->id;
+    $ranks = $hlpInit->planRanks($planId);
+    $typeIds = $hlpInit->calcTypes();
+    $calcIds = $hlpInit->suiteCalcs($suiteId, $typeIds);
     $calcIdQual = $calcIds[Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE];
     init_bonus_qual_rules($container, $calcIdQual, $ranks);
     $calcIdLevels = $calcIds[Cfg::CALC_TYPE_BONUS_LEVEL_BASED];
@@ -84,179 +83,6 @@ function init_bonus_levels($container, $calcId, $ranks)
         }
     }
     $em->flush();
-}
-
-/**
- * @param \Psr\Container\ContainerInterface $container
- * @return int
- */
-function init_bonus_plan($container)
-{
-    /** @var \Praxigento\Milc\Bonus\Api\Helper\Format $format */
-    $format = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Format::class);
-    $plan = new EPlan();
-    $plan->date_created = $format->getDateNowUtc();
-
-    $plan->note = 'Development plan.';
-    $found = common_get_by_attr($container, EPlan::class, [EPlan::NOTE => $plan->note]);
-    if (!$found) {
-        /** @var \Doctrine\ORM\EntityManagerInterface $em */
-        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-        $em->persist($plan);
-        $em->flush();
-    } else {
-        $data = reset($found);
-        $plan = new EPlan($data);
-    }
-    return $plan->id;
-}
-
-/**
- * @param \Psr\Container\ContainerInterface $container
- * @param int $planId
- * @return int
- */
-function init_bonus_suite($container, $planId)
-{
-    /** @var \Praxigento\Milc\Bonus\Api\Helper\Format $format */
-    $format = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Format::class);
-    $suite = new ESuite();
-    $suite->plan_ref = $planId;
-    $suite->date_created = $format->getDateNowUtc();
-    $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
-
-    $suite->note = Cfg::SUITE_NOTE;
-    $found = common_get_by_attr($container, ESuite::class, [ESuite::PLAN_REF => $planId]);
-    if (!$found) {
-        /** @var \Doctrine\ORM\EntityManagerInterface $em */
-        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-        $em->persist($suite);
-        $em->flush();
-    } else {
-        $data = reset($found);
-        $suite = new EPlan($data);
-    }
-    return $suite->id;
-}
-
-/**
- * @param \Psr\Container\ContainerInterface $container
- * @param int $planId
- * @return array
- */
-function init_bonus_plan_ranks($container, $planId)
-{
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    /* Human */
-    $human = new EPlanRank();
-    $human->plan_ref = $planId;
-    $human->code = Cfg::RANK_HUMAN;
-    $human->note = 'Human (lowest)';
-    $human->sequence = 1;
-    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $human->code]);
-    if (!$found) {
-        $em->persist($human);
-    } else {
-        $data = reset($found);
-        $human = new EPlanRank($data);
-    }
-    /* Hero */
-    $hero = new EPlanRank();
-    $hero->plan_ref = $planId;
-    $hero->code = Cfg::RANK_HERO;
-    $hero->note = 'Hero';
-    $hero->sequence = 2;
-    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $hero->code]);
-    if (!$found) {
-        $em->persist($hero);
-    } else {
-        $data = reset($found);
-        $hero = new EPlanRank($data);
-    }
-    /* Angel */
-    $angel = new EPlanRank();
-    $angel->plan_ref = $planId;
-    $angel->code = Cfg::RANK_ANGEL;
-    $angel->note = 'Angel';
-    $angel->sequence = 3;
-    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $angel->code]);
-    if (!$found) {
-        $em->persist($angel);
-    } else {
-        $data = reset($found);
-        $angel = new EPlanRank($data);
-    }
-    /* God */
-    $god = new EPlanRank();
-    $god->plan_ref = $planId;
-    $god->code = Cfg::RANK_GOD;
-    $god->note = 'God (highest)';
-    $god->sequence = 4;
-    $found = common_get_by_attr($container, EPlanRank::class, [EPlanRank::CODE => $god->code]);
-    if (!$found) {
-        $em->persist($god);
-    } else {
-        $data = reset($found);
-        $god = new EPlanRank($data);
-    }
-    /**/
-    $em->flush();
-    return [$human->id, $hero->id, $angel->id, $god->id];
-}
-
-/**
- * @param \Psr\Container\ContainerInterface $container
- * @return int
- */
-function init_bonus_calc_type($container)
-{
-    $result = [];
-    //
-    $code = Cfg::CALC_TYPE_COLLECT_CV;
-    $id = init_bonus_calc_type_add($container, $code, 'CV collection.');
-    $result[$code] = $id;
-    //
-    $code = Cfg::CALC_TYPE_TREE_PLAIN;
-    $deps = [$id];
-    $id = init_bonus_calc_type_add($container, $code, 'Based on plain tree.', $deps);
-    $result[$code] = $id;
-    //
-    $code = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
-    $deps = [$id];
-    $id = init_bonus_calc_type_add($container, $code, 'Simple qualification calculation (based on PV, ...).', $deps);
-    $result[$code] = $id;
-    //
-    $code = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
-    $deps = [$id];
-    $id = init_bonus_calc_type_add($container, $code, 'Level based bonus calculation.', $deps);
-    $result[$code] = $id;
-    return $result;
-}
-
-function init_bonus_calc_type_add($container, $code, $note, $depsOn = [], $depsBefore = [])
-{
-    $found = common_get_by_attr($container, ECalcType::class, [ECalcType::CODE => $code]);
-    if (!$found) {
-        $calcType = new ECalcType();
-        $calcType->code = $code;
-        $calcType->note = $note;
-        /** @var \Doctrine\ORM\EntityManagerInterface $em */
-        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-        $em->persist($calcType);
-        $em->flush();
-        foreach ($depsOn as $one) {
-            $link = new ECalcTypeDepsOn();
-            $link->ref = $calcType->id;
-            $link->other_ref = $one;
-            $em->persist($link);
-            $em->flush();
-        }
-    } else {
-        $data = reset($found);
-        $calcType = new ECalcType($data);
-    }
-    return $calcType->id;
 }
 
 /**
