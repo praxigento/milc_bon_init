@@ -65,23 +65,26 @@ interface Config
     const DB_TBL_RES_PARTNER = 'res_partner';
     const DB_TBL_SALE_ORDER = 'sale_order';
     /**/
+    const FORMAT_DATE = 'Y-m-d';
+    const FORMAT_DATETIME = 'Y-m-d H:i:s';
+    /**/
     const QUAL_RULE_TYPE_GROUP = 'group';
     const QUAL_RULE_TYPE_PV = 'pv';
-    const QUAL_RULE_TYPE_RANK = 'rank';
     /**/
+    const QUAL_RULE_TYPE_RANK = 'rank';
     const RANK_ANGEL = 'ANG';
     const RANK_GOD = 'GOD';
     const RANK_HERO = 'HER';
-    const RANK_HUMAN = 'HUM';
     /**/
+    const RANK_HUMAN = 'HUM';
     const RULE_GROUP_LOGIC_AND = 'AND';
+    /**/
     const RULE_GROUP_LOGIC_OR = 'OR';
     /**/
     const SUITE_NOTE = 'Development calcs suite (monthly based).';
+    const TREE_DEPTH_INIT = 1; // path separator
     /**/
-    const TREE_DEPTH_INIT = 1;
-    const TREE_PS = ':'; // path separator
-    /**/
+    const TREE_PS = ':';
     const ZERO = 0.00001;
 
 }

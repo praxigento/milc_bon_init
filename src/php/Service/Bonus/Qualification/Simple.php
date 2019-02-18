@@ -24,6 +24,8 @@ use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Z\Data\Rule\Rank as DRank;
  */
 class Simple
 {
+    /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
+    private $dao;
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Map */
     private $hlpMap;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query\GetRanks */
@@ -32,10 +34,12 @@ class Simple
     private $srvLoader;
 
     public function __construct(
+        \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
         \Praxigento\Milc\Bonus\Api\Helper\Map $hlpMap,
         \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query\GetRanks $qGetRanks,
         \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader $srvLoader
     ) {
+        $this->dao = $dao;
         $this->hlpMap = $hlpMap;
         $this->qGetRanks = $qGetRanks;
         $this->srvLoader = $srvLoader;
@@ -44,11 +48,17 @@ class Simple
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $calcInstId = $req->calcInstId;
-        $tree = $req->tree;
+        $raceCalcIdQual = $req->raceCalcIdQual;
+        $raceCalcIdTree = $req->raceCalcIdTree;
+
+        if ($req->tree) {
+            $tree = $req->tree;
+        } else {
+            $tree = $this->getTree($raceCalcIdTree);
+        }
 
         /** @var DRankEntry[] $ranks */
-        $ranks = $this->getRanks($calcInstId);
+        $ranks = $this->getRanks($raceCalcIdQual);
         $rules = $this->getRulesTree($ranks);
 
         $entries = [];
@@ -57,11 +67,12 @@ class Simple
             $clientId = $one->client_ref;
             $rankId = $this->qualify($one, $ranks, $rules);
             if ($rankId) {
-                $entry = new EPeriodRank();
-                $entry->calc_inst_ref = $calcInstId;
-                $entry->client_ref = $clientId;
-                $entry->rank_ref = $rankId;
-                $entries[] = $entry;
+                $entity = new EPeriodRank();
+                $entity->calc_inst_ref = $raceCalcIdQual;
+                $entity->client_ref = $clientId;
+                $entity->rank_ref = $rankId;
+                $this->dao->create($entity);
+                $entries[] = $entity;
             }
         }
         $result = new AResponse();
@@ -101,6 +112,15 @@ class Simple
         /** @var ARuleLoadResponse $resp */
         $resp = $this->srvLoader->exec($req);
         $result = $resp->trees;
+        return $result;
+    }
+
+    private function getTree($raceCalcId)
+    {
+        $key = [
+            EPeriodTree::CALC_INST_REF => $raceCalcId
+        ];
+        $result = $this->dao->getSet(EPeriodTree::class, $key);
         return $result;
     }
 

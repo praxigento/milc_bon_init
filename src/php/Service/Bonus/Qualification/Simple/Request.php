@@ -10,8 +10,13 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple;
 class Request
     extends \TeqFw\Lib\Data
 {
-    /** @var int ID of the calculation in the period. */
-    public $calcInstId;
-    /** @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree[] */
+    /** @var int race calculation ID for qualification calculation. */
+    public $raceCalcIdQual;
+    /** @var int race calculation ID for tree composition calculation related to the current race qualification */
+    public $raceCalcIdTree;
+    /**
+     * @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree[]
+     * @deprecated use $raceCalcIdTree
+     */
     public $tree;
 }

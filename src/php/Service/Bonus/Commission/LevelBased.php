@@ -8,8 +8,8 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Commission;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Comm\Level as ECalcLevel;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Comm\Level as EPeriodLevel;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Rank as EPeriodRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request as ARequest;
@@ -19,6 +19,8 @@ class LevelBased
 {
     /** @var \TeqFw\Lib\Db\Api\Connection\Main */
     private $conn;
+    /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
+    private $dao;
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Map */
     private $hlpMap;
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Tree */
@@ -26,10 +28,12 @@ class LevelBased
 
     public function __construct(
         \TeqFw\Lib\Db\Api\Connection\Main $conn,
+        \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
         \Praxigento\Milc\Bonus\Api\Helper\Map $hlpMap,
         \Praxigento\Milc\Bonus\Api\Helper\Tree $hlpTree
     ) {
         $this->conn = $conn;
+        $this->dao = $dao;
         $this->hlpMap = $hlpMap;
         $this->hlpTree = $hlpTree;
     }
@@ -122,6 +126,11 @@ class LevelBased
         $mapCvByLevel = $this->collectCvByLevel($treeCalcInstId);
 
         $comm = $this->collectCommission($thisCalcInstId, $ranks, $commByRanks, $mapCvByLevel);
+
+        /* save commissions to DB */
+        foreach ($comm as $one) {
+            $this->dao->create($one);
+        }
 
         $result = new AResponse();
         $result->commissions = $comm;

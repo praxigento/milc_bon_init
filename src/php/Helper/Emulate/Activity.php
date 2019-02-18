@@ -14,8 +14,6 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Sale\Order as EFlectraSale;
 class Activity
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Activity
 {
-    /** @var \Psr\Container\ContainerInterface */
-    private $container;
     /** @var \DateTime date trace for events (is incremented on every event) */
     private $date;
     /** @var \Doctrine\ORM\EntityManagerInterface */
@@ -45,7 +43,6 @@ class Activity
     private $srvCvReg;
 
     public function __construct(
-        \Psr\Container\ContainerInterface $container,
         \Doctrine\ORM\EntityManagerInterface $em,
         \Praxigento\Milc\Bonus\Api\Service\Client\Add $srvClientAdd,
         \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent $srvClientChangeParent,
@@ -54,7 +51,6 @@ class Activity
         \Praxigento\Milc\Bonus\Api\Service\Client\SetType $srvClientSetType,
         \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv $srvCvReg
     ) {
-        $this->container = $container;
         $this->em = $em;
         $this->srvClientChangeParent = $srvClientChangeParent;
         $this->srvClientAdd = $srvClientAdd;

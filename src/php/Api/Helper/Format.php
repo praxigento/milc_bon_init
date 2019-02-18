@@ -17,4 +17,10 @@ interface Format
      * @return \DateTime
      */
     public function getDateNowUtc(): \DateTime;
+
+    /**
+     * @param mixed $data
+     * @return \DateTime
+     */
+    public function parseDateTime($data = null): \DateTime;
 }

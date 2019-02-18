@@ -299,7 +299,7 @@ class Bonus
         $details->volume = $volume;
         $details->autoship_only = $isAutoship;
         $details->period = $period;
-        $this->dao->create($rule);
+        $this->dao->create($details);
         return $result;
     }
 

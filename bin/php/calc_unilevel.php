@@ -103,13 +103,13 @@ function calc_bonus_comm_level_based($container, $calcThis, $calcTree, $calcRank
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response $resp */
     $resp = $srv->exec($req);
     /* save commissions */
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    $entries = $resp->commissions;
-    foreach ($entries as $entry) {
-        $em->persist($entry);
-    }
-    $em->flush();
+//    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+//    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+//    $entries = $resp->commissions;
+//    foreach ($entries as $entry) {
+//        $em->persist($entry);
+//    }
+//    $em->flush();
 }
 
 /**
@@ -321,17 +321,17 @@ function calc_qual_save_ranks($container, $calcInstId, $tree)
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple $srvProc */
     $srvProc = $container->get(\Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple::class);
     $req = new \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Request();
-    $req->calcInstId = $calcInstId;
+    $req->raceCalcIdQual = $calcInstId;
     $req->tree = $tree;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Response $resp */
     $resp = $srvProc->exec($req);
-    $entries = $resp->entries;
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    foreach ($entries as $entry) {
-        $em->persist($entry);
-    }
-    $em->flush();
+//    $entries = $resp->entries;
+//    /** @var \Doctrine\ORM\EntityManagerInterface $em */
+//    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+//    foreach ($entries as $entry) {
+//        $em->persist($entry);
+//    }
+//    $em->flush();
 }
 
 /**
