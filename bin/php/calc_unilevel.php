@@ -72,7 +72,7 @@ try {
     /**
      * Step 4: Level Based Commissions.
      */
-    $typeCode = Cfg::CALC_TYPE_BONUS_LEVEL_BASED;
+    $typeCode = Cfg::CALC_TYPE_COMM_LEVEL_BASED;
     $calc = calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, 4);
     $calcInst = calc_bonus_get_calc_instance($container, $raceId, $calc->id);
     $calcCommId = $calcInst->id;

@@ -14,6 +14,8 @@ interface Bonus
 
     public function calcTypes();
 
+    public function commLevels($calcId, $ranks);
+
     /**
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan
      */
@@ -26,6 +28,14 @@ interface Bonus
      * @return int[]
      */
     public function planRanks($planId);
+
+    /**
+     * Create ranks qualification rules for given qualification calculation.
+     *
+     * @param int $calcId
+     * @param int[] $ranks
+     */
+    public function qualRules($calcId, $ranks);
 
     /**
      * @param $planId
