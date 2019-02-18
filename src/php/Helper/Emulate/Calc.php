@@ -8,6 +8,7 @@ namespace Praxigento\Milc\Bonus\Helper\Emulate;
 
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EPlanCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
@@ -20,6 +21,8 @@ class Calc
 {
     /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
     private $dao;
+    /** @var \Praxigento\Milc\Bonus\Api\Helper\Format */
+    private $hlpFormat;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased */
     private $srvComm;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect */
@@ -31,17 +34,30 @@ class Calc
 
     public function __construct(
         \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
+        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat,
         \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect $srvCv,
         \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple $srvTree,
         \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple $srvQual,
         \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srvComm
     ) {
         $this->dao = $dao;
+        $this->hlpFormat = $hlpFormat;
         $this->srvCv = $srvCv;
         $this->srvTree = $srvTree;
         $this->srvQual = $srvQual;
         $this->srvComm = $srvComm;
         /**/
+    }
+
+    public function getDateMax(): \DateTime
+    {
+        $order = [ECvReg::DATE => 'DESC'];
+        $limit = 1;
+        $all = $this->dao->getSet(ECvReg::class, null, null, $order, $limit);
+        /** @var ECvReg $one */
+        $one = reset($all);
+        $result = $this->hlpFormat->parseDateTime($one->date);
+        return $result;
     }
 
     public function getSuite(): EPlanSuite

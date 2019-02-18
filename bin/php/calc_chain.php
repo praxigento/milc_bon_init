@@ -32,6 +32,7 @@ try {
 
     /* start from the beginning of the ages */
     $date = \DateTime::createFromFormat(Cfg::BEGINNING_OF_AGES_FORMAT, Cfg::BEGINNING_OF_AGES);
+    $dateMax = $hlpCalc->getDateMax();
     $i = 0;
     $maxInc = 3600 * 24;
     $suite = $hlpCalc->getSuite();
@@ -65,7 +66,7 @@ try {
 
 
         $conn->commit();
-    } while (++$i < 10);
+    } while (($date < $dateMax) && (++$i < 1000));
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {

@@ -18,6 +18,13 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EResRaceCalc;
 interface Calc
 {
     /**
+     * Max date with CV movements.
+     *
+     * @return \DateTime
+     */
+    public function getDateMax(): \DateTime;
+
+    /**
      * Get development suite.
      *
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite
