@@ -107,7 +107,7 @@ try {
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->flush();
 
-    $conn->rollBack();
+    $conn->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {
