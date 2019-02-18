@@ -337,7 +337,7 @@ class Bonus
             $suite->plan_ref = $planId;
             $suite->date_created = $this->hlpFormat->getDateNowUtc();
             $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
-            $suite->note = 'Dev. suite (monthly based).';
+            $suite->note = Cfg::SUITE_NOTE;
             $this->dao->create($suite);
             $result = $this->dao->getOne(ESuite::class, $key);
         }
