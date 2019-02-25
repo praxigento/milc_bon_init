@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool;
 
 
 /**
  * Bonus calculation inside of period.
  *
  * @Entity
- * @Table(name="bon_res_pool_calc")
+ * @Table(name="bon_pool_calc")
  */
 class Calc
     extends \TeqFw\Lib\Data

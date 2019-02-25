@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
 
 class GetMovements
 {

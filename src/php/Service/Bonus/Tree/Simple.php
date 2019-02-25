@@ -6,8 +6,8 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Tree;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EResCv;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EResTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EResTree;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Response as AResponse;
 

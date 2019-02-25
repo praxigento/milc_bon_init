@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool;
 
 
 /**
  * Downline tree data bound to bonus calculations.
  *
  * @Entity
- * @Table(name="bon_res_tree")
+ * @Table(name="bon_pool_tree")
  */
 class Tree
     extends \TeqFw\Lib\Data

@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool;
 
 
 /**
  * Bonus periods.
  *
  * @Entity
- * @Table(name="bon_res_period")
+ * @Table(name="bon_pool_period")
  */
 class Period
     extends \TeqFw\Lib\Data

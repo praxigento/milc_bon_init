@@ -8,9 +8,9 @@ namespace Praxigento\Milc\Bonus\Api\Helper\Emulate;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EResPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EResRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EResRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EResRaceCalc;
 
 /**
  * Emulate set of calculations.
@@ -42,21 +42,21 @@ interface Calc
      * Register new period for suite calculations.
      * @param string $dateBegin '2019-05-01'
      * @param int $suiteId
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period
      */
     public function registerPeriod($dateBegin, $suiteId): EResPeriod;
 
     /**
      * @param int $periodId
      * @param string $dateStarted
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool
      */
     public function registerRace($periodId, $dateStarted): EResRace;
 
     /**
      * @param int $raceId
      * @param int $calcId
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc
      */
     public function registerRaceCalc($raceId, $calcId): EResRaceCalc;
 

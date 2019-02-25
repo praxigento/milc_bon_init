@@ -12,9 +12,9 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EPlanCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EResPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EResRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EResRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EResRaceCalc;
 
 class Calc
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Calc

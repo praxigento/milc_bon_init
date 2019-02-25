@@ -2,6 +2,7 @@
   "DEM": {
     ".": "/bon",
     "calc": {
+      ".note": "Configuration for various types of calculations.",
       "comm": {
         "level": {
           ".": {
@@ -270,6 +271,7 @@
       }
     },
     "cv": {
+      ".note": "CV accounting (probably this namespace equals to 'dwnl'? should we move it one level up?).",
       "reg": {
         ".": {
           "desc": "Registry to save (Autoship) Commissionable Volumes (CV/ACV) movements.",
@@ -392,38 +394,66 @@
         }
       }
     },
-    "res": {
-      "period": {
+    "pool": {
+      ".note": "Results for concrete calculations.",
+      ".": {
+        "desc": "Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Calculations pool ID."
+          },
+          "period_ref": {
+            "type": "reference",
+            "desc": "Related period (bound to bonus suite)."
+          },
+          "date_started": {
+            "type": "datetime",
+            "desc": "Date when plan was created."
+          }
+        },
+        "relation": {
+          "result": {
+            "path": "/bon/pool/period",
+            "own": ["period_ref"],
+            "foreign": ["id"],
+            "on": {"delete": "cascade", "update": "cascade"}
+          }
+        }
+      },
+      "calc": {
         ".": {
-          "desc": "Registry for instances of bonus suites calculations (bound to period data and state).",
+          "desc": "Instance of the calculation inside of pool.",
           "attr": {
             "id": {
               "type": "identity",
-              "desc": "Period ID."
+              "desc": "Calculation ID."
             },
-            "suite_ref": {
+            "pool_ref": {
               "type": "reference",
-              "desc": "Related bonus suite."
+              "desc": "Related pool (bound to period)."
             },
-            "date_begin": {
-              "type": "date",
-              "desc": "Begin date of the period."
-            },
-            "state": {
-              "type": "string",
-              "desc": "Period state: open, closed"
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Related bonus calculation."
             }
           },
           "index": {
             "unique": {
               "type": "unique",
-              "attrs": ["suite_ref", "date_begin"]
+              "attrs": ["pool_ref", "calc_ref"]
             }
           },
           "relation": {
-            "suite": {
-              "path": "/bon/plan/suite",
-              "own": ["suite_ref"],
+            "pool": {
+              "path": "/bon/pool",
+              "own": ["pool_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "calc": {
+              "path": "/bon/plan/suite/calc",
+              "own": ["calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             }
@@ -476,7 +506,7 @@
             },
             "relation": {
               "poolCalc": {
-                "path": "/bon/res/pool/calc",
+                "path": "/bon/pool/calc",
                 "own": ["pool_calc_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
@@ -523,7 +553,7 @@
           },
           "relation": {
             "poolCalc": {
-              "path": "/bon/res/pool/calc",
+              "path": "/bon/pool/calc",
               "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -537,68 +567,39 @@
           }
         }
       },
-      "pool": {
+      "period": {
         ".": {
-          "desc": "Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).",
+          "desc": "Registry for instances of bonus suites calculations (bound to period data and state).",
           "attr": {
             "id": {
               "type": "identity",
-              "desc": "Calculations pool ID."
+              "desc": "Period ID."
             },
-            "period_ref": {
+            "suite_ref": {
               "type": "reference",
-              "desc": "Related period (bound to bonus suite)."
+              "desc": "Related bonus suite."
             },
-            "date_started": {
-              "type": "datetime",
-              "desc": "Date when plan was created."
+            "date_begin": {
+              "type": "date",
+              "desc": "Begin date of the period."
+            },
+            "state": {
+              "type": "string",
+              "desc": "Period state: open, closed"
+            }
+          },
+          "index": {
+            "unique": {
+              "type": "unique",
+              "attrs": ["suite_ref", "date_begin"]
             }
           },
           "relation": {
-            "result": {
-              "path": "/bon/res/period",
-              "own": ["period_ref"],
+            "suite": {
+              "path": "/bon/plan/suite",
+              "own": ["suite_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        },
-        "calc": {
-          ".": {
-            "desc": "Instance of the calculation inside of pool.",
-            "attr": {
-              "id": {
-                "type": "identity",
-                "desc": "Calculation ID."
-              },
-              "pool_ref": {
-                "type": "reference",
-                "desc": "Related pool (bound to period)."
-              },
-              "calc_ref": {
-                "type": "reference",
-                "desc": "Related bonus calculation."
-              }
-            },
-            "index": {
-              "unique": {
-                "type": "unique",
-                "attrs": ["pool_ref", "calc_ref"]
-              }
-            },
-            "relation": {
-              "pool": {
-                "path": "/bon/res/pool",
-                "own": ["pool_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "calc": {
-                "path": "/bon/plan/suite/calc",
-                "own": ["calc_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
             }
           }
         }
@@ -628,7 +629,7 @@
           },
           "relation": {
             "poolCalc": {
-              "path": "/bon/res/pool/calc",
+              "path": "/bon/pool/calc",
               "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -686,7 +687,7 @@
           },
           "relation": {
             "poolCalc": {
-              "path": "/bon/res/pool/calc",
+              "path": "/bon/pool/calc",
               "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
@@ -708,6 +709,7 @@
       }
     },
     "plan": {
+      ".note": "Bonus plan construction data.",
       ".": {
         "desc": "Set of bonus suites related to one set of ranks.",
         "attr": {

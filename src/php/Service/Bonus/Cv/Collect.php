@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Cv;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Response as AResponse;
 

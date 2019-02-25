@@ -4,14 +4,14 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus;
 
 
 /**
  * Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).
  *
  * @Entity
- * @Table(name="bon_res_pool")
+ * @Table(name="bon_pool")
  */
 class Pool
     extends \TeqFw\Lib\Data

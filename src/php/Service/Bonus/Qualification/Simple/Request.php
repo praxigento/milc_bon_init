@@ -15,7 +15,7 @@ class Request
     /** @var int race calculation ID for tree composition calculation related to the current race qualification */
     public $raceCalcIdTree;
     /**
-     * @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree[]
+     * @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree[]
      * @deprecated use $raceCalcIdTree
      */
     public $tree;

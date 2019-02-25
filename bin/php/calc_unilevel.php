@@ -14,11 +14,11 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as EBonCvReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EBonCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EBonSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EBonCvColect;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EBonPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EBonRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EBonPeriodCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EBonCvColect;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EBonPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EBonRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
 
@@ -207,7 +207,7 @@ function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
  * @param \Psr\Container\ContainerInterface $container
  * @param int $raceId
  * @param int $calcId
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc
  */
 function calc_bonus_get_calc_instance($container, $raceId, $calcId)
 {
@@ -336,7 +336,7 @@ function calc_qual_save_ranks($container, $calcInstId, $tree)
 
 /**
  * @param \Psr\Container\ContainerInterface $container
- * @param \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result $period
+ * @param \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool $period
  * @param int $calcInstId
  * @param EBonCvColect[] $collected
  */
