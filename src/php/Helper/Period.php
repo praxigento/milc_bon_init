@@ -11,6 +11,8 @@ use Praxigento\Milc\Bonus\Api\Config as Cfg;
 class Period
     implements \Praxigento\Milc\Bonus\Api\Helper\Period
 {
+    private const FROM = 'from';
+    private const TO = 'to';
     /** @var array Common cache for periods bounds: [period][type][from|to] = ... */
     private $cachePeriodBounds = [];
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Format */
@@ -75,8 +77,8 @@ class Period
                 $to = date(Cfg::FORMAT_DATETIME, $ts);
                 break;
         }
-        $this->cachePeriodBounds[$periodValue][$periodType]['from'] = $from;
-        $this->cachePeriodBounds[$periodValue][$periodType]['to'] = $to;
+        $this->cachePeriodBounds[$periodValue][$periodType][self::FROM] = $from;
+        $this->cachePeriodBounds[$periodValue][$periodType][self::TO] = $to;
     }
 
     public function getPeriodFirstDate($datestamp)
@@ -84,15 +86,23 @@ class Period
         // TODO: Implement getPeriodFirstDate() method.
     }
 
-    public function getTimestampFrom($date, $periodType = self::TYPE_DAY)
+    public function getTimestampFrom($datestamp, $periodType = self::TYPE_DAY)
     {
-        $periodValue = $this->normalizePeriod($date, $periodType);
-        if (
-        !isset($this->cachePeriodBounds[$periodValue][$periodType])
-        ) {
+        $periodValue = $this->normalizePeriod($datestamp, $periodType);
+        if (!isset($this->cachePeriodBounds[$periodValue][$periodType])) {
             $this->calcPeriodBounds($periodValue, $periodType);
         }
-        $result = $this->cachePeriodBounds[$periodValue][$periodType]['from'];
+        $result = $this->cachePeriodBounds[$periodValue][$periodType][self::FROM];
+        return $result;
+    }
+
+    public function getTimestampTo($datestamp, $periodType = self::TYPE_DAY)
+    {
+        $periodValue = $this->normalizePeriod($datestamp, $periodType);
+        if (!isset($this->cachePeriodBounds[$periodValue][$periodType])) {
+            $this->calcPeriodBounds($periodValue, $periodType);
+        }
+        $result = $this->cachePeriodBounds[$periodValue][$periodType][self::TO];
         return $result;
     }
 

@@ -521,7 +521,7 @@
       },
       "cv": {
         ".": {
-          "desc": "CV/ACV are collected for period in one pool.",
+          "desc": "(A)CV are collected for period in one pool.",
           "attr": {
             "pool_calc_ref": {
               "type": "reference",
@@ -561,6 +561,41 @@
               "own": ["client_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "item": {
+          ".": {
+            "desc": "Registry for (A)CV movements are selected for CV Collection calculation in the pool.",
+            "attr": {
+              "pool_calc_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation instance."
+              },
+              "cv_reg_ref": {
+                "type": "reference",
+                "desc": "Reference to the client."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["pool_calc_ref", "cv_reg_ref"]
+              }
+            },
+            "relation": {
+              "poolCalc": {
+                "path": "/bon/pool/calc",
+                "own": ["pool_calc_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "cvRegistry": {
+                "path": "/bon/cv/reg",
+                "own": ["cv_reg_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
             }
           }
         }

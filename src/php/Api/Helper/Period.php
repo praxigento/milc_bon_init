@@ -26,6 +26,22 @@ interface Period
 
     public function getPeriodFirstDate($datestamp);
 
+    /**
+     * Get date-time value for "date >= :dateFrom" statements.
+     *
+     * @param string $datestamp
+     * @param string $periodType
+     * @return string
+     */
     public function getTimestampFrom($datestamp, $periodType = self::TYPE_DAY);
+
+    /**
+     * Get date-time value for "date < :dateTo" statements.
+     *
+     * @param string $datestamp
+     * @param string $periodType
+     * @return string
+     */
+    public function getTimestampTo($datestamp, $periodType = self::TYPE_DAY);
 
 }

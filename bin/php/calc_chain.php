@@ -49,19 +49,19 @@ try {
 
         /* register new race */
         $period = $hlpCalc->registerPeriod($dateFrom, $suite->id);
-        $race = $hlpCalc->registerRace($period->id, $dateTo);
+        $race = $hlpCalc->registerPool($period->id, $dateTo);
         $raceId = $race->id;
         /* STEP 1: collect CV for given period (from-to)*/
-        $raceCalcCollect = $hlpCalc->registerRaceCalc($raceId, $calcCollect->id);
+        $raceCalcCollect = $hlpCalc->registerPoolCalc($raceId, $calcCollect->id);
         $hlpCalc->step01Cv($raceCalcCollect->id, $dateFrom, $dateTo);
         /** STEP 2: Compose tree (just copy plain tree for the end of the period). */
-        $raceCalcTree = $hlpCalc->registerRaceCalc($raceId, $calcTree->id);
+        $raceCalcTree = $hlpCalc->registerPoolCalc($raceId, $calcTree->id);
         $hlpCalc->step02Tree($raceCalcTree->id, $raceCalcCollect->id, $dateTo);
         /** Step 3: Qualification. */
-        $raceCalcQual = $hlpCalc->registerRaceCalc($raceId, $calcQual->id);
+        $raceCalcQual = $hlpCalc->registerPoolCalc($raceId, $calcQual->id);
         $hlpCalc->step03Qual($raceCalcQual->id, $raceCalcTree->id);
         /** Step 4: Level Based Commissions. */
-        $raceCalcComm = $hlpCalc->registerRaceCalc($raceId, $calcComm->id);
+        $raceCalcComm = $hlpCalc->registerPoolCalc($raceId, $calcComm->id);
         $hlpCalc->step04Comm($raceCalcComm->id, $raceCalcTree->id, $raceCalcQual->id);
 
 

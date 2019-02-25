@@ -9,12 +9,12 @@ namespace Praxigento\Milc\Bonus\Helper\Emulate;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EPlanCalcType;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EResRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EResRaceCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as ECalcType;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as ESuite;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as ESuiteCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EPool;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EPoolCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EPoolPeriod;
 
 class Calc
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Calc
@@ -60,66 +60,66 @@ class Calc
         return $result;
     }
 
-    public function getSuite(): EPlanSuite
+    public function getSuite(): ESuite
     {
-        /** @var EPlanSuite[] $all */
-        $all = $this->dao->getSet(EPlanSuite::class);
+        /** @var ESuite[] $all */
+        $all = $this->dao->getSet(ESuite::class);
         $result = reset($all);
         return $result;
     }
 
-    public function getSuiteCalc($suiteId, $code): EPlanSuiteCalc
+    public function getSuiteCalc($suiteId, $code): ESuiteCalc
     {
         /* get calc type ID by code */
-        $key = [EPlanCalcType::CODE => $code];
-        /** @var EPlanCalcType $foundType */
-        $foundType = $this->dao->getOne(EPlanCalcType::class, $key);
+        $key = [ECalcType::CODE => $code];
+        /** @var ECalcType $foundType */
+        $foundType = $this->dao->getOne(ECalcType::class, $key);
         /* get suite calc */
         $key = [
-            EPlanSuiteCalc::SUITE_REF => $suiteId,
-            EPlanSuiteCalc::TYPE_REF => $foundType->id
+            ESuiteCalc::SUITE_REF => $suiteId,
+            ESuiteCalc::TYPE_REF => $foundType->id
         ];
-        $result = $this->dao->getOne(EPlanSuiteCalc::class, $key);
+        $result = $this->dao->getOne(ESuiteCalc::class, $key);
         return $result;
 
     }
 
-    public function registerPeriod($dateBegin, $suiteId): EResPeriod
+    public function registerPeriod($dateBegin, $suiteId): EPoolPeriod
     {
         $key = [
-            EResPeriod::DATE_BEGIN => $dateBegin,
-            EResPeriod::SUITE_REF => $suiteId
+            EPoolPeriod::DATE_BEGIN => $dateBegin,
+            EPoolPeriod::SUITE_REF => $suiteId
         ];
-        /** @var EResPeriod $result */
-        $result = $this->dao->getOne(EResPeriod::class, $key);
+        /** @var EPoolPeriod $result */
+        $result = $this->dao->getOne(EPoolPeriod::class, $key);
         if (!$result) {
-            $entity = new EResPeriod();
+            $entity = new EPoolPeriod();
             $entity->suite_ref = $suiteId;
             $entity->date_begin = $dateBegin;
             $entity->state = Cfg::BONUS_PERIOD_STATE_OPEN;
             $id = $this->dao->create($entity);
-            $result = $this->dao->getOne(EResPeriod::class, $id);
+            $result = $this->dao->getOne(EPoolPeriod::class, $id);
         }
         return $result;
     }
 
-    public function registerRace($periodId, $dateStarted): EResRace
+    public function registerPool($periodId, $dateStarted): EPool
     {
-        $entity = new EResRace();
+        $entity = new EPool();
         $entity->period_ref = $periodId;
         $entity->date_started = $dateStarted;
         $id = $this->dao->create($entity);
-        $result = $this->dao->getOne(EResRace::class, $id);
+        $result = $this->dao->getOne(EPool::class, $id);
         return $result;
     }
 
-    public function registerRaceCalc($raceId, $calcId): EResRaceCalc
+    public function registerPoolCalc($raceId, $calcId): EPoolCalc
     {
-        $entity = new EResRaceCalc();
+        $entity = new EPoolCalc();
         $entity->pool_ref = $raceId;
         $entity->calc_ref = $calcId;
         $id = $this->dao->create($entity);
-        $result = $this->dao->getOne(EResRaceCalc::class, $id);
+        $result = $this->dao->getOne(EPoolCalc::class, $id);
         return $result;
     }
 

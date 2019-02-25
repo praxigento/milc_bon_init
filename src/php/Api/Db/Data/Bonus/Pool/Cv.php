@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool;
 
 
 /**
- * CV/ACV are collected for period.
+ * (A)CV are collected for period in one pool.
  *
  * @Entity
  * @Table(name="bon_pool_cv")
