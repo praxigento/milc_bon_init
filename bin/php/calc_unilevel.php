@@ -16,8 +16,8 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EBonSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EBonSuiteCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Cv as EBonCvColect;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EBonPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race as EBonRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EBonPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EBonRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EBonPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ATreeGetRequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Response as ATreeGetResponse;
@@ -207,18 +207,18 @@ function calc_bonus_get_calc_by_type($container, $suiteId, $typeCode, $sequence)
  * @param \Psr\Container\ContainerInterface $container
  * @param int $raceId
  * @param int $calcId
- * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc
+ * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc
  */
 function calc_bonus_get_calc_instance($container, $raceId, $calcId)
 {
     $bind = [
-        EBonPeriodCalc::RACE_REF => $raceId,
+        EBonPeriodCalc::POOL_REF => $raceId,
         EBonPeriodCalc::CALC_REF => $calcId
     ];
     $found = common_get_by_attr($container, EBonPeriodCalc::class, $bind);
     if (!$found) {
         $result = new EBonPeriodCalc();
-        $result->race_ref = $raceId;
+        $result->pool_ref = $raceId;
         $result->calc_ref = $calcId;
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
@@ -241,7 +241,7 @@ function calc_cv_collect($container, $calcInstId, $datePeriod)
 {
     $result = [];
     $bind = [
-        EBonCvColect::CALC_INST_REF => $calcInstId
+        EBonCvColect::POOL_CALC_REF => $calcInstId
     ];
     $found = common_get_by_attr($container, EBonCvColect::class, $bind);
     if (!$found) {
@@ -253,7 +253,7 @@ function calc_cv_collect($container, $calcInstId, $datePeriod)
         $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
         foreach ($all as $data) {
             $entry = new EBonCvColect($data);
-            $entry->calc_inst_ref = $calcInstId;
+            $entry->pool_calc_ref = $calcInstId;
             $em->persist($entry);
             $em->flush();
             $result[] = $entry;
@@ -368,7 +368,7 @@ function calc_tree_plain($container, EBonPeriod $period, $calcInstId, $collected
             $ownPv = (isset($mapById[$entry->client_id][false])) ? $mapById[$entry->client_id][false] : 0;
             $apv = (isset($mapById[$entry->client_id][true])) ? $mapById[$entry->client_id][true] : 0;
             $item = new EPeriodTree();
-            $item->calc_inst_ref = $calcInstId;
+            $item->pool_calc_ref = $calcInstId;
             $item->client_ref = $entry->client_id;
             $item->parent_ref = $entry->parent_id;
             $item->apv = $apv;

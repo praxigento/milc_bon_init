@@ -16,18 +16,12 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Comm;
 class Level
     extends \TeqFw\Lib\Data
 {
-    public const CALC_INST_REF = 'calc_inst_ref';
     public const CLIENT_REF = 'client_ref';
     public const COMMISSION = 'commission';
     public const CV = 'cv';
     public const LEVEL = 'level';
     public const PERCENT = 'percent';
-    /**
-     * @var int
-     * @Id
-     * @Column(type="integer")
-     */
-    public $calc_inst_ref;
+    public const POOL_CALC_REF = 'pool_calc_ref';
     /**
      * @var int
      * @Id
@@ -54,4 +48,10 @@ class Level
      * @Column(type="decimal", precision=5, scale=4)
      */
     public $percent;
+    /**
+     * @var int
+     * @Id
+     * @Column(type="integer")
+     */
+    public $pool_calc_ref;
 }

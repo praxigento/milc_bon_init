@@ -17,9 +17,9 @@ class Tree
     extends \TeqFw\Lib\Data
 {
     public const APV = 'apv';
-    public const CALC_INST_REF = 'calc_inst_ref';
     public const CLIENT_REF = 'client_ref';
     public const PARENT_REF = 'parent_ref';
+    public const POOL_CALC_REF = 'pool_calc_ref';
     public const PV = 'pv';
     /**
      * @var float
@@ -31,18 +31,18 @@ class Tree
      * @Id
      * @Column(type="integer")
      */
-    public $calc_inst_ref;
-    /**
-     * @var int
-     * @Id
-     * @Column(type="integer")
-     */
     public $client_ref;
     /**
      * @var int
      * @Column(type="integer")
      */
     public $parent_ref;
+    /**
+     * @var int
+     * @Id
+     * @Column(type="integer")
+     */
+    public $pool_calc_ref;
     /**
      * @var float
      * @Column(type="decimal", precision=10, scale=2)

@@ -68,7 +68,7 @@ class Simple
             $rankId = $this->qualify($one, $ranks, $rules);
             if ($rankId) {
                 $entity = new EPeriodRank();
-                $entity->calc_inst_ref = $raceCalcIdQual;
+                $entity->pool_calc_ref = $raceCalcIdQual;
                 $entity->client_ref = $clientId;
                 $entity->rank_ref = $rankId;
                 $this->dao->create($entity);
@@ -118,7 +118,7 @@ class Simple
     private function getTree($raceCalcId)
     {
         $key = [
-            EPeriodTree::CALC_INST_REF => $raceCalcId
+            EPeriodTree::POOL_CALC_REF => $raceCalcId
         ];
         $result = $this->dao->getSet(EPeriodTree::class, $key);
         return $result;

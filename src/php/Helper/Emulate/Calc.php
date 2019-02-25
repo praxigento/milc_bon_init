@@ -13,8 +13,8 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EPlanCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EResPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race as EResRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EResRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EResRaceCalc;
 
 class Calc
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Calc
@@ -116,7 +116,7 @@ class Calc
     public function registerRaceCalc($raceId, $calcId): EResRaceCalc
     {
         $entity = new EResRaceCalc();
-        $entity->race_ref = $raceId;
+        $entity->pool_ref = $raceId;
         $entity->calc_ref = $calcId;
         $id = $this->dao->create($entity);
         $result = $this->dao->getOne(EResRaceCalc::class, $id);

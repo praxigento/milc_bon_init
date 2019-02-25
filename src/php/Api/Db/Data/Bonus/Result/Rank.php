@@ -16,22 +16,21 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 class Rank
     extends \TeqFw\Lib\Data
 {
-    const CALC_INST_REF = 'calc_inst_ref';
     const CLIENT_REF = 'client_ref';
+    const POOL_CALC_REF = 'pool_calc_ref';
     const RANK_REF = 'rank_ref';
-
-    /**
-     * @var int
-     * @Id
-     * @Column(type="integer")
-     */
-    public $calc_inst_ref;
     /**
      * @var int
      * @Id
      * @Column(type="integer")
      */
     public $client_ref;
+    /**
+     * @var int
+     * @Id
+     * @Column(type="integer")
+     */
+    public $pool_calc_ref;
     /**
      * @var int
      * @Column(type="integer")

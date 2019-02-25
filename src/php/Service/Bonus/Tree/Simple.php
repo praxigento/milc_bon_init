@@ -43,7 +43,7 @@ class Simple
 
     private function getCvCollected($raceCalcId)
     {
-        $key = [EResCv::CALC_INST_REF => $raceCalcId];
+        $key = [EResCv::POOL_CALC_REF => $raceCalcId];
         $all = $this->dao->getSet(EResCv::class, $key);
         /* map CV by client/autoship */
         $result = [];
@@ -85,7 +85,7 @@ class Simple
                 $pv = (isset($cv[$clientId][false])) ? $cv[$clientId][false] : 0;
                 $apv = (isset($cv[$clientId][true])) ? $cv[$clientId][true] : 0;
                 $entity = new EResTree();
-                $entity->calc_inst_ref = $raceCalcId;
+                $entity->pool_calc_ref = $raceCalcId;
                 $entity->client_ref = $one->client_id;
                 $entity->parent_ref = $one->parent_id;
                 $entity->apv = $apv;

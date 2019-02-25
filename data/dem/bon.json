@@ -433,9 +433,9 @@
       "comm": {
         "level": {
           ".": {
-            "desc": "Level based bonus commission values for race calculation.",
+            "desc": "Level based bonus commission values for pool calculation.",
             "attr": {
-              "calc_inst_ref": {
+              "pool_calc_ref": {
                 "type": "reference",
                 "desc": "Reference to the calculation instance."
               },
@@ -471,13 +471,13 @@
             "index": {
               "pk": {
                 "type": "primary",
-                "attrs": ["calc_inst_ref", "client_ref", "level"]
+                "attrs": ["pool_calc_ref", "client_ref", "level"]
               }
             },
             "relation": {
-              "raceCalc": {
-                "path": "/bon/res/race/calc",
-                "own": ["calc_inst_ref"],
+              "poolCalc": {
+                "path": "/bon/res/pool/calc",
+                "own": ["pool_calc_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               },
@@ -493,9 +493,9 @@
       },
       "cv": {
         ".": {
-          "desc": "CV/ACV are collected for period in one race.",
+          "desc": "CV/ACV are collected for period in one pool.",
           "attr": {
-            "calc_inst_ref": {
+            "pool_calc_ref": {
               "type": "reference",
               "desc": "Reference to the calculation instance."
             },
@@ -518,13 +518,13 @@
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["calc_inst_ref", "client_ref", "is_autoship"]
+              "attrs": ["pool_calc_ref", "client_ref", "is_autoship"]
             }
           },
           "relation": {
-            "raceCalc": {
-              "path": "/bon/res/race/calc",
-              "own": ["calc_inst_ref"],
+            "poolCalc": {
+              "path": "/bon/res/pool/calc",
+              "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
@@ -537,13 +537,13 @@
           }
         }
       },
-      "race": {
+      "pool": {
         ".": {
           "desc": "Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).",
           "attr": {
             "id": {
               "type": "identity",
-              "desc": "Calculations race ID."
+              "desc": "Calculations pool ID."
             },
             "period_ref": {
               "type": "reference",
@@ -565,15 +565,15 @@
         },
         "calc": {
           ".": {
-            "desc": "Instance of the calculation inside of period race.",
+            "desc": "Instance of the calculation inside of pool.",
             "attr": {
               "id": {
                 "type": "identity",
                 "desc": "Calculation ID."
               },
-              "race_ref": {
+              "pool_ref": {
                 "type": "reference",
-                "desc": "Related race (bound to period)."
+                "desc": "Related pool (bound to period)."
               },
               "calc_ref": {
                 "type": "reference",
@@ -583,13 +583,13 @@
             "index": {
               "unique": {
                 "type": "unique",
-                "attrs": ["race_ref", "calc_ref"]
+                "attrs": ["pool_ref", "calc_ref"]
               }
             },
             "relation": {
-              "race": {
-                "path": "/bon/res/race",
-                "own": ["race_ref"],
+              "pool": {
+                "path": "/bon/res/pool",
+                "own": ["pool_ref"],
                 "foreign": ["id"],
                 "on": {"delete": "cascade", "update": "cascade"}
               },
@@ -605,9 +605,9 @@
       },
       "rank": {
         ".": {
-          "desc": "Qualifications on rank for race calculation.",
+          "desc": "Qualifications on rank for pool calculation.",
           "attr": {
-            "calc_inst_ref": {
+            "pool_calc_ref": {
               "type": "reference",
               "desc": "Reference to the calculation inside period."
             },
@@ -623,13 +623,13 @@
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["calc_inst_ref", "client_ref"]
+              "attrs": ["pool_calc_ref", "client_ref"]
             }
           },
           "relation": {
-            "raceCalc": {
-              "path": "/bon/res/race/calc",
-              "own": ["calc_inst_ref"],
+            "poolCalc": {
+              "path": "/bon/res/pool/calc",
+              "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },
@@ -652,7 +652,7 @@
         ".": {
           "desc": "Downline tree data bound to bonus calculations.",
           "attr": {
-            "calc_inst_ref": {
+            "pool_calc_ref": {
               "type": "reference",
               "desc": "Reference to the calculation inside period (plain & compressed, for example)."
             },
@@ -681,13 +681,13 @@
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["calc_inst_ref", "client_ref"]
+              "attrs": ["pool_calc_ref", "client_ref"]
             }
           },
           "relation": {
-            "raceCalc": {
-              "path": "/bon/res/race/calc",
-              "own": ["calc_inst_ref"],
+            "poolCalc": {
+              "path": "/bon/res/pool/calc",
+              "own": ["pool_calc_ref"],
               "foreign": ["id"],
               "on": {"delete": "cascade", "update": "cascade"}
             },

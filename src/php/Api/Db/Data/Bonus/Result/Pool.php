@@ -11,9 +11,9 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
  * Instances of the one set of calculations from one suite inside one period (cancelled, forecast, complete, etc).
  *
  * @Entity
- * @Table(name="bon_res_race")
+ * @Table(name="bon_res_pool")
  */
-class Race
+class Pool
     extends \TeqFw\Lib\Data
 {
     const DATE_STARTED = 'date_started';

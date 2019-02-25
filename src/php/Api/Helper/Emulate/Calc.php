@@ -9,8 +9,8 @@ namespace Praxigento\Milc\Bonus\Api\Helper\Emulate;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Period as EResPeriod;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race as EResRace;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool as EResRace;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EResRaceCalc;
 
 /**
  * Emulate set of calculations.
@@ -49,14 +49,14 @@ interface Calc
     /**
      * @param int $periodId
      * @param string $dateStarted
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool
      */
     public function registerRace($periodId, $dateStarted): EResRace;
 
     /**
      * @param int $raceId
      * @param int $calcId
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc
      */
     public function registerRaceCalc($raceId, $calcId): EResRaceCalc;
 

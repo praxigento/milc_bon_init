@@ -16,16 +16,10 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result;
 class Cv
     extends \TeqFw\Lib\Data
 {
-    const CALC_INST_REF = 'calc_inst_ref';
     const CLIENT_REF = 'client_ref';
     const IS_AUTOSHIP = 'is_autoship';
+    const POOL_CALC_REF = 'pool_calc_ref';
     const VOLUME = 'volume';
-    /**
-     * @var int
-     * @Id
-     * @Column(type="integer")
-     */
-    public $calc_inst_ref;
     /**
      * @var int
      * @Id
@@ -38,6 +32,12 @@ class Cv
      * @Column(type="boolean")
      */
     public $is_autoship;
+    /**
+     * @var int
+     * @Id
+     * @Column(type="integer")
+     */
+    public $pool_calc_ref;
     /**
      * @var float
      * @Column(type="decimal", precision=10, scale=2)

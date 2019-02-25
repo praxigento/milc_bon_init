@@ -53,8 +53,8 @@ interface Config
     const DB_TBL_BON_RESULT_COMM_LEVEL = 'bon_res_comm_level';
     const DB_TBL_BON_RESULT_CV = 'bon_res_cv';
     const DB_TBL_BON_RESULT_PERIOD = 'bon_res_period';
-    const DB_TBL_BON_RESULT_RACE = 'bon_res_race';
-    const DB_TBL_BON_RESULT_RACE_CALC = 'bon_res_race_calc';
+    const DB_TBL_BON_RESULT_POOL = 'bon_res_pool';
+    const DB_TBL_BON_RESULT_POOL_CALC = 'bon_res_pool_calc';
     const DB_TBL_BON_RESULT_RANK = 'bon_res_rank';
     const DB_TBL_BON_RESULT_TREE = 'bon_res_tree';
     const DB_TBL_DWNL_LOG_DEL = 'dwnl_log_del';

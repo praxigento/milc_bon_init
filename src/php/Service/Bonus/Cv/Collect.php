@@ -38,7 +38,7 @@ class Collect
         /** @var EResCv[] $movements */
         $movements = $this->qGetMovements->exec($dateFrom, $dateTo);
         foreach ($movements as $one) {
-            $one->calc_inst_ref = $raceCalcId;
+            $one->pool_calc_ref = $raceCalcId;
             $this->dao->create($one);
         }
 

@@ -4,21 +4,21 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool;
 
 
 /**
  * Bonus calculation inside of period.
  *
  * @Entity
- * @Table(name="bon_res_race_calc")
+ * @Table(name="bon_res_pool_calc")
  */
 class Calc
     extends \TeqFw\Lib\Data
 {
     const CALC_REF = 'calc_ref';
     const ID = 'id';
-    const RACE_REF = 'race_ref';
+    const POOL_REF = 'pool_ref';
     /**
      * @var int
      * @Column(type="integer")
@@ -35,5 +35,5 @@ class Calc
      * @var int
      * @Column(type="integer")
      */
-    public $race_ref;
+    public $pool_ref;
 }

@@ -7,9 +7,9 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Race\Calc as EPeriodCalc;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rank as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Result\Pool\Calc as EPeriodCalc;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Data\RankEntry as DRankEntry;
 
 /**
@@ -47,7 +47,7 @@ class GetRanks
 
         /** @var \Doctrine\DBAL\Query\QueryBuilder $result */
         $result = $this->conn->createQueryBuilder();
-        $result->from(Cfg::DB_TBL_BON_RESULT_RACE_CALC, $asCalc);
+        $result->from(Cfg::DB_TBL_BON_RESULT_POOL_CALC, $asCalc);
         $result->select([
             "$asRank." . EPlanRank::ID . " as " . DRankEntry::RANK_ID,
             "$asRank." . EPlanRank::CODE . " as " . DRankEntry::RANK_CODE,

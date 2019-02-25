@@ -18,7 +18,7 @@ const PERCENT_NEW_CLIENT_IS_NOT_DISTR = 5;
 const PERCENT_PARENT_CHANGE = 20;
 const PERCENT_RESTORE = 8;
 const PERCENT_TYPE_CHANGE = 20;
-const TOTAL_CLIENTS = 200;
+const TOTAL_CLIENTS = 80;
 /**
  * Get DI container then populate database schema with DEM'ed entities.
  */
