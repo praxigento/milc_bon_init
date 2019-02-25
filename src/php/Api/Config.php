@@ -34,12 +34,12 @@ interface Config
     const DB_DRIVER_POSTGRES = 'pdo_pgsql';
     /**/
     const DB_TBL_BON_CALC_COMM_LEVEL = 'bon_calc_comm_level';
-    const DB_TBL_BON_CALC_QUAL_RANK = 'bon_calc_qual_rank';
-    const DB_TBL_BON_CALC_QUAL_RULE = 'bon_calc_qual_rule';
-    const DB_TBL_BON_CALC_QUAL_RULE_GROUP = 'bon_calc_qual_rule_group';
-    const DB_TBL_BON_CALC_QUAL_RULE_GROUP_REF = 'bon_calc_qual_rule_group_ref';
-    const DB_TBL_BON_CALC_QUAL_RULE_PV = 'bon_calc_qual_rule_pv';
-    const DB_TBL_BON_CALC_QUAL_RULE_RANK = 'bon_calc_qual_rule_rank';
+    const DB_TBL_BON_CALC_RANK = 'bon_calc_rank';
+    const DB_TBL_BON_CALC_RANK_RULE = 'bon_calc_rank_rule';
+    const DB_TBL_BON_CALC_RANK_RULE_GROUP = 'bon_calc_rank_rule_group';
+    const DB_TBL_BON_CALC_RANK_RULE_GROUP_REF = 'bon_calc_rank_rule_group_ref';
+    const DB_TBL_BON_CALC_RANK_RULE_PV = 'bon_calc_rank_rule_pv';
+    const DB_TBL_BON_CALC_RANK_RULE_RANK = 'bon_calc_rank_rule_rank';
     const DB_TBL_BON_CV_REG = 'bon_cv_reg';
     const DB_TBL_BON_CV_REG_SALE = 'bon_cv_reg_sale';
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';

@@ -7,7 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rank as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank as EPlanQual;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EPeriodCalc;
 use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Data\RankEntry as DRankEntry;
@@ -54,9 +54,9 @@ class GetRanks
             "$asRank." . EPlanRank::SEQUENCE . " as " . DRankEntry::SEQUENCE,
             "$asQual." . EPlanQual::RULE_REF . " as " . DRankEntry::RULE_ID
         ]);
-        /* LEFT JOIN bon_calc_qual_rank */
+        /* LEFT JOIN bon_calc_rank_rank */
         $on = "$asQual." . EPlanQual::CALC_REF . "=$asCalc." . EPeriodCalc::CALC_REF;
-        $result->leftJoin($asCalc, Cfg::DB_TBL_BON_CALC_QUAL_RANK, $asQual, $on);
+        $result->leftJoin($asCalc, Cfg::DB_TBL_BON_CALC_RANK, $asQual, $on);
         /* LEFT JOIN bon_plan_rank */
         $on = "$asRank." . EPlanRank::ID . "=$asQual." . EPlanQual::RANK_REF;
         $result->leftJoin($asQual, Cfg::DB_TBL_BON_PLAN_RANK, $asRank, $on);

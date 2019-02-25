@@ -10,6 +10,6 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Qualification\Z\Data\Rule;
  * Service level wrapper for DB data.
  */
 class Rank
-    extends \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank
+    extends \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Rank
 {
 }

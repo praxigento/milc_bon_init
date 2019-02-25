@@ -52,49 +52,47 @@
           }
         }
       },
-      "qual": {
-        "rank": {
-          ".": {
-            "desc": "Relations between ranks and qualification rules.",
-            "attr": {
-              "calc_ref": {
-                "type": "reference",
-                "desc": "Reference to the calculation."
-              },
-              "rank_ref": {
-                "type": "reference",
-                "desc": "Reference to the rank."
-              },
-              "rule_ref": {
-                "type": "reference",
-                "desc": "Reference to the qualification rule."
-              }
+      "rank": {
+        ".": {
+          "desc": "Relations between ranks and qualification rules.",
+          "attr": {
+            "calc_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation."
             },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["calc_ref", "rank_ref", "rule_ref"]
-              }
+            "rank_ref": {
+              "type": "reference",
+              "desc": "Reference to the rank."
             },
-            "relation": {
-              "calc": {
-                "path": "/bon/plan/suite/calc",
-                "own": ["calc_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "rank": {
-                "path": "/bon/plan/rank",
-                "own": ["rank_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "rule": {
-                "path": "/bon/calc/qual/rule",
-                "own": ["rule_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              }
+            "rule_ref": {
+              "type": "reference",
+              "desc": "Reference to the qualification rule."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["calc_ref", "rank_ref", "rule_ref"]
+            }
+          },
+          "relation": {
+            "calc": {
+              "path": "/bon/plan/suite/calc",
+              "own": ["calc_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rank": {
+              "path": "/bon/plan/rank",
+              "own": ["rank_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
+            },
+            "rule": {
+              "path": "/bon/calc/rank/rule",
+              "own": ["rule_ref"],
+              "foreign": ["id"],
+              "on": {"delete": "cascade", "update": "cascade"}
             }
           }
         },
@@ -134,7 +132,7 @@
               },
               "relation": {
                 "rule": {
-                  "path": "/bon/calc/qual/rule",
+                  "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
                   "on": {"delete": "cascade", "update": "cascade"}
@@ -162,13 +160,13 @@
                 },
                 "relation": {
                   "groupingRule": {
-                    "path": "/bon/calc/qual/rule/group",
+                    "path": "/bon/calc/rank/rule/group",
                     "own": ["grouping_ref"],
                     "foreign": ["ref"],
                     "on": {"delete": "cascade", "update": "cascade"}
                   },
                   "groupedRule": {
-                    "path": "/bon/calc/qual/rule",
+                    "path": "/bon/calc/rank/rule",
                     "own": ["grouped_ref"],
                     "foreign": ["id"],
                     "on": {"delete": "cascade", "update": "cascade"}
@@ -212,7 +210,7 @@
               },
               "relation": {
                 "rule": {
-                  "path": "/bon/calc/qual/rule",
+                  "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
                   "on": {"delete": "cascade", "update": "cascade"}
@@ -253,7 +251,7 @@
               },
               "relation": {
                 "rule": {
-                  "path": "/bon/calc/qual/rule",
+                  "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
                   "on": {"delete": "cascade", "update": "cascade"}

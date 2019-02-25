@@ -8,12 +8,12 @@ namespace Praxigento\Milc\Bonus\Helper\Init;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Comm\Level as ECalcLevel;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rank as EPlanQual;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule as EQualRule;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group as EQualRuleGroup;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Group\Ref as EQualRuleGroupRef;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Pv as EQualRulePv;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Qual\Rule\Rank as EQualRuleRank;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank as EPlanQual;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule as EQualRule;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Group as EQualRuleGroup;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Group\Ref as EQualRuleGroupRef;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Pv as EQualRulePv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Rank as EQualRuleRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan as EPlan;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as ECalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type\Deps\After as ECalcTypeDepsOn;
