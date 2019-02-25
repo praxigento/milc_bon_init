@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 
 class GetMovements
 {
@@ -33,9 +33,9 @@ class GetMovements
         $qb = $this->conn->createQueryBuilder();
         $qb->from(Cfg::DB_TBL_BON_CV_REG, $as);
         $cols = [
-            EResCv::CLIENT_REF => "$as." . ECvReg::CLIENT_REF,
-            EResCv::IS_AUTOSHIP => "$as." . ECvReg::IS_AUTOSHIP,
-            "SUM($as." . ECvReg::VOLUME . ") as " . EResCv::VOLUME
+            EPoolCv::CLIENT_REF => "$as." . ECvReg::CLIENT_REF,
+            EPoolCv::IS_AUTOSHIP => "$as." . ECvReg::IS_AUTOSHIP,
+            "SUM($as." . ECvReg::VOLUME . ") as " . EPoolCv::VOLUME
         ];
         $qb->select($cols);
         $byDateFrom = ECvReg::DATE . '>=:' . self::BND_DATE_FROM;
@@ -48,8 +48,8 @@ class GetMovements
         $qb->groupBy("$as." . ECvReg::CLIENT_REF, "$as." . ECvReg::IS_AUTOSHIP);
 
         $stmt = $qb->execute();
-        /** @var EResCv[] $all */
-        $result = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, EResCv::class);
+        /** @var EPoolCv[] $all */
+        $result = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, EPoolCv::class);
         return $result;
     }
 

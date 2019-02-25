@@ -48,17 +48,17 @@ class Simple
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $raceCalcIdQual = $req->raceCalcIdQual;
-        $raceCalcIdTree = $req->raceCalcIdTree;
+        $poolCalcIdQual = $req->poolCalcIdQual;
+        $poolCalcIdTree = $req->poolCalcIdTree;
 
         if ($req->tree) {
             $tree = $req->tree;
         } else {
-            $tree = $this->getTree($raceCalcIdTree);
+            $tree = $this->getTree($poolCalcIdTree);
         }
 
         /** @var DRankEntry[] $ranks */
-        $ranks = $this->getRanks($raceCalcIdQual);
+        $ranks = $this->getRanks($poolCalcIdQual);
         $rules = $this->getRulesTree($ranks);
 
         $entries = [];
@@ -68,7 +68,7 @@ class Simple
             $rankId = $this->qualify($one, $ranks, $rules);
             if ($rankId) {
                 $entity = new EPeriodRank();
-                $entity->pool_calc_ref = $raceCalcIdQual;
+                $entity->pool_calc_ref = $poolCalcIdQual;
                 $entity->client_ref = $clientId;
                 $entity->rank_ref = $rankId;
                 $this->dao->create($entity);
@@ -115,10 +115,10 @@ class Simple
         return $result;
     }
 
-    private function getTree($raceCalcId)
+    private function getTree($poolCalcId)
     {
         $key = [
-            EPeriodTree::POOL_CALC_REF => $raceCalcId
+            EPeriodTree::POOL_CALC_REF => $poolCalcId
         ];
         $result = $this->dao->getSet(EPeriodTree::class, $key);
         return $result;

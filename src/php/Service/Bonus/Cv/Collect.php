@@ -6,12 +6,12 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Cv;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Response as AResponse;
 
 /**
- * Collect CV for given period and save it with given raceCalcId.
+ * Collect CV for given period and save it with given poolCalcId.
  */
 class Collect
 {
@@ -31,14 +31,14 @@ class Collect
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $raceCalcId = $req->raceCalcId;
+        $poolCalcId = $req->poolCalcId;
         $dateFrom = $req->dateFrom;
         $dateTo = $req->dateTo;
 
-        /** @var EResCv[] $movements */
+        /** @var EPoolCv[] $movements */
         $movements = $this->qGetMovements->exec($dateFrom, $dateTo);
         foreach ($movements as $one) {
-            $one->pool_calc_ref = $raceCalcId;
+            $one->pool_calc_ref = $poolCalcId;
             $this->dao->create($one);
         }
 

@@ -12,9 +12,9 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as EPlanCalcType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EResRace;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
 
 class Calc
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Calc
@@ -123,38 +123,38 @@ class Calc
         return $result;
     }
 
-    public function step01Cv($raceCalcId, $dateFrom, $dateTo)
+    public function step01Cv($poolCalcId, $dateFrom, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request();
-        $req->raceCalcId = $raceCalcId;
+        $req->poolCalcId = $poolCalcId;
         $req->dateFrom = $dateFrom;
         $req->dateTo = $dateTo;
         $resp = $this->srvCv->exec($req);
     }
 
-    public function step02Tree($raceCalcId, $raceCalcIdCvCollect, $dateTo)
+    public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request();
-        $req->raceCalcId = $raceCalcId;
-        $req->raceCalcIdCvCollect = $raceCalcIdCvCollect;
+        $req->poolCalcId = $poolCalcId;
+        $req->poolCalcIdCvCollect = $poolCalcIdCvCollect;
         $req->dateTo = $dateTo;
         $resp = $this->srvTree->exec($req);
     }
 
-    public function step03Qual($raceCalcId, $raceCalcIdTree)
+    public function step03Qual($poolCalcId, $poolCalcIdTree)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Request();
-        $req->raceCalcIdQual = $raceCalcId;
-        $req->raceCalcIdTree = $raceCalcIdTree;
+        $req->poolCalcIdQual = $poolCalcId;
+        $req->poolCalcIdTree = $poolCalcIdTree;
         $this->srvQual->exec($req);
     }
 
-    public function step04Comm($raceCalcId, $raceCalcIdTree, $raceCalcIdQual)
+    public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
-        $req->thisCalcInstId = $raceCalcId;
-        $req->treeCalcInstId = $raceCalcIdTree;
-        $req->ranksCalcInstId = $raceCalcIdQual;
+        $req->thisCalcInstId = $poolCalcId;
+        $req->treeCalcInstId = $poolCalcIdTree;
+        $req->ranksCalcInstId = $poolCalcIdQual;
         /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response $resp */
         $resp = $this->srvComm->exec($req);
     }

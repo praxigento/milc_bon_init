@@ -8,8 +8,8 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Commission;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Comm\Level as ECalcLevel;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Comm\Level as EPeriodLevel;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EPeriodCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Comm\Level as EPeriodLevel;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Rank as EPeriodRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EPeriodTree;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request as ARequest;

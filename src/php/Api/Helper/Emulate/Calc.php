@@ -8,9 +8,9 @@ namespace Praxigento\Milc\Bonus\Api\Helper\Emulate;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as EPlanSuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as EPlanSuiteCalc;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool as EResRace;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc as EResRaceCalc;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period as EResPeriod;
 
 /**
  * Emulate set of calculations.
@@ -63,29 +63,29 @@ interface Calc
     /**
      * Collect CV on step 01.
      *
-     * @param int $raceCalcId
+     * @param int $poolCalcId
      * @param string $dateFrom
      * @param string $dateTo
      * @return mixed
      */
-    public function step01Cv($raceCalcId, $dateFrom, $dateTo);
+    public function step01Cv($poolCalcId, $dateFrom, $dateTo);
 
     /**
      * Compose downline tree on step 02.
      *
-     * @param int $raceCalcId
-     * @param int $raceCalcIdCvCollect
+     * @param int $poolCalcId
+     * @param int $poolCalcIdCvCollect
      * @param string $dateTo
      * @return mixed
      */
-    public function step02Tree($raceCalcId, $raceCalcIdCvCollect, $dateTo);
+    public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo);
 
     /**
-     * @param int $raceCalcId
-     * @param int $raceCalcIdTree
+     * @param int $poolCalcId
+     * @param int $poolCalcIdTree
      * @return mixed
      */
-    public function step03Qual($raceCalcId, $raceCalcIdTree);
+    public function step03Qual($poolCalcId, $poolCalcIdTree);
 
-    public function step04Comm($raceCalcId, $raceCalcIdTree, $raceCalcIdQual);
+    public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual);
 }

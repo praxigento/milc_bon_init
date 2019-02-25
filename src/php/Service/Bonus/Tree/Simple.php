@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Tree;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EResCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EResTree;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Response as AResponse;
@@ -29,25 +29,25 @@ class Simple
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $raceCalcId = $req->raceCalcId;
-        $raceCalcIdCvCollect = $req->raceCalcIdCvCollect;
+        $poolCalcId = $req->poolCalcId;
+        $poolCalcIdCvCollect = $req->poolCalcIdCvCollect;
         $dateTo = $req->dateTo;
 
-        $cv = $this->getCvCollected($raceCalcIdCvCollect);
+        $cv = $this->getCvCollected($poolCalcIdCvCollect);
         $tree = $this->getDownlineTree($dateTo);
-        $entries = $this->saveTree($raceCalcId, $tree, $cv);
+        $entries = $this->saveTree($poolCalcId, $tree, $cv);
 
         $result = new AResponse();
         return $result;
     }
 
-    private function getCvCollected($raceCalcId)
+    private function getCvCollected($poolCalcId)
     {
-        $key = [EResCv::POOL_CALC_REF => $raceCalcId];
-        $all = $this->dao->getSet(EResCv::class, $key);
+        $key = [EPoolCv::POOL_CALC_REF => $poolCalcId];
+        $all = $this->dao->getSet(EPoolCv::class, $key);
         /* map CV by client/autoship */
         $result = [];
-        /** @var EResCv $one */
+        /** @var EPoolCv $one */
         foreach ($all as $one) {
             $clientId = $one->client_ref;
             $isAutoship = (bool)$one->is_autoship;
@@ -71,12 +71,12 @@ class Simple
     }
 
     /**
-     * @param int $raceCalcId
+     * @param int $poolCalcId
      * @param \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min[] $tree
      * @param array $cv [clientId][isAutoship]=>cv
      * @return EResTree[]
      */
-    private function saveTree($raceCalcId, $tree, $cv)
+    private function saveTree($poolCalcId, $tree, $cv)
     {
         $result = [];
         if (is_array($tree)) {
@@ -85,7 +85,7 @@ class Simple
                 $pv = (isset($cv[$clientId][false])) ? $cv[$clientId][false] : 0;
                 $apv = (isset($cv[$clientId][true])) ? $cv[$clientId][true] : 0;
                 $entity = new EResTree();
-                $entity->pool_calc_ref = $raceCalcId;
+                $entity->pool_calc_ref = $poolCalcId;
                 $entity->client_ref = $one->client_id;
                 $entity->parent_ref = $one->parent_id;
                 $entity->apv = $apv;

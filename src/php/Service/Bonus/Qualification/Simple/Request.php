@@ -11,12 +11,12 @@ class Request
     extends \TeqFw\Lib\Data
 {
     /** @var int race calculation ID for qualification calculation. */
-    public $raceCalcIdQual;
+    public $poolCalcIdQual;
     /** @var int race calculation ID for tree composition calculation related to the current race qualification */
-    public $raceCalcIdTree;
+    public $poolCalcIdTree;
     /**
      * @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree[]
-     * @deprecated use $raceCalcIdTree
+     * @deprecated use $poolCalcIdTree
      */
     public $tree;
 }

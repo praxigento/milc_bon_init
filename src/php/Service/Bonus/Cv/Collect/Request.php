@@ -14,5 +14,5 @@ class Request
     /** @var string excluding (<$dateTo) */
     public $dateTo;
     /** @var int */
-    public $raceCalcId;
+    public $poolCalcId;
 }
