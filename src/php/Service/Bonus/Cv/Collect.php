@@ -8,6 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv\Item as ECvItem;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Data\Movement as DMove;
+use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovements as QGetMoves;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Response as AResponse;
 
@@ -18,15 +19,28 @@ class Collect
 {
     /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
     private $dao;
-    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovementsNew */
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovements */
     private $qGetMovements;
 
     public function __construct(
         \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
-        \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovementsNew $qGetMovements
+        \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovements $qGetMovements
     ) {
         $this->dao = $dao;
         $this->qGetMovements = $qGetMovements;
+    }
+
+    private function collectMovements($dateFrom, $dateTo)
+    {
+        $query = $this->qGetMovements->build();
+        $bind = [
+            QGetMoves::BND_DATE_FROM => $dateFrom,
+            QGetMoves::BND_DATE_TO => $dateTo
+        ];
+        $query->setParameters($bind);
+        $stmt = $query->execute();
+        $result = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, QGetMoves::RESULT_CLASS);
+        return $result;
     }
 
     /**
@@ -67,7 +81,7 @@ class Collect
         $dateTo = $req->dateTo;
 
         /** @var DMove[] $movements */
-        $movements = $this->qGetMovements->exec($dateFrom, $dateTo);
+        $movements = $this->collectMovements($dateFrom, $dateTo);
         /* exclude backward movements and related forward movements */
         $positives = $this->excludeNegatives($movements);
         $this->saveItems($poolCalcId, $positives);

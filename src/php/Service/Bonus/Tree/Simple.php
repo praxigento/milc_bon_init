@@ -6,8 +6,9 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Tree;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EResTree;
+use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Data\Item as DItem;
+use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Db\Query\CollectCv as QCollectCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request as ARequest;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Response as AResponse;
 
@@ -15,14 +16,18 @@ class Simple
 {
     /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
     private $dao;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Db\Query\CollectCv */
+    private $qCollectCv;
     /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get */
     private $srvTreeGet;
 
     public function __construct(
         \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
+        \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Db\Query\CollectCv $qCollectCv,
         \Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get $srvTreeGet
     ) {
         $this->dao = $dao;
+        $this->qCollectCv = $qCollectCv;
         $this->srvTreeGet = $srvTreeGet;
     }
 
@@ -43,13 +48,16 @@ class Simple
 
     private function getCvCollected($poolCalcId)
     {
-        $key = [EPoolCv::POOL_CALC_REF => $poolCalcId];
-        $all = $this->dao->getSet(EPoolCv::class, $key);
+        $query = $this->qCollectCv->build();
+        $bind = [QCollectCv::BND_POOL_CALC_ID => $poolCalcId];
+        $query->setParameters($bind);
+        $stmt = $query->execute();
+        $all = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, QCollectCv::RESULT_CLASS);
         /* map CV by client/autoship */
         $result = [];
-        /** @var EPoolCv $one */
+        /** @var DItem $one */
         foreach ($all as $one) {
-            $clientId = $one->client_ref;
+            $clientId = $one->client_id;
             $isAutoship = (bool)$one->is_autoship;
             $result[$clientId][$isAutoship] = $one->volume;
         }

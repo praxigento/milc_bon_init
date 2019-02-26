@@ -30,7 +30,7 @@ try {
 
     $conn->beginTransaction();
 
-    /* start from the beginning of the ages */
+    /* start from the beginning of the ages and get one month to process */
     $date = \DateTime::createFromFormat(Cfg::BEGINNING_OF_AGES_FORMAT, Cfg::BEGINNING_OF_AGES);
     $dateFrom = $hlpPeriod->getTimestampFrom($date, HPeriod::TYPE_MONTH);
     $dateTo = $hlpPeriod->getTimestampTo($date, HPeriod::TYPE_MONTH);
@@ -60,7 +60,7 @@ try {
     $hlpCalc->step04Comm($poolCalcComm->id, $poolCalcTree->id, $poolCalcRank->id);
 
 
-    $conn->rollBack();
+    $conn->commit();
 
     echo "\nDone.\n";
 } catch (\Throwable $e) {

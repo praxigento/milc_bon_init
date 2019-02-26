@@ -8,13 +8,23 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry\Sale as ECvRegSale;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry\Sale\Back as ECvRegSaleBack;
+use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Data\Movement as DMove;
 
+/**
+ * Get all CV movements for given dates range (with movement type info).
+ */
 class GetMovements
 {
-    private const AS_MAIN = 'main';
-    private const BND_DATE_FROM = 'dateFrom';
-    private const BND_DATE_TO = 'dateTo';
+    public const AS_BACK = 'back';
+    public const AS_REG = 'reg';
+    public const AS_SALE = 'sale';
+
+    public const BND_DATE_FROM = 'dateFrom';
+    public const BND_DATE_TO = 'dateTo';
+
+    public const RESULT_CLASS = DMove::class;
 
     /** @var \TeqFw\Lib\Db\Api\Connection\Main */
     private $conn;
@@ -25,31 +35,44 @@ class GetMovements
         $this->conn = $conn;
     }
 
-    public function exec($dateFrom, $dateTo)
+    /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    public function build()
     {
 
-        $as = self::AS_MAIN;
-        /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
-        $qb = $this->conn->createQueryBuilder();
-        $qb->from(Cfg::DB_TBL_BON_CV_REG, $as);
+        $asReg = self::AS_REG;
+        $asSale = self::AS_SALE;
+        $asBack = self::AS_BACK;
+        /** @var \Doctrine\DBAL\Query\QueryBuilder $result */
+        $result = $this->conn->createQueryBuilder();
+        $result->from(Cfg::DB_TBL_BON_CV_REG, $asReg);
         $cols = [
-            EPoolCv::CLIENT_REF => "$as." . ECvReg::CLIENT_REF,
-            EPoolCv::IS_AUTOSHIP => "$as." . ECvReg::IS_AUTOSHIP,
-            "SUM($as." . ECvReg::VOLUME . ") as " . EPoolCv::VOLUME
+            "$asReg." . ECvReg::ID . ' as ' . DMove::REG_ID
         ];
-        $qb->select($cols);
+        $result->select($cols);
+
+        /* LEFT JOIN bon_cv_reg_sale */
+        $on = "$asSale." . ECvRegSale::REGISTRY_REF . "=$asReg." . ECvReg::ID;
+        $result->leftJoin($asReg, Cfg::DB_TBL_BON_CV_REG_SALE, $asSale, $on);
+        $cols = [
+            "$asSale." . ECvRegSale::SOURCE_REF . ' as ' . DMove::SALE_ID
+        ];
+        $result->addSelect($cols);
+
+        /* LEFT JOIN bon_cv_reg_sale_back */
+        $on = "$asBack." . ECvRegSaleBack::REGISTRY_REF . "=$asReg." . ECvReg::ID;
+        $result->leftJoin($asReg, Cfg::DB_TBL_BON_CV_REG_SALE_BACK, $asBack, $on);
+        $cols = [
+            "$asBack." . ECvRegSaleBack::SOURCE_REF . ' as ' . DMove::BACK_ID
+        ];
+        $result->addSelect($cols);
+
+        /* WHERE */
         $byDateFrom = ECvReg::DATE . '>=:' . self::BND_DATE_FROM;
         $byDateTo = ECvReg::DATE . '<:' . self::BND_DATE_TO;
-        $qb->where("($byDateFrom) AND ($byDateTo)");
-        $qb->setParameters([
-            self::BND_DATE_FROM => $dateFrom,
-            self::BND_DATE_TO => $dateTo
-        ]);
-        $qb->groupBy("$as." . ECvReg::CLIENT_REF, "$as." . ECvReg::IS_AUTOSHIP);
+        $result->where("($byDateFrom) AND ($byDateTo)");
 
-        $stmt = $qb->execute();
-        /** @var EPoolCv[] $all */
-        $result = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, EPoolCv::class);
         return $result;
     }
 
