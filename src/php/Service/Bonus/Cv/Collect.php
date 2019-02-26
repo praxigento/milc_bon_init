@@ -76,7 +76,7 @@ class Collect
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $poolCalcId = $req->poolCalcId;
+        $poolCalcId = $req->poolCalcIdOwn;
         $dateFrom = $req->dateFrom;
         $dateTo = $req->dateTo;
 

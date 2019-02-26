@@ -18,9 +18,9 @@ class LevelBasedTest
         /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srv */
         $srv = $container->get(\Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased::class);
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
-        $req->thisCalcInstId = 4;
-        $req->ranksCalcInstId = 3;
-        $req->treeCalcInstId = 2;
+        $req->poolCalcIdOwn = 4;
+        $req->poolCalcIdRanks = 3;
+        $req->poolCalcIdTree = 2;
         $resp = $srv->exec($req);
         $this->assertInstanceOf(\Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response::class, $resp);
     }

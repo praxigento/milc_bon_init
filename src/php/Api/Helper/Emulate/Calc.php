@@ -40,6 +40,7 @@ interface Calc
 
     /**
      * Register new period for suite calculations.
+     *
      * @param string $dateBegin '2019-05-01'
      * @param int $suiteId
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Period
@@ -47,6 +48,8 @@ interface Calc
     public function registerPeriod($dateBegin, $suiteId): EPoolPeriod;
 
     /**
+     * Register new pool for given period linked to the suite.
+     *
      * @param int $periodId
      * @param string $dateStarted
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool
@@ -54,14 +57,16 @@ interface Calc
     public function registerPool($periodId, $dateStarted): EPool;
 
     /**
-     * @param int $raceId
-     * @param int $calcId
+     * Register new pool calculation instance for given suite calculation.
+     *
+     * @param int $poolId
+     * @param int $suiteCalcId
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Calc
      */
-    public function registerPoolCalc($raceId, $calcId): EPoolCalc;
+    public function registerPoolCalc($poolId, $suiteCalcId): EPoolCalc;
 
     /**
-     * Collect CV on step 01.
+     * CV collection.
      *
      * @param int $poolCalcId
      * @param string $dateFrom
@@ -71,7 +76,7 @@ interface Calc
     public function step01Cv($poolCalcId, $dateFrom, $dateTo);
 
     /**
-     * Compose downline tree on step 02.
+     * Downline tree composition.
      *
      * @param int $poolCalcId
      * @param int $poolCalcIdCvCollect
@@ -81,11 +86,21 @@ interface Calc
     public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo);
 
     /**
+     * Qualification rank calculation.
+     *
      * @param int $poolCalcId
      * @param int $poolCalcIdTree
      * @return mixed
      */
-    public function step03Qual($poolCalcId, $poolCalcIdTree);
+    public function step03Rank($poolCalcId, $poolCalcIdTree);
 
+    /**
+     * Level based commission calculation.
+     *
+     * @param int $poolCalcId
+     * @param int $poolCalcIdTree
+     * @param int $poolCalcIdQual
+     * @return mixed
+     */
     public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual);
 }

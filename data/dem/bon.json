@@ -463,6 +463,10 @@
           ".": {
             "desc": "Level based bonus commission values for pool calculation.",
             "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "ID of the commission amount (used in clawback links)."
+              },
               "pool_calc_ref": {
                 "type": "reference",
                 "desc": "Reference to the calculation instance."
@@ -497,8 +501,8 @@
               }
             },
             "index": {
-              "pk": {
-                "type": "primary",
+              "unique": {
+                "type": "unique",
                 "attrs": ["pool_calc_ref", "client_ref", "level"]
               }
             },
@@ -514,6 +518,47 @@
                 "own": ["client_ref"],
                 "foreign": ["client_ref"],
                 "on": {"delete": "cascade", "update": "cascade"}
+              }
+            }
+          },
+          "quant": {
+            ".": {
+              "desc": "",
+              "attr": {
+                "comm_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the level commission item."
+                },
+                "cv_reg_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the CV movement registry item."
+                },
+                "value": {
+                  "type": "decimal",
+                  "desc": "Part of the commission amount from this CV movement.",
+                  "precision": 10,
+                  "scale": 2
+                }
+              },
+              "index": {
+                "pk": {
+                  "type": "primary",
+                  "attrs": ["comm_ref", "cv_reg_ref"]
+                }
+              },
+              "relation": {
+                "commission": {
+                  "path": "/bon/pool/comm/level",
+                  "own": ["comm_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                },
+                "cvRegistry": {
+                  "path": "/bon/cv/reg",
+                  "own": ["cv_reg_ref"],
+                  "foreign": ["id"],
+                  "on": {"delete": "cascade", "update": "cascade"}
+                }
               }
             }
           }

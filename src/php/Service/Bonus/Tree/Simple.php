@@ -34,8 +34,8 @@ class Simple
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $poolCalcId = $req->poolCalcId;
-        $poolCalcIdCvCollect = $req->poolCalcIdCvCollect;
+        $poolCalcId = $req->poolCalcIdOwn;
+        $poolCalcIdCvCollect = $req->poolCalcIdCv;
         $dateTo = $req->dateTo;
 
         $cv = $this->getCvCollected($poolCalcIdCvCollect);

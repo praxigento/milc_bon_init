@@ -48,17 +48,13 @@ class Simple
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $poolCalcIdQual = $req->poolCalcIdQual;
+        $poolCalcIdRank = $req->poolCalcIdRank;
         $poolCalcIdTree = $req->poolCalcIdTree;
 
-        if ($req->tree) {
-            $tree = $req->tree;
-        } else {
-            $tree = $this->getTree($poolCalcIdTree);
-        }
+        $tree = $this->getTree($poolCalcIdTree);
 
         /** @var DRankEntry[] $ranks */
-        $ranks = $this->getRanks($poolCalcIdQual);
+        $ranks = $this->getRanks($poolCalcIdRank);
         $rules = $this->getRulesTree($ranks);
 
         $entries = [];
@@ -68,7 +64,7 @@ class Simple
             $rankId = $this->qualify($one, $ranks, $rules);
             if ($rankId) {
                 $entity = new EPeriodRank();
-                $entity->pool_calc_ref = $poolCalcIdQual;
+                $entity->pool_calc_ref = $poolCalcIdRank;
                 $entity->client_ref = $clientId;
                 $entity->rank_ref = $rankId;
                 $this->dao->create($entity);

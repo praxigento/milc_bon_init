@@ -59,7 +59,7 @@ try {
         $hlpCalc->step02Tree($raceCalcTree->id, $raceCalcCollect->id, $dateTo);
         /** Step 3: Qualification. */
         $raceCalcQual = $hlpCalc->registerPoolCalc($raceId, $calcQual->id);
-        $hlpCalc->step03Qual($raceCalcQual->id, $raceCalcTree->id);
+        $hlpCalc->step03Rank($raceCalcQual->id, $raceCalcTree->id);
         /** Step 4: Level Based Commissions. */
         $raceCalcComm = $hlpCalc->registerPoolCalc($raceId, $calcComm->id);
         $hlpCalc->step04Comm($raceCalcComm->id, $raceCalcTree->id, $raceCalcQual->id);

@@ -113,11 +113,11 @@ class Calc
         return $result;
     }
 
-    public function registerPoolCalc($raceId, $calcId): EPoolCalc
+    public function registerPoolCalc($poolId, $suiteCalcId): EPoolCalc
     {
         $entity = new EPoolCalc();
-        $entity->pool_ref = $raceId;
-        $entity->calc_ref = $calcId;
+        $entity->pool_ref = $poolId;
+        $entity->calc_ref = $suiteCalcId;
         $id = $this->dao->create($entity);
         $result = $this->dao->getOne(EPoolCalc::class, $id);
         return $result;
@@ -126,7 +126,7 @@ class Calc
     public function step01Cv($poolCalcId, $dateFrom, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request();
-        $req->poolCalcId = $poolCalcId;
+        $req->poolCalcIdOwn = $poolCalcId;
         $req->dateFrom = $dateFrom;
         $req->dateTo = $dateTo;
         $resp = $this->srvCv->exec($req);
@@ -135,16 +135,16 @@ class Calc
     public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request();
-        $req->poolCalcId = $poolCalcId;
-        $req->poolCalcIdCvCollect = $poolCalcIdCvCollect;
+        $req->poolCalcIdOwn = $poolCalcId;
+        $req->poolCalcIdCv = $poolCalcIdCvCollect;
         $req->dateTo = $dateTo;
         $resp = $this->srvTree->exec($req);
     }
 
-    public function step03Qual($poolCalcId, $poolCalcIdTree)
+    public function step03Rank($poolCalcId, $poolCalcIdTree)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Request();
-        $req->poolCalcIdQual = $poolCalcId;
+        $req->poolCalcIdRank = $poolCalcId;
         $req->poolCalcIdTree = $poolCalcIdTree;
         $this->srvQual->exec($req);
     }
@@ -152,9 +152,9 @@ class Calc
     public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
-        $req->thisCalcInstId = $poolCalcId;
-        $req->treeCalcInstId = $poolCalcIdTree;
-        $req->ranksCalcInstId = $poolCalcIdQual;
+        $req->poolCalcIdOwn = $poolCalcId;
+        $req->poolCalcIdTree = $poolCalcIdTree;
+        $req->poolCalcIdRanks = $poolCalcIdQual;
         /** @var \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Response $resp */
         $resp = $this->srvComm->exec($req);
     }

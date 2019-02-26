@@ -12,7 +12,7 @@ class Request
     /** @var string excluding (<$dateTo) */
     public $dateTo;
     /** @var int */
-    public $poolCalcId;
+    public $poolCalcIdOwn;
     /** @var int */
-    public $poolCalcIdCvCollect;
+    public $poolCalcIdCv;
 }

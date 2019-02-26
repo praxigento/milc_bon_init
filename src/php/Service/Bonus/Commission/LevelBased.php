@@ -116,9 +116,9 @@ class LevelBased
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $thisCalcInstId = $req->thisCalcInstId;
-        $ranksCalcInstId = $req->ranksCalcInstId;
-        $treeCalcInstId = $req->treeCalcInstId;
+        $thisCalcInstId = $req->poolCalcIdOwn;
+        $ranksCalcInstId = $req->poolCalcIdRanks;
+        $treeCalcInstId = $req->poolCalcIdTree;
 
         $calcId = $this->getCalcId($thisCalcInstId);
         $commByRanks = $this->getLevels($calcId);

@@ -19,12 +19,12 @@ class Level
     public const CLIENT_REF = 'client_ref';
     public const COMMISSION = 'commission';
     public const CV = 'cv';
+    public const ID = 'id';
     public const LEVEL = 'level';
     public const PERCENT = 'percent';
     public const POOL_CALC_REF = 'pool_calc_ref';
     /**
      * @var int
-     * @Id
      * @Column(type="integer")
      */
     public $client_ref;
@@ -40,6 +40,12 @@ class Level
     public $cv;
     /**
      * @var int
+     * @Id
+     * @Column(type="integer")
+     */
+    public $id;
+    /**
+     * @var int
      * @Column(type="integer")
      */
     public $level;
@@ -50,7 +56,6 @@ class Level
     public $percent;
     /**
      * @var int
-     * @Id
      * @Column(type="integer")
      */
     public $pool_calc_ref;

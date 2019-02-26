@@ -52,9 +52,9 @@ try {
     /** STEP 2: Compose tree (just copy plain tree for the end of the period). */
     $poolCalcTree = $hlpCalc->registerPoolCalc($poolId, $calcTree->id);
     $hlpCalc->step02Tree($poolCalcTree->id, $poolCalcCollect->id, $dateTo);
-    /** Step 3: Qualification. */
+    /** Step 3: Rank Qualification. */
     $poolCalcRank = $hlpCalc->registerPoolCalc($poolId, $calcRank->id);
-    $hlpCalc->step03Qual($poolCalcRank->id, $poolCalcTree->id);
+    $hlpCalc->step03Rank($poolCalcRank->id, $poolCalcTree->id);
     /** Step 4: Level Based Commissions. */
     $poolCalcComm = $hlpCalc->registerPoolCalc($poolId, $calcComm->id);
     $hlpCalc->step04Comm($poolCalcComm->id, $poolCalcTree->id, $poolCalcRank->id);
