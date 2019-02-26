@@ -523,7 +523,7 @@
           },
           "quant": {
             ".": {
-              "desc": "",
+              "desc": "Links to CV movements related to commission been paid.",
               "attr": {
                 "comm_ref": {
                   "type": "reference",
@@ -729,7 +729,7 @@
       },
       "tree": {
         ".": {
-          "desc": "Downline tree data bound to bonus calculations.",
+          "desc": "Downline tree data bound to the pool of calculations.",
           "attr": {
             "pool_calc_ref": {
               "type": "reference",
@@ -758,8 +758,8 @@
             }
           },
           "index": {
-            "pk": {
-              "type": "primary",
+            "unique": {
+              "type": "unique",
               "attrs": ["pool_calc_ref", "client_ref"]
             }
           },
@@ -781,6 +781,51 @@
               "own": ["parent_ref"],
               "foreign": ["client_ref"],
               "on": {"delete": "cascade", "update": "cascade"}
+            }
+          }
+        },
+        "quant": {
+          ".": {
+            "desc": "Links to the CV movements aggregated to PV.",
+            "attr": {
+              "pool_calc_ref": {
+                "type": "reference",
+                "desc": "Reference to the tree calculation in the pool."
+              },
+              "cv_reg_ref": {
+                "type": "reference",
+                "desc": "Reference to the CV movement registry item."
+              },
+              "client_ref": {
+                "type": "reference",
+                "desc": "Reference to the client for whom CV were accounted into PV."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["pool_calc_ref", "cv_reg_ref"]
+              }
+            },
+            "relation": {
+              "poolCalc": {
+                "path": "/bon/pool/calc",
+                "own": ["pool_calc_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "cvRegistry": {
+                "path": "/bon/cv/reg",
+                "own": ["cv_reg_ref"],
+                "foreign": ["id"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              },
+              "client": {
+                "path": "/dwnl/reg",
+                "own": ["client_ref"],
+                "foreign": ["client_ref"],
+                "on": {"delete": "cascade", "update": "cascade"}
+              }
             }
           }
         }

@@ -7,6 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Bonus\Tree;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as EResTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Quant as EResTreeQuant;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Data\Item as DItem;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Db\Query\CollectCv as QCollectCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request as ARequest;
@@ -31,36 +32,50 @@ class Simple
         $this->srvTreeGet = $srvTreeGet;
     }
 
-    public function exec($req)
+    private function collectCv($poolCalcId)
     {
-        assert($req instanceof ARequest);
-        $poolCalcId = $req->poolCalcIdOwn;
-        $poolCalcIdCvCollect = $req->poolCalcIdCv;
-        $dateTo = $req->dateTo;
-
-        $cv = $this->getCvCollected($poolCalcIdCvCollect);
-        $tree = $this->getDownlineTree($dateTo);
-        $entries = $this->saveTree($poolCalcId, $tree, $cv);
-
-        $result = new AResponse();
-        return $result;
-    }
-
-    private function getCvCollected($poolCalcId)
-    {
+        /* load DB data */
         $query = $this->qCollectCv->build();
         $bind = [QCollectCv::BND_POOL_CALC_ID => $poolCalcId];
         $query->setParameters($bind);
         $stmt = $query->execute();
         $all = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, QCollectCv::RESULT_CLASS);
-        /* map CV by client/autoship */
-        $result = [];
+        /* create result maps */
+        $mapReg = [];
+        $mapValue = [];
         /** @var DItem $one */
         foreach ($all as $one) {
+            $regId = $one->cv_reg_id;
             $clientId = $one->client_id;
             $isAutoship = (bool)$one->is_autoship;
-            $result[$clientId][$isAutoship] = $one->volume;
+            $volume = $one->volume;
+            /* compose CV movements map */
+            if (!isset($mapReg[$clientId])) {
+                $mapReg[$clientId] = [];
+            }
+            $mapReg[$clientId][] = $regId;
+            /* compose CV values map */
+            if (!isset($mapValue[$clientId][$isAutoship])) {
+                $mapValue[$clientId][$isAutoship] = 0;
+            }
+            $mapValue[$clientId][$isAutoship] += $volume;
         }
+        return [$mapReg, $mapValue];
+    }
+
+    public function exec($req)
+    {
+        assert($req instanceof ARequest);
+        $poolCalcId = $req->poolCalcIdOwn;
+        $poolCalcIdCv = $req->poolCalcIdCv;
+        $dateTo = $req->dateTo;
+
+        [$regs, $volumes] = $this->collectCv($poolCalcIdCv);
+        $tree = $this->getDownlineTree($dateTo);
+        $this->saveTree($poolCalcId, $tree, $volumes);
+        $this->saveQuants($poolCalcId, $regs);
+
+        $result = new AResponse();
         return $result;
     }
 
@@ -80,13 +95,30 @@ class Simple
 
     /**
      * @param int $poolCalcId
+     * @param $reg [clientId][cvRegId, ...]
+     */
+    private function saveQuants($poolCalcId, $reg)
+    {
+        if (is_array($reg)) {
+            foreach ($reg as $clientId => $refs) {
+                foreach ($refs as $ref) {
+                    $entity = new EResTreeQuant();
+                    $entity->pool_calc_ref = $poolCalcId;
+                    $entity->cv_reg_ref = $ref;
+                    $entity->client_ref = $clientId;
+                    $this->dao->create($entity);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param int $poolCalcId
      * @param \Praxigento\Milc\Bonus\Api\Service\Data\Tree\Entry\Min[] $tree
      * @param array $cv [clientId][isAutoship]=>cv
-     * @return EResTree[]
      */
     private function saveTree($poolCalcId, $tree, $cv)
     {
-        $result = [];
         if (is_array($tree)) {
             foreach ($tree as $one) {
                 $clientId = $one->client_id;
@@ -102,6 +134,5 @@ class Simple
                 $result[] = $entity;
             }
         }
-        return $result;
     }
 }

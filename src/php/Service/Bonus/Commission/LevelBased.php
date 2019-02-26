@@ -116,16 +116,17 @@ class LevelBased
     public function exec($req)
     {
         assert($req instanceof ARequest);
-        $thisCalcInstId = $req->poolCalcIdOwn;
-        $ranksCalcInstId = $req->poolCalcIdRanks;
-        $treeCalcInstId = $req->poolCalcIdTree;
+        $poolCalcIdCv = $req->poolCalcIdCv;
+        $poolCalcIdOwn = $req->poolCalcIdOwn;
+        $poolCalcIdRanks = $req->poolCalcIdRanks;
+        $poolCalcIdTree = $req->poolCalcIdTree;
 
-        $calcId = $this->getCalcId($thisCalcInstId);
+        $calcId = $this->getCalcId($poolCalcIdOwn);
         $commByRanks = $this->getLevels($calcId);
-        $ranks = $this->getRanks($ranksCalcInstId);
-        $mapCvByLevel = $this->collectCvByLevel($treeCalcInstId);
+        $ranks = $this->getRanks($poolCalcIdRanks);
+        $mapCvByLevel = $this->collectCvByLevel($poolCalcIdTree);
 
-        $comm = $this->collectCommission($thisCalcInstId, $ranks, $commByRanks, $mapCvByLevel);
+        $comm = $this->collectCommission($poolCalcIdOwn, $ranks, $commByRanks, $mapCvByLevel);
 
         /* save commissions to DB */
         foreach ($comm as $one) {

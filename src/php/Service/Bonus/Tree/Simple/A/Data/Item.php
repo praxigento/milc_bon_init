@@ -14,10 +14,12 @@ class Item
     extends \TeqFw\Lib\Data
 {
     const CLIENT_ID = 'client_id';
+    const CV_REG_ID = 'cv_reg_id';
     const IS_AUTOSHIP = 'is_autoship';
     const VOLUME = 'volume';
 
     public $client_id;
+    public $cv_reg_id;
     public $is_autoship;
     public $volume;
 }
