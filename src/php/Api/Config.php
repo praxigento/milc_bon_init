@@ -53,11 +53,13 @@ interface Config
     const DB_TBL_BON_POOL = 'bon_pool';
     const DB_TBL_BON_POOL_CALC = 'bon_pool_calc';
     const DB_TBL_BON_POOL_COMM_LEVEL = 'bon_pool_comm_level';
+    const DB_TBL_BON_POOL_COMM_LEVEL_QUANT = 'bon_pool_comm_level_quant';
     const DB_TBL_BON_POOL_CV = 'bon_pool_cv';
     const DB_TBL_BON_POOL_CV_ITEM = 'bon_pool_cv_item';
     const DB_TBL_BON_POOL_PERIOD = 'bon_pool_period';
-    const DB_TBL_BON_RANK = 'bon_pool_rank';
-    const DB_TBL_BON_TREE = 'bon_pool_tree';
+    const DB_TBL_BON_POOL_RANK = 'bon_pool_rank';
+    const DB_TBL_BON_POOL_TREE = 'bon_pool_tree';
+    const DB_TBL_BON_POOL_TREE_QUANT = 'bon_pool_tree_quant';
     const DB_TBL_DWNL_LOG_DEL = 'dwnl_log_del';
     const DB_TBL_DWNL_LOG_TREE = 'dwnl_log_tree';
     const DB_TBL_DWNL_LOG_TYPE = 'dwnl_log_type';
