@@ -565,50 +565,6 @@
         }
       },
       "cv": {
-        ".": {
-          "desc": "(A)CV are collected for period in one pool.",
-          "attr": {
-            "pool_calc_ref": {
-              "type": "reference",
-              "desc": "Reference to the calculation instance."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "is_autoship": {
-              "type": "boolean",
-              "default": false,
-              "desc": "'true' if this is an Autoship CV."
-            },
-            "volume": {
-              "type": "decimal",
-              "desc": "Amount of the CV/ACV to be add/subtract to/from client.",
-              "precision": 10,
-              "scale": 2
-            }
-          },
-          "index": {
-            "pk": {
-              "type": "primary",
-              "attrs": ["pool_calc_ref", "client_ref", "is_autoship"]
-            }
-          },
-          "relation": {
-            "poolCalc": {
-              "path": "/bon/pool/calc",
-              "own": ["pool_calc_ref"],
-              "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "client": {
-              "path": "/dwnl/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        },
         "item": {
           ".": {
             "desc": "Registry for (A)CV movements are selected for CV Collection calculation in the pool.",

@@ -54,7 +54,6 @@ interface Config
     const DB_TBL_BON_POOL_CALC = 'bon_pool_calc';
     const DB_TBL_BON_POOL_COMM_LEVEL = 'bon_pool_comm_level';
     const DB_TBL_BON_POOL_COMM_LEVEL_QUANT = 'bon_pool_comm_level_quant';
-    const DB_TBL_BON_POOL_CV = 'bon_pool_cv';
     const DB_TBL_BON_POOL_CV_ITEM = 'bon_pool_cv_item';
     const DB_TBL_BON_POOL_PERIOD = 'bon_pool_period';
     const DB_TBL_BON_POOL_RANK = 'bon_pool_rank';
