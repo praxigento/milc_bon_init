@@ -37,9 +37,9 @@ try {
 
     /* get developer suite of calcs */
     $suite = $hlpCalc->getSuite();
-    $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COLLECT_CV);
-    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_PLAIN);
-    $calcRank = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE);
+    $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_COLLECT);
+    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_NATURAL);
+    $calcRank = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_RANK_QUAL);
     $calcComm = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COMM_LEVEL_BASED);
 
     /* register new pool */

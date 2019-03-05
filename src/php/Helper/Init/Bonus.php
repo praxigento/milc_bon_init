@@ -42,24 +42,56 @@ class Bonus
     {
         $result = [];
         //
-        $code = Cfg::CALC_TYPE_COLLECT_CV;
-        $id = $this->calcTypesAdd($code, 'CV collection.');
-        $result[$code] = $id;
+        $code = Cfg::CALC_TYPE_CV_COLLECT;
+        $deps = [];
+        $idCvCollect = $this->calcTypesAdd($code, 'CV collection.', $deps);
+        $result[$code] = $idCvCollect;
         //
-        $code = Cfg::CALC_TYPE_TREE_PLAIN;
-        $deps = [$id];
-        $id = $this->calcTypesAdd($code, 'Plain downline tree composition.', $deps);
-        $result[$code] = $id;
+        $code = Cfg::CALC_TYPE_TREE_NATURAL;
+        $deps = [];
+        $idTreeNatural = $this->calcTypesAdd($code, 'Plain downline tree composition.', $deps);
+        $result[$code] = $idTreeNatural;
         //
-        $code = Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE;
-        $deps = [$id];
-        $id = $this->calcTypesAdd($code, 'Simple qualification calculation (based on PV, ...).', $deps);
-        $result[$code] = $id;
+        $code = Cfg::CALC_TYPE_TREE_BINARY;
+//        $deps = [];
+        $idTreeBinary = $this->calcTypesAdd($code, 'Binary downline tree composition.', $deps);
+        $result[$code] = $idTreeBinary;
+        //
+        $code = Cfg::CALC_TYPE_TREE_MATRIX;
+//        $deps = [];
+        $idTreeMatrix = $this->calcTypesAdd($code, 'Binary downline tree composition.', $deps);
+        $result[$code] = $idTreeMatrix;
+        //
+        $code = Cfg::CALC_TYPE_CV_GROUPING_PV;
+        $deps = [$idTreeNatural, $idTreeBinary, $idTreeMatrix];
+        $idGroupPv = $this->calcTypesAdd($code, 'PV calculation in the tree.', $deps);
+        $result[$code] = $idGroupPv;
+        //
+        $code = Cfg::CALC_TYPE_CV_GROUPING_GV;
+        $deps = [$idGroupPv];
+        $idGroupGv = $this->calcTypesAdd($code, 'GV calculation in the tree.', $deps);
+        $result[$code] = $idGroupGv;
+        //
+        $code = Cfg::CALC_TYPE_CV_GROUPING_OV;
+//        $deps = [];
+        $idGroupOv = $this->calcTypesAdd($code, 'OV calculation in the tree.', $deps);
+        $result[$code] = $idGroupOv;
+        //
+        $code = Cfg::CALC_TYPE_RANK_QUAL;
+        $deps = [$idGroupPv, $idGroupGv, $idGroupOv];
+        $idRank = $this->calcTypesAdd($code, 'Simple qualification calculation (based on PV, ...).', $deps);
+        $result[$code] = $idRank;
         //
         $code = Cfg::CALC_TYPE_COMM_LEVEL_BASED;
-        $deps = [$id];
-        $id = $this->calcTypesAdd($code, 'Level based bonus calculation.', $deps);
-        $result[$code] = $id;
+        $deps = [$idRank];
+        $idCommLevel = $this->calcTypesAdd($code, 'Level based bonus calculation.', $deps);
+        $result[$code] = $idCommLevel;
+        //
+        $code = Cfg::CALC_TYPE_DOWNGRADE;
+        $deps = [$idRank];
+        $idDowngrade = $this->calcTypesAdd($code, 'Distributors downgrade calculation.', $deps);
+        $result[$code] = $idDowngrade;
+
         return $result;
     }
 

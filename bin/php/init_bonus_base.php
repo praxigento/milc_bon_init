@@ -21,8 +21,8 @@ try {
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
 
-    /** @var \Praxigento\Milc\Bonus\Helper\Init\Bonus $hlpInit */
-    $hlpInit = $container->get(\Praxigento\Milc\Bonus\Helper\Init\Bonus::class);
+    /** @var \Praxigento\Milc\Bonus\Api\Helper\Init\Bonus $hlpInit */
+    $hlpInit = $container->get(\Praxigento\Milc\Bonus\Api\Helper\Init\Bonus::class);
     /** @var \Doctrine\ORM\EntityManagerInterface $em */
     $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
     $em->beginTransaction();
@@ -34,8 +34,8 @@ try {
     $ranks = $hlpInit->planRanks($planId);
     $typeIds = $hlpInit->calcTypes();
     $calcIds = $hlpInit->suiteCalcs($suiteId, $typeIds);
-    $calcIdQual = $calcIds[Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE];
-    $hlpInit->qualRules($calcIdQual, $ranks);
+    $calcIdRanks = $calcIds[Cfg::CALC_TYPE_RANK_QUAL];
+    $hlpInit->qualRules($calcIdRanks, $ranks);
     $calcIdLevels = $calcIds[Cfg::CALC_TYPE_COMM_LEVEL_BASED];
     $hlpInit->commLevels($calcIdLevels, $ranks);
 

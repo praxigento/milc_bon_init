@@ -22,7 +22,7 @@ try {
      */
     $app = \Praxigento\Milc\Bonus\App::getInstance();
     $container = $app->getContainer();
-    $typeCode = Cfg::CALC_TYPE_COLLECT_CV;
+    $typeCode = Cfg::CALC_TYPE_CV_COLLECT;
 
     /** @var \Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get $srv */
     $srv = $container->get(\Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get::class);

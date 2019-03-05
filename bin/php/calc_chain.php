@@ -36,9 +36,9 @@ try {
     $i = 0;
     $maxInc = 3600 * 24;
     $suite = $hlpCalc->getSuite();
-    $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COLLECT_CV);
-    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_PLAIN);
-    $calcQual = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_QUALIFY_RANK_SIMPLE);
+    $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_COLLECT);
+    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_NATURAL);
+    $calcQual = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_RANK_QUAL);
     $calcComm = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COMM_LEVEL_BASED);
     do {
         $date = $hlpCommon->dateModify($date, $maxInc);
