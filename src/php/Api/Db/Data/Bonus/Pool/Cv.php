@@ -4,15 +4,15 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool;
 
 /**
- * Registry for (A)CV movements are selected for CV Collection calculation in the pool.
+ * Registry for (A)CV movements are selected for pool calculations.
  *
  * @Entity
- * @Table(name="bon_pool_cv_item")
+ * @Table(name="bon_pool_cv")
  */
-class Item
+class Cv
     extends \TeqFw\Lib\Data
 {
     const CV_REG_REF = 'cv_reg_ref';

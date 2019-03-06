@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv\Item as EPoolCvItem;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\A\Data\Item as DItem;
 
 /**
@@ -40,12 +40,12 @@ class CollectCv
 
         /** @var \Doctrine\DBAL\Query\QueryBuilder $result */
         $result = $this->conn->createQueryBuilder();
-        $result->from(Cfg::DB_TBL_BON_POOL_CV_ITEM, $asItem);
+        $result->from(Cfg::DB_TBL_BON_POOL_CV, $asItem);
         $cols = [];
         $result->select($cols);
 
         /* LEFT JOIN bon_cv_reg */
-        $on = "$asReg." . ECvReg::ID . "=$asItem." . EPoolCvItem::CV_REG_REF;
+        $on = "$asReg." . ECvReg::ID . "=$asItem." . EPoolCv::CV_REG_REF;
         $result->leftJoin($asItem, Cfg::DB_TBL_BON_CV_REG, $asReg, $on);
         $cols = [
             "$asReg." . ECvReg::ID . ' as ' . DItem::CV_REG_ID,
@@ -56,7 +56,7 @@ class CollectCv
         $result->addSelect($cols);
 
         /* WHERE */
-        $byPoolCalcId = "$asItem." . EPoolCvItem::POOL_CALC_REF . "=:" . self::BND_POOL_CALC_ID;
+        $byPoolCalcId = "$asItem." . EPoolCv::POOL_CALC_REF . "=:" . self::BND_POOL_CALC_ID;
         $result->where($byPoolCalcId);
 
         /* GROUP */

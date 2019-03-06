@@ -137,7 +137,7 @@ select pc.id           AS pool_calc_id,
        cvr.is_autoship AS is_autoship,
        cvr.date        AS cv_reg_date,
        cvr.type        AS cv_reg_type
-from ((bon_pool_cv_item ci
+from ((bon_pool_cv ci
   left join bon_pool_calc pc on
     ((pc.id = ci.pool_calc_ref)))
        left join bon_cv_reg cvr on

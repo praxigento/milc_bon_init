@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Bonus\Cv;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv\Item as ECvItem;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Data\Movement as DMove;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\A\Db\Query\GetMovements as QGetMoves;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request as ARequest;
@@ -96,7 +96,7 @@ class Collect
     private function saveItems($poolCalcId, $items)
     {
         foreach ($items as $item) {
-            $entity = new ECvItem();
+            $entity = new EPoolCv();
             $entity->pool_calc_ref = $poolCalcId;
             $entity->cv_reg_ref = $item->reg_id;
             $this->dao->create($entity);

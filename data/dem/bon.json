@@ -40,13 +40,19 @@
                 "path": "/bon/plan/suite/calc",
                 "own": ["calc_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "rank": {
                 "path": "/bon/plan/rank",
                 "own": ["rank_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           }
@@ -80,19 +86,28 @@
               "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "rank": {
               "path": "/bon/plan/rank",
               "own": ["rank_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "rule": {
               "path": "/bon/calc/rank/rule",
               "own": ["rule_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         },
@@ -135,7 +150,10 @@
                   "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             },
@@ -163,13 +181,19 @@
                     "path": "/bon/calc/rank/rule/group",
                     "own": ["grouping_ref"],
                     "foreign": ["ref"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   },
                   "groupedRule": {
                     "path": "/bon/calc/rank/rule",
                     "own": ["grouped_ref"],
                     "foreign": ["id"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   }
                 }
               }
@@ -213,7 +237,10 @@
                   "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             }
@@ -254,13 +281,19 @@
                   "path": "/bon/calc/rank/rule",
                   "own": ["ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 },
                 "rank": {
                   "path": "/bon/plan/rank",
                   "own": ["rank_ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             }
@@ -308,7 +341,10 @@
               "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         },
@@ -340,13 +376,19 @@
                 "path": "/bon/cv/reg",
                 "own": ["registry_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "sale": {
                 "path": "/sale/order",
                 "own": ["source_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           },
@@ -378,13 +420,19 @@
                   "path": "/bon/cv/reg",
                   "own": ["registry_ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 },
                 "sale": {
                   "path": "/bon/cv/reg/sale",
                   "own": ["source_ref"],
                   "foreign": ["source_ref"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             }
@@ -415,7 +463,10 @@
             "path": "/bon/pool/period",
             "own": ["period_ref"],
             "foreign": ["id"],
-            "on": {"delete": "cascade", "update": "cascade"}
+            "on": {
+              "delete": "cascade",
+              "update": "cascade"
+            }
           }
         }
       },
@@ -447,13 +498,19 @@
               "path": "/bon/pool",
               "own": ["pool_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "calc": {
               "path": "/bon/plan/suite/calc",
               "own": ["calc_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         }
@@ -511,13 +568,19 @@
                 "path": "/bon/pool/calc",
                 "own": ["pool_calc_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "client": {
                 "path": "/dwnl/reg",
                 "own": ["client_ref"],
                 "foreign": ["client_ref"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           },
@@ -551,13 +614,19 @@
                   "path": "/bon/pool/comm/level",
                   "own": ["comm_ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 },
                 "cvRegistry": {
                   "path": "/bon/cv/reg",
                   "own": ["cv_reg_ref"],
                   "foreign": ["id"],
-                  "on": {"delete": "cascade", "update": "cascade"}
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             }
@@ -565,37 +634,41 @@
         }
       },
       "cv": {
-        "item": {
-          ".": {
-            "desc": "Registry for (A)CV movements are selected for CV Collection calculation in the pool.",
-            "attr": {
-              "pool_calc_ref": {
-                "type": "reference",
-                "desc": "Reference to the calculation instance."
-              },
-              "cv_reg_ref": {
-                "type": "reference",
-                "desc": "Reference to the client."
+        ".": {
+          "desc": "Registry for (A)CV movements are selected for pool calculations.",
+          "attr": {
+            "pool_calc_ref": {
+              "type": "reference",
+              "desc": "Reference to the calculation instance."
+            },
+            "cv_reg_ref": {
+              "type": "reference",
+              "desc": "Reference to the client."
+            }
+          },
+          "index": {
+            "pk": {
+              "type": "primary",
+              "attrs": ["pool_calc_ref", "cv_reg_ref"]
+            }
+          },
+          "relation": {
+            "poolCalc": {
+              "path": "/bon/pool/calc",
+              "own": ["pool_calc_ref"],
+              "foreign": ["id"],
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
               }
             },
-            "index": {
-              "pk": {
-                "type": "primary",
-                "attrs": ["pool_calc_ref", "cv_reg_ref"]
-              }
-            },
-            "relation": {
-              "poolCalc": {
-                "path": "/bon/pool/calc",
-                "own": ["pool_calc_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
-              },
-              "cvRegistry": {
-                "path": "/bon/cv/reg",
-                "own": ["cv_reg_ref"],
-                "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+            "cvRegistry": {
+              "path": "/bon/cv/reg",
+              "own": ["cv_reg_ref"],
+              "foreign": ["id"],
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
               }
             }
           }
@@ -633,7 +706,10 @@
               "path": "/bon/plan/suite",
               "own": ["suite_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         }
@@ -666,19 +742,28 @@
               "path": "/bon/pool/calc",
               "own": ["pool_calc_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "client": {
               "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "rank": {
               "path": "/bon/plan/rank",
               "own": ["rank_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         }
@@ -724,19 +809,28 @@
               "path": "/bon/pool/calc",
               "own": ["pool_calc_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "client": {
               "path": "/dwnl/reg",
               "own": ["client_ref"],
               "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             },
             "parent": {
               "path": "/dwnl/reg",
               "own": ["parent_ref"],
               "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         },
@@ -768,19 +862,28 @@
                 "path": "/bon/pool/calc",
                 "own": ["pool_calc_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "cvRegistry": {
                 "path": "/bon/cv/reg",
                 "own": ["cv_reg_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "client": {
                 "path": "/dwnl/reg",
                 "own": ["client_ref"],
                 "foreign": ["client_ref"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           }
@@ -856,13 +959,19 @@
                     "path": "/bon/plan/calc/type",
                     "own": ["ref"],
                     "foreign": ["id"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   },
                   "otherRef": {
                     "path": "/bon/plan/calc/type",
                     "own": ["other_ref"],
                     "foreign": ["id"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   }
                 }
               }
@@ -891,13 +1000,19 @@
                     "path": "/bon/plan/calc/type",
                     "own": ["ref"],
                     "foreign": ["id"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   },
                   "otherRef": {
                     "path": "/bon/plan/calc/type",
                     "own": ["other_ref"],
                     "foreign": ["id"],
-                    "on": {"delete": "cascade", "update": "cascade"}
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
                   }
                 }
               }
@@ -937,7 +1052,10 @@
               "path": "/bon/plan",
               "own": ["plan_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         }
@@ -972,7 +1090,10 @@
               "path": "/bon/plan",
               "own": ["plan_ref"],
               "foreign": ["id"],
-              "on": {"delete": "cascade", "update": "cascade"}
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
             }
           }
         },
@@ -1010,13 +1131,19 @@
                 "path": "/bon/plan/suite",
                 "own": ["suite_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               },
               "calcType": {
                 "path": "/bon/plan/calc/type",
                 "own": ["type_ref"],
                 "foreign": ["id"],
-                "on": {"delete": "cascade", "update": "cascade"}
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           }
