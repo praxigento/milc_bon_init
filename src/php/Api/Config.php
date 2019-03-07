@@ -65,6 +65,8 @@ interface Config
     const DB_TBL_BON_POOL_PERIOD = 'bon_pool_period';
     const DB_TBL_BON_POOL_RANK = 'bon_pool_rank';
     const DB_TBL_BON_POOL_TREE = 'bon_pool_tree';
+    const DB_TBL_BON_POOL_TREE_GV = 'bon_pool_tree_gv';
+    const DB_TBL_BON_POOL_TREE_OV = 'bon_pool_tree_ov';
     const DB_TBL_BON_POOL_TREE_PV = 'bon_pool_tree_pv';
     const DB_TBL_BON_POOL_TREE_PV_LINK = 'bon_pool_tree_pv_link';
     const DB_TBL_DWNL_LOG_DEL = 'dwnl_log_del';
@@ -80,21 +82,21 @@ interface Config
     /**/
     const QUAL_RULE_TYPE_GROUP = 'group';
     const QUAL_RULE_TYPE_PV = 'pv';
-    /**/
     const QUAL_RULE_TYPE_RANK = 'rank';
+    /**/
     const RANK_ANGEL = 'ANG';
     const RANK_GOD = 'GOD';
     const RANK_HERO = 'HER';
-    /**/
     const RANK_HUMAN = 'HUM';
-    const RULE_GROUP_LOGIC_AND = 'AND';
     /**/
+    const RULE_GROUP_LOGIC_AND = 'AND';
     const RULE_GROUP_LOGIC_OR = 'OR';
     /**/
     const SUITE_NOTE = 'Development calcs suite (monthly based).';
-    const TREE_DEPTH_INIT = 1; // path separator
     /**/
+    const TREE_DEPTH_INIT = 1;
     const TREE_PS = ':';
+    /**/
     const ZERO = 0.00001;
 
 }

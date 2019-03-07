@@ -826,6 +826,74 @@
             }
           }
         },
+        "gv": {
+          ".": {
+            "desc": "Group Volumes for the nodes of the related tree.",
+            "attr": {
+              "tree_node_ref": {
+                "type": "reference",
+                "desc": "Reference to the tree node."
+              },
+              "gv": {
+                "type": "decimal",
+                "desc": "Group Volume.",
+                "precision": 10,
+                "scale": 2
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["tree_node_ref"]
+              }
+            },
+            "relation": {
+              "treeNodeRef": {
+                "path": "/bon/pool/tree",
+                "own": ["tree_node_ref"],
+                "foreign": ["id"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
+              }
+            }
+          }
+        },
+        "ov": {
+          ".": {
+            "desc": "Organization volumes for the nodes of the related tree.",
+            "attr": {
+              "tree_node_ref": {
+                "type": "reference",
+                "desc": "Reference to the tree node."
+              },
+              "ov": {
+                "type": "decimal",
+                "desc": "Organization Volume.",
+                "precision": 10,
+                "scale": 2
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["tree_node_ref"]
+              }
+            },
+            "relation": {
+              "treeNodeRef": {
+                "path": "/bon/pool/tree",
+                "own": ["tree_node_ref"],
+                "foreign": ["id"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
+              }
+            }
+          }
+        },
         "pv": {
           ".": {
             "desc": "PV for the nodes of the related tree.",
