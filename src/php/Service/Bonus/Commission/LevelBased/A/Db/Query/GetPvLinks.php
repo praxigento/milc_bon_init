@@ -9,7 +9,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\A\Db\Query;
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as ETree;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Quant as EPvLink;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Pv\Link as EPvLink;
 use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\A\Data\PvLinkEntry as DEntry;
 
 class GetPvLinks
@@ -46,9 +46,9 @@ class GetPvLinks
         $cols = [];
         $result->select($cols);
 
-        /* LEFT JOIN bon_pool_tree_quant */
+        /* LEFT JOIN bon_pool_tree_pv_link */
         $on = "$asLink." . EPvLink::TREE_NODE_REF . "=$asTree." . ETree::ID;
-        $result->leftJoin($asTree, Cfg::DB_TBL_BON_POOL_TREE_QUANT, $asLink, $on);
+        $result->leftJoin($asTree, Cfg::DB_TBL_BON_POOL_TREE_PV_LINK, $asLink, $on);
         $cols = [];
         $result->select($cols);
 

@@ -864,38 +864,38 @@
                 }
               }
             }
-          }
-        },
-        "quant": {
-          ".": {
-            "desc": "Links to the CV movements aggregated to PV.",
-            "attr": {
-              "tree_node_ref": {
-                "type": "reference",
-                "desc": "Reference to the tree node."
-              },
-              "cv_reg_ref": {
-                "type": "reference",
-                "desc": "Reference to the CV movement registry item."
-              }
-            },
-            "relation": {
-              "treeNodeRef": {
-                "path": "/bon/pool/tree",
-                "own": ["tree_node_ref"],
-                "foreign": ["id"],
-                "on": {
-                  "delete": "cascade",
-                  "update": "cascade"
+          },
+          "link": {
+            ".": {
+              "desc": "Links to the CV movements aggregated to PV.",
+              "attr": {
+                "tree_node_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the tree node."
+                },
+                "cv_reg_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the CV movement registry item."
                 }
               },
-              "cvRegistry": {
-                "path": "/bon/cv/reg",
-                "own": ["cv_reg_ref"],
-                "foreign": ["id"],
-                "on": {
-                  "delete": "cascade",
-                  "update": "cascade"
+              "relation": {
+                "treeNodeRef": {
+                  "path": "/bon/pool/tree",
+                  "own": ["tree_node_ref"],
+                  "foreign": ["id"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                },
+                "cvRegistry": {
+                  "path": "/bon/cv/reg",
+                  "own": ["cv_reg_ref"],
+                  "foreign": ["id"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
                 }
               }
             }

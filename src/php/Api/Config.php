@@ -66,7 +66,7 @@ interface Config
     const DB_TBL_BON_POOL_RANK = 'bon_pool_rank';
     const DB_TBL_BON_POOL_TREE = 'bon_pool_tree';
     const DB_TBL_BON_POOL_TREE_PV = 'bon_pool_tree_pv';
-    const DB_TBL_BON_POOL_TREE_QUANT = 'bon_pool_tree_quant';
+    const DB_TBL_BON_POOL_TREE_PV_LINK = 'bon_pool_tree_pv_link';
     const DB_TBL_DWNL_LOG_DEL = 'dwnl_log_del';
     const DB_TBL_DWNL_LOG_TREE = 'dwnl_log_tree';
     const DB_TBL_DWNL_LOG_TYPE = 'dwnl_log_type';

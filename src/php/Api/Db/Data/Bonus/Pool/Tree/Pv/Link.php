@@ -4,16 +4,16 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Pv;
 
 
 /**
  * Links to the CV movements aggregated to PV.
  *
  * @Entity
- * @Table(name="bon_pool_tree_quant")
+ * @Table(name="bon_pool_tree_pv_link")
  */
-class Quant
+class Link
     extends \TeqFw\Lib\Data
 {
     public const CV_REG_REF = 'cv_reg_ref';

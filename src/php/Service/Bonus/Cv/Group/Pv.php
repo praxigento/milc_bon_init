@@ -8,7 +8,7 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Group;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Pv as ETreePv;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Quant as ETreePvLink;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Pv\Link as ETreePvLink;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\A\Data\Item as DItem;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\A\Db\Query\CollectCv as QCollectCv;
 use Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\Request as ARequest;

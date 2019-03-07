@@ -154,7 +154,7 @@ select `tr`.`pool_calc_ref`      AS `pool_calc_id`,
        `tpv`.`pv`                AS `pv`,
        `tpv`.`apv`               AS `apv`
 from `bon_pool_tree` `tr`
-       left join `bon_pool_tree_quant` `trq` on
+       left join `bon_pool_tree_pv_link` `trq` on
   `trq`.`tree_node_ref` = `tr`.`id`
        left join `bon_pool_tree_pv` `tpv` on
   `tpv`.`tree_node_ref` = `tr`.`id`
