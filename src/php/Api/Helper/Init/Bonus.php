@@ -38,10 +38,19 @@ interface Bonus
     public function qualRules($calcId, $ranks);
 
     /**
+     * Create new suite of Unilevel based cals.
+     *
      * @param $planId
      * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite
      */
-    public function suite($planId): ESuite;
+    public function suiteUnilevel($planId): ESuite;
 
-    public function suiteCalcs($suiteId, $typeIds);
+    /**
+     * Create suite calculations for Unilevel Suite.
+     *
+     * @param $suiteId
+     * @param $typeIds
+     * @return array [calc_type_code=>suite_calc_id]
+     */
+    public function suiteUnilevelCalcs($suiteId, $typeIds);
 }

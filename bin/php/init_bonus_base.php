@@ -29,11 +29,11 @@ try {
 
     $plan = $hlpInit->plan();
     $planId = $plan->id;
-    $suite = $hlpInit->suite($planId);
+    $suite = $hlpInit->suiteUnilevel($planId);
     $suiteId = $suite->id;
     $ranks = $hlpInit->planRanks($planId);
     $typeIds = $hlpInit->calcTypes();
-    $calcIds = $hlpInit->suiteCalcs($suiteId, $typeIds);
+    $calcIds = $hlpInit->suiteUnilevelCalcs($suiteId, $typeIds);
     $calcIdRanks = $calcIds[Cfg::CALC_TYPE_RANK_QUAL];
     $hlpInit->qualRules($calcIdRanks, $ranks);
     $calcIdLevels = $calcIds[Cfg::CALC_TYPE_COMM_LEVEL_BASED];

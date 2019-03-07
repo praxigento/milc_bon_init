@@ -770,8 +770,12 @@
       },
       "tree": {
         ".": {
-          "desc": "Downline tree data bound to the pool of calculations.",
+          "desc": "Downline tree data bound to some tree calculation in the pool.",
           "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "ID of the tree node for concrete pool calculation."
+            },
             "pool_calc_ref": {
               "type": "reference",
               "desc": "Reference to the calculation inside period (plain & compressed, for example)."
@@ -784,18 +788,6 @@
               "type": "reference",
               "desc": "Reference to the client's parent.",
               "nullable": false
-            },
-            "pv": {
-              "type": "decimal",
-              "desc": "Personal Volume (autoship is included).",
-              "precision": 10,
-              "scale": 2
-            },
-            "apv": {
-              "type": "decimal",
-              "desc": "Personal Volume (autoship only).",
-              "precision": 10,
-              "scale": 2
             }
           },
           "index": {
@@ -834,33 +826,63 @@
             }
           }
         },
-        "quant": {
+        "pv": {
           ".": {
-            "desc": "Links to the CV movements aggregated to PV.",
+            "desc": "PV for the nodes of the related tree.",
             "attr": {
-              "pool_calc_ref": {
+              "tree_node_ref": {
                 "type": "reference",
-                "desc": "Reference to the tree calculation in the pool."
+                "desc": "Reference to the tree node."
               },
-              "cv_reg_ref": {
-                "type": "reference",
-                "desc": "Reference to the CV movement registry item."
+              "pv": {
+                "type": "decimal",
+                "desc": "Personal Volume (autoship is included).",
+                "precision": 10,
+                "scale": 2
               },
-              "client_ref": {
-                "type": "reference",
-                "desc": "Reference to the client for whom CV were accounted into PV."
+              "apv": {
+                "type": "decimal",
+                "desc": "Personal Volume (autoship only).",
+                "precision": 10,
+                "scale": 2
               }
             },
             "index": {
               "pk": {
                 "type": "primary",
-                "attrs": ["pool_calc_ref", "cv_reg_ref"]
+                "attrs": ["tree_node_ref"]
               }
             },
             "relation": {
-              "poolCalc": {
-                "path": "/bon/pool/calc",
-                "own": ["pool_calc_ref"],
+              "treeNodeRef": {
+                "path": "/bon/pool/tree",
+                "own": ["tree_node_ref"],
+                "foreign": ["id"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
+              }
+            }
+          }
+        },
+        "quant": {
+          ".": {
+            "desc": "Links to the CV movements aggregated to PV.",
+            "attr": {
+              "tree_node_ref": {
+                "type": "reference",
+                "desc": "Reference to the tree node."
+              },
+              "cv_reg_ref": {
+                "type": "reference",
+                "desc": "Reference to the CV movement registry item."
+              }
+            },
+            "relation": {
+              "treeNodeRef": {
+                "path": "/bon/pool/tree",
+                "own": ["tree_node_ref"],
                 "foreign": ["id"],
                 "on": {
                   "delete": "cascade",
@@ -871,15 +893,6 @@
                 "path": "/bon/cv/reg",
                 "own": ["cv_reg_ref"],
                 "foreign": ["id"],
-                "on": {
-                  "delete": "cascade",
-                  "update": "cascade"
-                }
-              },
-              "client": {
-                "path": "/dwnl/reg",
-                "own": ["client_ref"],
-                "foreign": ["client_ref"],
                 "on": {
                   "delete": "cascade",
                   "update": "cascade"

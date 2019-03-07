@@ -360,7 +360,7 @@ class Bonus
         return $result;
     }
 
-    public function suite($planId): ESuite
+    public function suiteUnilevel($planId): ESuite
     {
         $key = [ESuite::PLAN_REF => $planId];
         $result = $this->dao->getOne(ESuite::class, $key);
@@ -376,7 +376,7 @@ class Bonus
         return $result;
     }
 
-    public function suiteCalcs($suiteId, $typeIds)
+    public function suiteUnilevelCalcs($suiteId, $typeIds)
     {
         $result = [];
         $key = [ESuiteCalc::SUITE_REF => $suiteId];
@@ -384,15 +384,56 @@ class Bonus
         $found = $this->dao->getSet(ESuiteCalc::class, $key);
         if (!count($found)) {
             $i = 1;
-            foreach ($typeIds as $typeCode => $typeId) {
-                $calc = new ESuiteCalc();
-                $calc->suite_ref = $suiteId;
-                $calc->type_ref = $typeId;
-                $calc->date_created = new \DateTime();
-                $calc->sequence = $i++;
-                $id = $this->dao->create($calc);
-                $result[$typeCode] = $id;
-            }
+            /* COLLECT */
+            $typeCode = Cfg::CALC_TYPE_CV_COLLECT;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* NATURAL TREE */
+            $typeCode = Cfg::CALC_TYPE_TREE_NATURAL;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* PV GROUPING */
+            $typeCode = Cfg::CALC_TYPE_CV_GROUPING_PV;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* RANK QUALIFICATION */
+            $typeCode = Cfg::CALC_TYPE_RANK_QUAL;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* LEVEL BASED COMMISSION */
+            $typeCode = Cfg::CALC_TYPE_COMM_LEVEL_BASED;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
         } else {
             $flipped = array_flip($typeIds);
             foreach ($found as $one) {

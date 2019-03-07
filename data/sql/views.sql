@@ -145,22 +145,23 @@ from ((bon_pool_cv ci
 
 CREATE
   OR REPLACE
-  VIEW bon_ui_calc_tree AS
-select tr.pool_calc_ref      AS pool_calc_id,
-       tr.client_ref         AS client_id,
-       tr.parent_ref         AS parent_id,
-       count(trq.cv_reg_ref) AS total_orders,
-       tr.pv                 AS pv,
-       tr.apv                AS apv
-from (bon_pool_tree tr
-       left join bon_pool_tree_quant trq on
-  (((trq.pool_calc_ref = tr.pool_calc_ref)
-    and (trq.client_ref = tr.client_ref))))
-group by tr.pool_calc_ref,
-         tr.client_ref,
-         tr.parent_ref,
-         tr.pv,
-         tr.apv;
+  VIEW `bon_ui_calc_tree` AS
+select `tr`.`pool_calc_ref`      AS `pool_calc_id`,
+       `tr`.`client_ref`         AS `client_id`,
+       `tr`.`parent_ref`         AS `parent_id`,
+       count(`trq`.`cv_reg_ref`) AS `total_orders`,
+       `tpv`.`pv`                AS `pv`,
+       `tpv`.`apv`               AS `apv`
+from `bon_pool_tree` `tr`
+       left join `bon_pool_tree_quant` `trq` on
+  `trq`.`tree_node_ref` = `tr`.`id`
+       left join `bon_pool_tree_pv` `tpv` on
+  `tpv`.`tree_node_ref` = `tr`.`id`
+group by `tr`.`pool_calc_ref`,
+         `tr`.`client_ref`,
+         `tr`.`parent_ref`,
+         `tpv`.`pv`,
+         `tpv`.`apv`;
 
 CREATE
   OR REPLACE
