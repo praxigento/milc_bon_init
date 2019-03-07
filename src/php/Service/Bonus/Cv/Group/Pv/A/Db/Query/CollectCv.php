@@ -4,16 +4,19 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\A\Db\Query;
+namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\A\Db\Query;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Cv\Registry as ECvReg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree\Quant as ETreeQuant;
-use Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\A\Data\TreeQuant as DItem;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Cv as EPoolCv;
+use Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\A\Data\Item as DItem;
 
-class GetTreeQuants
+/**
+ * Create query to collect CV quants to calculate PV/GV/...
+ */
+class CollectCv
 {
-    public const AS_QUANT = 'quant';
+    public const AS_ITEM = 'item';
     public const AS_REG = 'reg';
     public const BND_POOL_CALC_ID = 'poolCalcId';
     public const RESULT_CLASS = DItem::class;
@@ -32,29 +35,28 @@ class GetTreeQuants
      */
     public function build()
     {
-        $asQuant = self::AS_QUANT;
+        $asItem = self::AS_ITEM;
         $asReg = self::AS_REG;
 
         /** @var \Doctrine\DBAL\Query\QueryBuilder $result */
         $result = $this->conn->createQueryBuilder();
-
-        /* FROM bon_pool_tree_quant */
-        $result->from(Cfg::DB_TBL_BON_POOL_TREE_QUANT, $asQuant);
+        $result->from(Cfg::DB_TBL_BON_POOL_CV, $asItem);
         $cols = [];
         $result->select($cols);
 
         /* LEFT JOIN bon_cv_reg */
-        $on = "$asReg." . ECvReg::ID . "=$asQuant." . ETreeQuant::CV_REG_REF;
-        $result->leftJoin($asQuant, Cfg::DB_TBL_BON_CV_REG, $asReg, $on);
+        $on = "$asReg." . ECvReg::ID . "=$asItem." . EPoolCv::CV_REG_REF;
+        $result->leftJoin($asItem, Cfg::DB_TBL_BON_CV_REG, $asReg, $on);
         $cols = [
             "$asReg." . ECvReg::ID . ' as ' . DItem::CV_REG_ID,
             "$asReg." . ECvReg::CLIENT_REF . ' as ' . DItem::CLIENT_ID,
+            "$asReg." . ECvReg::IS_AUTOSHIP . ' as ' . DItem::IS_AUTOSHIP,
             "$asReg." . ECvReg::VOLUME . ' as ' . DItem::VOLUME
         ];
         $result->addSelect($cols);
 
         /* WHERE */
-        $byPoolCalcId = "$asQuant." . ETreeQuant::POOL_CALC_REF . "=:" . self::BND_POOL_CALC_ID;
+        $byPoolCalcId = "$asItem." . EPoolCv::POOL_CALC_REF . "=:" . self::BND_POOL_CALC_ID;
         $result->where($byPoolCalcId);
 
         return $result;

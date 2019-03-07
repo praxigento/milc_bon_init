@@ -1,10 +1,11 @@
 CREATE
   OR REPLACE
   VIEW bon_ui_plan_calcs AS
-select sc.id       AS calc_id,
-       t.code      AS calc_type,
-       sc.sequence AS calc_order,
-       s.period    AS period
+select sc.suite_ref AS suite_id,
+       sc.id        AS suite_calc_id,
+       t.code       AS suite_calc_type,
+       sc.sequence  AS suite_calc_order,
+       s.period     AS suite_period
 from ((bon_plan_suite s
   left join bon_plan_suite_calc sc on
     ((sc.suite_ref = s.id)))

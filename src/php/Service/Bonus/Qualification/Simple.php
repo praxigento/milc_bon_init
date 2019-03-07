@@ -24,6 +24,8 @@ use Praxigento\Milc\Bonus\Service\Bonus\Qualification\Z\Data\Rule\Rank as DRank;
  */
 class Simple
 {
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Rule\Pv */
+    private $aRulePv;
     /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
     private $dao;
     /** @var \Praxigento\Milc\Bonus\Api\Helper\Map */
@@ -37,12 +39,14 @@ class Simple
         \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
         \Praxigento\Milc\Bonus\Api\Helper\Map $hlpMap,
         \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Db\Query\GetRanks $qGetRanks,
-        \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader $srvLoader
+        \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Rule\Loader $srvLoader,
+        \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\A\Rule\Pv $aRulePv
     ) {
         $this->dao = $dao;
         $this->hlpMap = $hlpMap;
         $this->qGetRanks = $qGetRanks;
         $this->srvLoader = $srvLoader;
+        $this->aRulePv = $aRulePv;
     }
 
     public function exec($req)
@@ -57,6 +61,7 @@ class Simple
         $ranks = $this->getRanks($poolCalcIdRank);
         $rules = $this->getRulesTree($ranks);
 
+        $this->aRulePv->reset($poolCalcIdTree);
         $entries = [];
         /** @var \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree $one */
         foreach ($tree as $one) {
@@ -131,8 +136,8 @@ class Simple
         $result = null;
         foreach ($ranks as $rank) {
             $ruleId = $rank->rule_id;
-            $chain = $rules[$ruleId];
-            $isValid = $this->validateRules($one, $chain);
+            $rule = $rules[$ruleId];
+            $isValid = $this->validateRules($one, $rule);
             if ($isValid) {
                 $result = $rank->rank_id;
             } else {
@@ -144,20 +149,20 @@ class Simple
 
     /**
      * @param EPeriodTree $client
-     * @param $chain
+     * @param $rule
      * @return bool
      */
-    private function validateRules($client, $chain)
+    private function validateRules($client, $rule)
     {
         $result = false;
 
-        $class = get_class($chain);
+        $class = get_class($rule);
         if ($class == DGroup::class) {
-            $result = $this->validateRulesGroup($client, $chain);
+            $result = $this->validateRulesGroup($client, $rule);
         } elseif ($class == DPv::class) {
-            $result = $this->validateRulesPv($client, $chain);
+            $result = $this->aRulePv->validate($client, $rule);
         } elseif ($class == DRank::class) {
-            $result = $this->validateRulesRank($client, $chain);
+            $result = $this->validateRulesRank($client, $rule);
         }
         return $result;
     }
@@ -192,35 +197,6 @@ class Simple
                     $result = true;
                 }
             }
-        }
-        return $result;
-    }
-
-    /**
-     * @param EPeriodTree $treeNode
-     * @param DPv $rule
-     * @return bool
-     */
-    private function validateRulesPv($treeNode, $rule)
-    {
-        $result = false;
-        $clientId = $treeNode->client_ref;
-        if ($rule->period == 0) {
-            /* get current period PV/APV */
-            $pv = $treeNode->pv;
-            $apv = $treeNode->apv;
-        } else {
-            /* retrieve qualification data for period in the past */
-            /* TODO: add data loading for past periods */
-            $pv = 0;
-            $apv = 0;
-        }
-        if ($rule->autoship_only) {
-            /* compare autoship PV */
-            $result = $apv >= $rule->volume;
-        } else {
-            /* compare all PV */
-            $result = $pv >= $rule->volume;
         }
         return $result;
     }

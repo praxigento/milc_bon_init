@@ -9,10 +9,10 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv;
 class Request
     extends \TeqFw\Lib\Data
 {
-    /** @var string including (>=$dateFrom) */
-    public $dateFrom;
-    /** @var string excluding (<$dateTo) */
-    public $dateTo;
+    /** @var int */
+    public $poolCalcIdCollect;
     /** @var int */
     public $poolCalcIdOwn;
+    /** @var int */
+    public $poolCalcIdTree;
 }

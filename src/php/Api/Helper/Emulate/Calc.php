@@ -73,17 +73,26 @@ interface Calc
      * @param string $dateTo
      * @return mixed
      */
-    public function step01Cv($poolCalcId, $dateFrom, $dateTo);
+    public function step01CvCollect($poolCalcId, $dateFrom, $dateTo);
 
     /**
      * Downline tree composition.
      *
      * @param int $poolCalcId
-     * @param int $poolCalcIdCvCollect
      * @param string $dateTo
      * @return mixed
      */
-    public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo);
+    public function step02Tree($poolCalcId, $dateTo);
+
+    /**
+     * Group CV to PV using given tree.
+     *
+     * @param int $poolCalcId
+     * @param int $poolCalcIdCvCollect
+     * @param int $poolCalcIdTree
+     * @return mixed
+     */
+    public function step03GroupPv($poolCalcId, $poolCalcIdCvCollect, $poolCalcIdTree);
 
     /**
      * Qualification rank calculation.
@@ -92,7 +101,7 @@ interface Calc
      * @param int $poolCalcIdTree
      * @return mixed
      */
-    public function step03Rank($poolCalcId, $poolCalcIdTree);
+    public function step04Rank($poolCalcId, $poolCalcIdTree);
 
     /**
      * Level based commission calculation.
@@ -102,5 +111,5 @@ interface Calc
      * @param int $poolCalcIdQual
      * @return mixed
      */
-    public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual);
+    public function step05Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual);
 }

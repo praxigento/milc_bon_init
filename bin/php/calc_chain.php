@@ -38,6 +38,7 @@ try {
     $suite = $hlpCalc->getSuite();
     $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_COLLECT);
     $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_NATURAL);
+    $calcPv = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_GROUPING_PV);
     $calcQual = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_RANK_QUAL);
     $calcComm = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COMM_LEVEL_BASED);
     do {
@@ -49,20 +50,23 @@ try {
 
         /* register new race */
         $period = $hlpCalc->registerPeriod($dateFrom, $suite->id);
-        $race = $hlpCalc->registerPool($period->id, $dateTo);
-        $raceId = $race->id;
+        $pool = $hlpCalc->registerPool($period->id, $dateTo);
+        $poolId = $pool->id;
         /* STEP 1: collect CV for given period (from-to)*/
-        $raceCalcCollect = $hlpCalc->registerPoolCalc($raceId, $calcCollect->id);
-        $hlpCalc->step01Cv($raceCalcCollect->id, $dateFrom, $dateTo);
+        $poolCalcCollect = $hlpCalc->registerPoolCalc($poolId, $calcCollect->id);
+        $hlpCalc->step01CvCollect($poolCalcCollect->id, $dateFrom, $dateTo);
         /** STEP 2: Compose tree (just copy plain tree for the end of the period). */
-        $raceCalcTree = $hlpCalc->registerPoolCalc($raceId, $calcTree->id);
-        $hlpCalc->step02Tree($raceCalcTree->id, $raceCalcCollect->id, $dateTo);
-        /** Step 3: Qualification. */
-        $raceCalcQual = $hlpCalc->registerPoolCalc($raceId, $calcQual->id);
-        $hlpCalc->step03Rank($raceCalcQual->id, $raceCalcTree->id);
-        /** Step 4: Level Based Commissions. */
-        $raceCalcComm = $hlpCalc->registerPoolCalc($raceId, $calcComm->id);
-        $hlpCalc->step04Comm($raceCalcComm->id, $raceCalcTree->id, $raceCalcQual->id);
+        $poolCalcTree = $hlpCalc->registerPoolCalc($poolId, $calcTree->id);
+        $hlpCalc->step02Tree($poolCalcTree->id, $dateTo);
+        /** Step 3: PV grouping. */
+        $poolCalcPv = $hlpCalc->registerPoolCalc($poolId, $calcPv->id);
+        $hlpCalc->step03GroupPv($poolCalcPv->id, $poolCalcCollect->id, $poolCalcTree->id);
+        /** Step 4: Qualification. */
+        $poolCalcQual = $hlpCalc->registerPoolCalc($poolId, $calcQual->id);
+        $hlpCalc->step04Rank($poolCalcQual->id, $poolCalcTree->id);
+        /** Step 5: Level Based Commissions. */
+        $poolCalcComm = $hlpCalc->registerPoolCalc($poolId, $calcComm->id);
+        $hlpCalc->step05Comm($poolCalcComm->id, $poolCalcTree->id, $poolCalcQual->id);
 
 
         $conn->commit();

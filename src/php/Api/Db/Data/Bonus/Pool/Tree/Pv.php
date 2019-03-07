@@ -8,22 +8,27 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Pool\Tree;
 
 
 /**
- * Links to the CV movements aggregated to PV.
+ * PV for downline tree customers.
  *
  * @Entity
- * @Table(name="bon_pool_tree_quant")
+ * @Table(name="bon_pool_tree_pv")
  */
-class Quant
+class Pv
     extends \TeqFw\Lib\Data
 {
-    public const CV_REG_REF = 'cv_reg_ref';
+    public const APV = 'apv';
+    public const PV = 'pv';
     public const TREE_NODE_REF = 'tree_node_ref';
-
     /**
-     * @var int
-     * @Column(type="integer")
+     * @var float
+     * @Column(type="decimal", precision=10, scale=2)
      */
-    public $cv_reg_ref;
+    public $apv;
+    /**
+     * @var float
+     * @Column(type="decimal", precision=10, scale=2)
+     */
+    public $pv;
     /**
      * @var int
      * @Id

@@ -27,6 +27,8 @@ class Calc
     private $srvComm;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect */
     private $srvCv;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv */
+    private $srvGroupPv;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple */
     private $srvQual;
     /** @var \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple */
@@ -35,18 +37,19 @@ class Calc
     public function __construct(
         \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
         \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat,
+        \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srvComm,
         \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect $srvCv,
-        \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple $srvTree,
+        \Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv $srvGroupPv,
         \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple $srvQual,
-        \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased $srvComm
+        \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple $srvTree
     ) {
         $this->dao = $dao;
         $this->hlpFormat = $hlpFormat;
-        $this->srvCv = $srvCv;
-        $this->srvTree = $srvTree;
-        $this->srvQual = $srvQual;
         $this->srvComm = $srvComm;
-        /**/
+        $this->srvCv = $srvCv;
+        $this->srvGroupPv = $srvGroupPv;
+        $this->srvQual = $srvQual;
+        $this->srvTree = $srvTree;
     }
 
     public function getDateMax(): \DateTime
@@ -123,7 +126,7 @@ class Calc
         return $result;
     }
 
-    public function step01Cv($poolCalcId, $dateFrom, $dateTo)
+    public function step01CvCollect($poolCalcId, $dateFrom, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Cv\Collect\Request();
         $req->poolCalcIdOwn = $poolCalcId;
@@ -132,16 +135,24 @@ class Calc
         $resp = $this->srvCv->exec($req);
     }
 
-    public function step02Tree($poolCalcId, $poolCalcIdCvCollect, $dateTo)
+    public function step02Tree($poolCalcId, $dateTo)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple\Request();
         $req->poolCalcIdOwn = $poolCalcId;
-        $req->poolCalcIdCv = $poolCalcIdCvCollect;
         $req->dateTo = $dateTo;
         $resp = $this->srvTree->exec($req);
     }
 
-    public function step03Rank($poolCalcId, $poolCalcIdTree)
+    public function step03GroupPv($poolCalcId, $poolCalcIdCvCollect, $poolCalcIdTree)
+    {
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Cv\Group\Pv\Request();
+        $req->poolCalcIdOwn = $poolCalcId;
+        $req->poolCalcIdCollect = $poolCalcIdCvCollect;
+        $req->poolCalcIdTree = $poolCalcIdTree;
+        $this->srvGroupPv->exec($req);
+    }
+
+    public function step04Rank($poolCalcId, $poolCalcIdTree)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Qualification\Simple\Request();
         $req->poolCalcIdRank = $poolCalcId;
@@ -149,7 +160,7 @@ class Calc
         $this->srvQual->exec($req);
     }
 
-    public function step04Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual)
+    public function step05Comm($poolCalcId, $poolCalcIdTree, $poolCalcIdQual)
     {
         $req = new \Praxigento\Milc\Bonus\Service\Bonus\Commission\LevelBased\Request();
         $req->poolCalcIdOwn = $poolCalcId;

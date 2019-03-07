@@ -9,10 +9,8 @@ namespace Praxigento\Milc\Bonus\Service\Bonus\Tree\Simple;
 class Request
     extends \TeqFw\Lib\Data
 {
-    /** @var string excluding (<$dateTo) */
+    /** @var string up to date (excluding, <$dateTo) */
     public $dateTo;
     /** @var int */
     public $poolCalcIdOwn;
-    /** @var int */
-    public $poolCalcIdCv;
 }
