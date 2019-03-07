@@ -440,6 +440,417 @@
         }
       }
     },
+    "event": {
+      "log": {
+        ".": {
+          "desc": "Log for bonus related events.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Log item ID to add natural order if 'date' values are equal for different items."
+            },
+            "date": {
+              "type": "datetime",
+              "desc": "Event datetime."
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "dwnl": {
+          "del": {
+            ".": {
+              "desc": "Log to save 'delete/restore' events in clients registry.",
+              "attr": {
+                "log_ref": {
+                  "type": "reference",
+                  "desc": "Reference to common log item with date value."
+                },
+                "client_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the client."
+                },
+                "is_deleted": {
+                  "type": "boolean",
+                  "desc": "'true' if client is deleted/anonymized.",
+                  "default": false
+                }
+              },
+              "relation": {
+                "log": {
+                  "path": "/bon/event/log",
+                  "own": ["log_ref"],
+                  "foreign": ["id"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                },
+                "client": {
+                  "path": "/dwnl/reg",
+                  "own": ["client_ref"],
+                  "foreign": ["client_ref"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                }
+              }
+            }
+          },
+          "tree": {
+            ".": {
+              "desc": "Log to save changes in 'parent-child' relations between clients (tree states in retrospective).",
+              "attr": {
+                "log_ref": {
+                  "type": "reference",
+                  "desc": "Reference to common log item with date value."
+                },
+                "client_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the client itself."
+                },
+                "parent_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the client's  parent.",
+                  "nullable": true
+                }
+              },
+              "relation": {
+                "log": {
+                  "path": "/bon/event/log",
+                  "own": ["log_ref"],
+                  "foreign": ["id"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                },
+                "client": {
+                  "path": "/dwnl/reg",
+                  "own": ["client_ref"],
+                  "foreign": ["client_ref"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                },
+                "parent": {
+                  "path": "/dwnl/reg",
+                  "own": ["parent_ref"],
+                  "foreign": ["client_ref"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                }
+              }
+            }
+          },
+          "type": {
+            ".": {
+              "desc": "Log to save 'setType' changes in clients registry.",
+              "attr": {
+                "log_ref": {
+                  "type": "reference",
+                  "desc": "Reference to common log item with date value."
+                },
+                "client_ref": {
+                  "type": "reference",
+                  "desc": "Reference to the client."
+                },
+                "is_customer": {
+                  "type": "boolean",
+                  "desc": "'true' - client is customer, 'false' - distributor.",
+                  "default": false
+                }
+              },
+              "relation": {
+                "log": {
+                  "path": "/bon/event/log",
+                  "own": ["log_ref"],
+                  "foreign": ["id"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                },
+                "client": {
+                  "path": "/dwnl/reg",
+                  "own": ["client_ref"],
+                  "foreign": ["client_ref"],
+                  "on": {
+                    "delete": "cascade",
+                    "update": "cascade"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "plan": {
+      ".note": "Bonus plan construction data.",
+      ".": {
+        "desc": "Set of bonus suites related to one set of ranks.",
+        "attr": {
+          "id": {
+            "type": "identity",
+            "desc": "Plan ID."
+          },
+          "date_created": {
+            "type": "date",
+            "desc": "Date when plan was created."
+          },
+          "note": {
+            "type": "string",
+            "desc": "Plan description for humans."
+          }
+        }
+      },
+      "calc": {
+        "type": {
+          ".": {
+            "desc": "Calculations types codifier.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Calculation type ID."
+              },
+              "code": {
+                "type": "string",
+                "desc": "Calculation code to be referenced from programs/scripts."
+              },
+              "note": {
+                "type": "string",
+                "desc": "Calculation type reference for humans."
+              }
+            },
+            "index": {
+              "unique": {
+                "type": "unique",
+                "attrs": ["code"]
+              }
+            }
+          },
+          "deps": {
+            "after": {
+              ".": {
+                "desc": "Calculations are based on other calculations (ref depends on other_ref).",
+                "attr": {
+                  "ref": {
+                    "type": "reference",
+                    "desc": "Main calculation."
+                  },
+                  "other_ref": {
+                    "type": "reference",
+                    "desc": "Base calculation for main calculation."
+                  }
+                },
+                "index": {
+                  "pk": {
+                    "type": "primary",
+                    "attrs": ["ref", "other_ref"]
+                  }
+                },
+                "relation": {
+                  "ref": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["ref"],
+                    "foreign": ["id"],
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
+                  },
+                  "otherRef": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["other_ref"],
+                    "foreign": ["id"],
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
+                  }
+                }
+              }
+            },
+            "before": {
+              ".": {
+                "desc": "Calculations that should be performed before other calculations.",
+                "attr": {
+                  "ref": {
+                    "type": "reference",
+                    "desc": "Main calculation."
+                  },
+                  "other_ref": {
+                    "type": "reference",
+                    "desc": "Main calculation should be performed before this calc."
+                  }
+                },
+                "index": {
+                  "pk": {
+                    "type": "primary",
+                    "attrs": ["ref", "other_ref"]
+                  }
+                },
+                "relation": {
+                  "ref": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["ref"],
+                    "foreign": ["id"],
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
+                  },
+                  "otherRef": {
+                    "path": "/bon/plan/calc/type",
+                    "own": ["other_ref"],
+                    "foreign": ["id"],
+                    "on": {
+                      "delete": "cascade",
+                      "update": "cascade"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rank": {
+        ".": {
+          "desc": "Ranks bound to the concrete plan.",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Rank ID."
+            },
+            "plan_ref": {
+              "type": "reference",
+              "desc": "Reference to the plan."
+            },
+            "code": {
+              "type": "string",
+              "desc": "Small code for the rank."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Description of the rank for humans."
+            },
+            "sequence": {
+              "type": "integer",
+              "desc": "Calculation sequence (order) in the plan.",
+              "small": true,
+              "unsigned": true
+            }
+          },
+          "relation": {
+            "plan": {
+              "path": "/bon/plan",
+              "own": ["plan_ref"],
+              "foreign": ["id"],
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
+            }
+          }
+        }
+      },
+      "suite": {
+        ".": {
+          "desc": "Set of calculations related to one period type (day, week, month, year).",
+          "attr": {
+            "id": {
+              "type": "identity",
+              "desc": "Plan ID."
+            },
+            "plan_ref": {
+              "type": "reference",
+              "desc": "Reference to the bonus plan."
+            },
+            "period": {
+              "type": "string",
+              "desc": "Period type (D)AY, (W)EEK, (M)ONTH, (Y)EAR)."
+            },
+            "date_created": {
+              "type": "date",
+              "desc": "Date when plan was created."
+            },
+            "note": {
+              "type": "string",
+              "desc": "Plan description for humans."
+            }
+          },
+          "relation": {
+            "suite": {
+              "path": "/bon/plan",
+              "own": ["plan_ref"],
+              "foreign": ["id"],
+              "on": {
+                "delete": "cascade",
+                "update": "cascade"
+              }
+            }
+          }
+        },
+        "calc": {
+          ".": {
+            "desc": "Calculations being bound to the concrete suite.",
+            "attr": {
+              "id": {
+                "type": "identity",
+                "desc": "Calculation ID."
+              },
+              "suite_ref": {
+                "type": "reference",
+                "desc": "Reference to the plan."
+              },
+              "type_ref": {
+                "type": "reference",
+                "desc": "Reference to the calculation type."
+              },
+              "sequence": {
+                "type": "integer",
+                "desc": "Calculation sequence (order) in the plan.",
+                "small": true,
+                "unsigned": true
+              },
+              "date_created": {
+                "type": "datetime",
+                "desc": "Date when first calculation was (will be) performed.",
+                "small": true,
+                "unsigned": true
+              }
+            },
+            "relation": {
+              "suite": {
+                "path": "/bon/plan/suite",
+                "own": ["suite_ref"],
+                "foreign": ["id"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
+              },
+              "calcType": {
+                "path": "/bon/plan/calc/type",
+                "own": ["type_ref"],
+                "foreign": ["id"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "pool": {
       ".note": "Results for concrete calculations.",
       ".": {
@@ -964,266 +1375,6 @@
                     "delete": "cascade",
                     "update": "cascade"
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "plan": {
-      ".note": "Bonus plan construction data.",
-      ".": {
-        "desc": "Set of bonus suites related to one set of ranks.",
-        "attr": {
-          "id": {
-            "type": "identity",
-            "desc": "Plan ID."
-          },
-          "date_created": {
-            "type": "date",
-            "desc": "Date when plan was created."
-          },
-          "note": {
-            "type": "string",
-            "desc": "Plan description for humans."
-          }
-        }
-      },
-      "calc": {
-        "type": {
-          ".": {
-            "desc": "Calculations types codifier.",
-            "attr": {
-              "id": {
-                "type": "identity",
-                "desc": "Calculation type ID."
-              },
-              "code": {
-                "type": "string",
-                "desc": "Calculation code to be referenced from programs/scripts."
-              },
-              "note": {
-                "type": "string",
-                "desc": "Calculation type reference for humans."
-              }
-            },
-            "index": {
-              "unique": {
-                "type": "unique",
-                "attrs": ["code"]
-              }
-            }
-          },
-          "deps": {
-            "after": {
-              ".": {
-                "desc": "Calculations are based on other calculations (ref depends on other_ref).",
-                "attr": {
-                  "ref": {
-                    "type": "reference",
-                    "desc": "Main calculation."
-                  },
-                  "other_ref": {
-                    "type": "reference",
-                    "desc": "Base calculation for main calculation."
-                  }
-                },
-                "index": {
-                  "pk": {
-                    "type": "primary",
-                    "attrs": ["ref", "other_ref"]
-                  }
-                },
-                "relation": {
-                  "ref": {
-                    "path": "/bon/plan/calc/type",
-                    "own": ["ref"],
-                    "foreign": ["id"],
-                    "on": {
-                      "delete": "cascade",
-                      "update": "cascade"
-                    }
-                  },
-                  "otherRef": {
-                    "path": "/bon/plan/calc/type",
-                    "own": ["other_ref"],
-                    "foreign": ["id"],
-                    "on": {
-                      "delete": "cascade",
-                      "update": "cascade"
-                    }
-                  }
-                }
-              }
-            },
-            "before": {
-              ".": {
-                "desc": "Calculations that should be performed before other calculations.",
-                "attr": {
-                  "ref": {
-                    "type": "reference",
-                    "desc": "Main calculation."
-                  },
-                  "other_ref": {
-                    "type": "reference",
-                    "desc": "Main calculation should be performed before this calc."
-                  }
-                },
-                "index": {
-                  "pk": {
-                    "type": "primary",
-                    "attrs": ["ref", "other_ref"]
-                  }
-                },
-                "relation": {
-                  "ref": {
-                    "path": "/bon/plan/calc/type",
-                    "own": ["ref"],
-                    "foreign": ["id"],
-                    "on": {
-                      "delete": "cascade",
-                      "update": "cascade"
-                    }
-                  },
-                  "otherRef": {
-                    "path": "/bon/plan/calc/type",
-                    "own": ["other_ref"],
-                    "foreign": ["id"],
-                    "on": {
-                      "delete": "cascade",
-                      "update": "cascade"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "rank": {
-        ".": {
-          "desc": "Ranks bound to the concrete plan.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Rank ID."
-            },
-            "plan_ref": {
-              "type": "reference",
-              "desc": "Reference to the plan."
-            },
-            "code": {
-              "type": "string",
-              "desc": "Small code for the rank."
-            },
-            "note": {
-              "type": "string",
-              "desc": "Description of the rank for humans."
-            },
-            "sequence": {
-              "type": "integer",
-              "desc": "Calculation sequence (order) in the plan.",
-              "small": true,
-              "unsigned": true
-            }
-          },
-          "relation": {
-            "plan": {
-              "path": "/bon/plan",
-              "own": ["plan_ref"],
-              "foreign": ["id"],
-              "on": {
-                "delete": "cascade",
-                "update": "cascade"
-              }
-            }
-          }
-        }
-      },
-      "suite": {
-        ".": {
-          "desc": "Set of calculations related to one period type (day, week, month, year).",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "Plan ID."
-            },
-            "plan_ref": {
-              "type": "reference",
-              "desc": "Reference to the bonus plan."
-            },
-            "period": {
-              "type": "string",
-              "desc": "Period type (D)AY, (W)EEK, (M)ONTH, (Y)EAR)."
-            },
-            "date_created": {
-              "type": "date",
-              "desc": "Date when plan was created."
-            },
-            "note": {
-              "type": "string",
-              "desc": "Plan description for humans."
-            }
-          },
-          "relation": {
-            "suite": {
-              "path": "/bon/plan",
-              "own": ["plan_ref"],
-              "foreign": ["id"],
-              "on": {
-                "delete": "cascade",
-                "update": "cascade"
-              }
-            }
-          }
-        },
-        "calc": {
-          ".": {
-            "desc": "Calculations being bound to the concrete suite.",
-            "attr": {
-              "id": {
-                "type": "identity",
-                "desc": "Calculation ID."
-              },
-              "suite_ref": {
-                "type": "reference",
-                "desc": "Reference to the plan."
-              },
-              "type_ref": {
-                "type": "reference",
-                "desc": "Reference to the calculation type."
-              },
-              "sequence": {
-                "type": "integer",
-                "desc": "Calculation sequence (order) in the plan.",
-                "small": true,
-                "unsigned": true
-              },
-              "date_created": {
-                "type": "datetime",
-                "desc": "Date when first calculation was (will be) performed.",
-                "small": true,
-                "unsigned": true
-              }
-            },
-            "relation": {
-              "suite": {
-                "path": "/bon/plan/suite",
-                "own": ["suite_ref"],
-                "foreign": ["id"],
-                "on": {
-                  "delete": "cascade",
-                  "update": "cascade"
-                }
-              },
-              "calcType": {
-                "path": "/bon/plan/calc/type",
-                "own": ["type_ref"],
-                "foreign": ["id"],
-                "on": {
-                  "delete": "cascade",
-                  "update": "cascade"
                 }
               }
             }

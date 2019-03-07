@@ -4,42 +4,35 @@
  * Since: 2019
  */
 
-namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log;
+namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl;
 
 
 /**
+ * Log to save changes in 'parent-child' relations between clients (tree states in retrospective).
+ *
  * @Entity
- * @Table(name="dwnl_log_tree")
+ * @Table(name="bon_event_log_dwnl_tree")
  */
 class Tree
     extends \TeqFw\Lib\Data
 {
     const CLIENT_REF = 'client_ref';
-    const DATE = 'date';
-    const ID = 'id';
+    const LOG_REF = 'log_ref';
     const PARENT_REF = 'parent_ref';
-
     /**
      * @var int
      * @Column(type="integer")
      */
     public $client_ref;
     /**
-     * @var \DateTime
-     * @Column(type="datetime")
-     */
-    public $date;
-    /**
      * @var int
      * @Id
      * @Column(type="integer")
-     * @GeneratedValue
      */
-    public $id;
+    public $log_ref;
     /**
      * @var int
      * @Column(type="integer")
      */
     public $parent_ref;
-
 }

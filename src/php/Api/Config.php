@@ -50,6 +50,10 @@ interface Config
     const DB_TBL_BON_CV_REG = 'bon_cv_reg';
     const DB_TBL_BON_CV_REG_SALE = 'bon_cv_reg_sale';
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';
+    const DB_TBL_BON_EVENT_LOG = 'bon_event_log';
+    const DB_TBL_BON_EVENT_LOG_DWNL_DEL = 'bon_event_log_dwnl_del';
+    const DB_TBL_BON_EVENT_LOG_DWNL_TREE = 'bon_event_log_dwnl_tree';
+    const DB_TBL_BON_EVENT_LOG_DWNL_TYPE = 'bon_event_log_dwnl_type';
     const DB_TBL_BON_PLAN = 'bon_plan';
     const DB_TBL_BON_PLAN_CALC_TYPE = 'bon_plan_calc_type';
     const DB_TBL_BON_PLAN_CALC_TYPE_DEPS_AFTER = 'bon_plan_calc_type_deps_after';
