@@ -7,7 +7,7 @@
 namespace Praxigento\Milc\Bonus\Service\Client;
 
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Delete as ELogDelete;
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ELogTree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Service\Client\Restore\Request as ARequest;
@@ -57,11 +57,13 @@ class Restore
 
     private function addToTreeLog($clientId, $parentId, $date)
     {
-        $log = new ETreeLog();
+        $log = new ELogTree();
         $log->client_ref = $clientId;
         $log->parent_ref = $parentId;
-        $log->date = $date;
-        $this->manEntity->persist($log);
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add\Request();
+        $req->date = $date;
+        $req->details = $log;
+        $this->srvEventLogAdd->exec($req);
     }
 
     public function exec($req)

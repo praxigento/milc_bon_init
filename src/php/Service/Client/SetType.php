@@ -6,8 +6,8 @@
 
 namespace Praxigento\Milc\Bonus\Service\Client;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Type as ETypeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ELogTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Type as ELogType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Service\Client\SetType\Request as ARequest;
@@ -20,33 +20,39 @@ class SetType
     private $hlpFormat;
     /** @var \Doctrine\ORM\EntityManagerInterface */
     private $manEntity;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add */
+    private $srvEventLogAdd;
 
     public function __construct(
         \Doctrine\ORM\EntityManagerInterface $manEntity,
-        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat
+        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat,
+        \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add $srvEventLogAdd
     ) {
         $this->manEntity = $manEntity;
         $this->hlpFormat = $hlpFormat;
+        $this->srvEventLogAdd = $srvEventLogAdd;
     }
 
     private function addToTreeLog($clientId, $parentId, $date)
     {
-        $log = new ETreeLog();
+        $log = new ELogTree();
         $log->client_ref = $clientId;
         $log->parent_ref = $parentId;
-        $log->date = $date;
-        $this->manEntity->persist($log);
-        $this->manEntity->flush();
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add\Request();
+        $req->date = $date;
+        $req->details = $log;
+        $this->srvEventLogAdd->exec($req);
     }
 
     private function addToTypeLog($clientId, $date, $isCustomer)
     {
-        $log = new ETypeLog();
+        $log = new ELogType();
         $log->client_ref = $clientId;
-        $log->date = $date;
         $log->is_customer = $isCustomer;
-        $this->manEntity->persist($log);
-        $this->manEntity->flush();
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add\Request();
+        $req->date = $date;
+        $req->details = $log;
+        $this->srvEventLogAdd->exec($req);
     }
 
     private function changeParentForFrontLine($clientId, $parentId)

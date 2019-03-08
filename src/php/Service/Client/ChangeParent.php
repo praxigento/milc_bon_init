@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Client;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ELogTree;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
 use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent\Response as AResponse;
@@ -18,13 +18,28 @@ class ChangeParent
     private $hlpFormat;
     /** @var \Doctrine\ORM\EntityManagerInterface */
     private $manEntity;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add */
+    private $srvEventLogAdd;
 
     public function __construct(
         \Doctrine\ORM\EntityManagerInterface $manEntity,
-        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat
+        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat,
+        \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add $srvEventLogAdd
     ) {
         $this->manEntity = $manEntity;
         $this->hlpFormat = $hlpFormat;
+        $this->srvEventLogAdd = $srvEventLogAdd;
+    }
+
+    private function addToTreeLog($clientId, $parentId, $date)
+    {
+        $log = new ELogTree();
+        $log->client_ref = $clientId;
+        $log->parent_ref = $parentId;
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add\Request();
+        $req->date = $date;
+        $req->details = $log;
+        $this->srvEventLogAdd->exec($req);
     }
 
     public function exec($req)
@@ -50,11 +65,7 @@ class ChangeParent
             $isNotInDwnl = $this->validateNewParentIsNotInDownline($clientId, $parentIdOld, $parentIdNew);
             if ($isDiffer && $isNotInDwnl) {
                 /* save data into downline tree trace */
-                $log = new ETreeLog();
-                $log->client_ref = $clientId;
-                $log->parent_ref = $parentIdNew;
-                $log->date = $date;
-                $this->manEntity->persist($log);
+                $this->addToTreeLog($clientId, $parentIdNew, $date);
                 /* update current downline tree */
                 $found->parent_ref = $parentIdNew;
                 /* TODO: change depths & paths for customer itself & for it's downline */

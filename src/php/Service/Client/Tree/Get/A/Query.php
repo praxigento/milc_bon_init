@@ -7,7 +7,8 @@
 namespace Praxigento\Milc\Bonus\Service\Client\Tree\Get\A;
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log as ELog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ETreeLog;
 
 /**
  * Build query to get
@@ -18,6 +19,7 @@ class Query
     const AS_BY_CLIENT = 'by_client';
     const AS_BY_DATE = 'by_date';
     const AS_INIT = 'init';
+    const AS_INIT_LOG = 'ilog';
     const AS_RESULT = 'result';
     /**/
     const A_BY_CLIENT_REF = 'by_client_ref';
@@ -62,12 +64,13 @@ class Query
      */
     private function expForDate()
     {
+        $as = self::AS_INIT_LOG;
         $isMySQL = $this->hlpDb->isConnectedToMySQL();
         if ($isMySQL) {
-            $result = "date_format(" . self::AS_INIT . "." . ETreeLog::DATE . ", '%Y-%m-%d')";
+            $result = "date_format($as." . ELog::DATE . ", '%Y-%m-%d')";
         } else {
             /* postgres case */
-            $result = "date_trunc('day', " . self::AS_INIT . "." . ETreeLog::DATE . ")";
+            $result = "date_trunc('day', $as." . ELog::DATE . ")";
         }
         return $result;
     }
@@ -77,20 +80,34 @@ class Query
      */
     private function getQueryInit()
     {
+        $asLogEvent = self::AS_INIT_LOG;
+        $asLogTree = self::AS_INIT;
         $expForDate = $this->expForDate();
         /* compose query using builder */
         $result = $this->conn->createQueryBuilder();
-        $result->from(Cfg::DB_TBL_DWNL_LOG_TREE, self::AS_INIT);
+
+        /* FROM bon_event_log_dwnl_tree */
+        $result->from(Cfg::DB_TBL_BON_EVENT_LOG_DWNL_TREE, $asLogTree);
         $result->select([
-            self::AS_INIT . '.' . ETreeLog::CLIENT_REF . ' as ' . self::A_BY_DATE_CLIENT_REF,
-            'MAX(' . self::AS_INIT . '.' . ETreeLog::ID . ') as ' . self::A_BY_DATE_ID
+            "$asLogTree." . ETreeLog::CLIENT_REF . ' as ' . self::A_BY_DATE_CLIENT_REF,
+            "MAX($asLogTree." . ETreeLog::LOG_REF . ') as ' . self::A_BY_DATE_ID
         ]);
+
+        /* LEFT JOIN bon_cv_reg */
+        $on = "$asLogEvent." . ELog::ID . "=$asLogTree." . ETreeLog::LOG_REF;
+        $result->leftJoin($asLogTree, Cfg::DB_TBL_BON_EVENT_LOG, $asLogEvent, $on);
+
+        /* WHERE */
         $result->where($expForDate . '<=:' . self::BND_DATE);
+
+        /* GROUP */
         $result->groupBy([
-            self::AS_INIT . '.' . ETreeLog::CLIENT_REF,
+            "$asLogTree." . ETreeLog::CLIENT_REF,
             $expForDate
         ]);
-        $result->addOrderBy(self::AS_INIT . '.' . ETreeLog::CLIENT_REF);
+
+        /* ORDER */
+        $result->addOrderBy("$asLogTree." . ETreeLog::CLIENT_REF);
         $result->addOrderBy($expForDate, 'desc');
         return $result;
     }
@@ -101,12 +118,13 @@ class Query
      */
     private function getQueryMiddle($qbInit)
     {
+        $as = self::AS_BY_DATE;
         /* compose query using builder */
         $result = $this->conn->createQueryBuilder();
         $from = '(' . $qbInit->getSQL() . ')';
-        $result->from($from, self::AS_BY_DATE);
-        $result->select('MAX(' . self::AS_BY_DATE . '.' . self::A_BY_DATE_ID . ') as ' . self::A_BY_CLIENT_REF);
-        $result->groupBy(self::AS_BY_DATE . '.' . self::A_BY_DATE_CLIENT_REF);
+        $result->from($from, $as);
+        $result->select("MAX($as." . self::A_BY_DATE_ID . ') as ' . self::A_BY_CLIENT_REF);
+        $result->groupBy("$as." . self::A_BY_DATE_CLIENT_REF);
         return $result;
     }
 
@@ -116,22 +134,21 @@ class Query
      */
     private function getQueryOuter($qbMiddle)
     {
+        $asRes = self::AS_RESULT;
+        $asClient = self::AS_BY_CLIENT;
         /* compose query using builder */
         $result = $this->conn->createQueryBuilder();
         $expr = $result->expr();
-        $from = '(' . $qbMiddle->getSQL() . ')';
-        $result->from($from, self::AS_BY_CLIENT);
+        $sqlMiddle = $qbMiddle->getSQL();
+        $from = "($sqlMiddle)";
+        $result->from($from, $asClient);
         $result->select([
-            self::AS_RESULT . '.' . ETreeLog::CLIENT_REF . ' as ' . self::A_RES_CLIENT_ID,
-            self::AS_RESULT . '.' . ETreeLog::PARENT_REF . ' as ' . self::A_RES_PARENT_ID
+            "$asRes." . ETreeLog::CLIENT_REF . ' as ' . self::A_RES_CLIENT_ID,
+            "$asRes." . ETreeLog::PARENT_REF . ' as ' . self::A_RES_PARENT_ID
         ]);
-        $on = $expr->eq(self::AS_RESULT . '.' . ETreeLog::ID, self::AS_BY_CLIENT . '.' . self::A_BY_CLIENT_REF);
-        $result->leftJoin(
-            self::AS_BY_CLIENT,
-            Cfg::DB_TBL_DWNL_LOG_TREE,
-            self::AS_RESULT,
-            $on
-        );
+        /* LEFT JOIN */
+        $on = "$asClient." . self::A_BY_CLIENT_REF . "=$asRes." . ETreeLog::LOG_REF;
+        $result->leftJoin($asClient, Cfg::DB_TBL_BON_EVENT_LOG_DWNL_TREE, $asRes, $on);
         return $result;
     }
 }
