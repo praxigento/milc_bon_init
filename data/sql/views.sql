@@ -99,10 +99,10 @@ select tr.client_ref   AS client_id,
        tr.depth        AS depth,
        tr.path         AS path,
        reg.is_customer AS is_customer
-from ((dwnl_tree tr
-  left join dwnl_reg reg on
+from ((bon_dwnl_tree tr
+  left join bon_dwnl_reg reg on
     ((reg.client_ref = tr.client_ref)))
-       left join dwnl_reg par on
+       left join bon_dwnl_reg par on
   ((par.client_ref = tr.parent_ref)));
 
 CREATE

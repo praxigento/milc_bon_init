@@ -48,12 +48,6 @@ try {
         $ddl->create($schema, $entity);
     }
 
-    $json = readJsonClient();
-    $collection = $parser->parseJson($json);
-    foreach ($collection->items as $entity) {
-        $ddl->create($schema, $entity);
-    }
-
     $json = readJsonBon();
     $collection = $parser->parseJson($json);
     foreach ($collection->items as $entity) {
