@@ -10,6 +10,7 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log;
 /**
  * @Entity
  * @Table(name="dwnl_log_tree")
+ * @deprecated use \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree
  */
 class Tree
     extends \TeqFw\Lib\Data

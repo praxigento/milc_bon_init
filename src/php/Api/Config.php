@@ -81,6 +81,10 @@ interface Config
     const DB_TBL_RES_PARTNER = 'res_partner';
     const DB_TBL_SALE_ORDER = 'sale_order';
     /**/
+    const EVENT_LOG_TYPE_DWNL_DELETE = 'dwnl.del';
+    const EVENT_LOG_TYPE_DWNL_TREE = 'dwnl.tree';
+    const EVENT_LOG_TYPE_DWNL_TYPE = 'dwnl.type';
+    /**/
     const FORMAT_DATE = 'Y-m-d';
     const FORMAT_DATETIME = 'Y-m-d H:i:s';
     /**/

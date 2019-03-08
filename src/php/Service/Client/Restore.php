@@ -6,7 +6,7 @@
 
 namespace Praxigento\Milc\Bonus\Service\Client;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Delete as EDeleteLog;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Delete as ELogDelete;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log\Tree as ETreeLog;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Tree as ETree;
@@ -20,22 +20,28 @@ class Restore
     private $hlpFormat;
     /** @var \Doctrine\ORM\EntityManagerInterface */
     private $manEntity;
+    /** @var \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add */
+    private $srvEventLogAdd;
 
     public function __construct(
         \Doctrine\ORM\EntityManagerInterface $manEntity,
-        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat
+        \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat,
+        \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add $srvEventLogAdd
     ) {
         $this->manEntity = $manEntity;
         $this->hlpFormat = $hlpFormat;
+        $this->srvEventLogAdd = $srvEventLogAdd;
     }
 
     private function addToDeleteLog($clientId, $date)
     {
-        $log = new EDeleteLog();
+        $log = new  ELogDelete();
         $log->client_ref = $clientId;
-        $log->date = $date;
         $log->is_deleted = false;
-        $this->manEntity->persist($log);
+        $req = new \Praxigento\Milc\Bonus\Service\Bonus\Event\Log\Add\Request();
+        $req->date = $date;
+        $req->details = $log;
+        $this->srvEventLogAdd->exec($req);
     }
 
     private function addToTree($clientId, $parentId)

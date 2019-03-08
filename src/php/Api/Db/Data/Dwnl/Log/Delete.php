@@ -10,6 +10,7 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Dwnl\Log;
 /**
  * @Entity
  * @Table(name="dwnl_log_del")
+ * @deprecated use \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Delete
  */
 class Delete
     extends \TeqFw\Lib\Data
