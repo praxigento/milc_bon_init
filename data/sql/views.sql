@@ -1,5 +1,143 @@
 CREATE
   OR REPLACE
+  VIEW bon_ui_calc_comm AS
+select cl.id                 AS comm_id,
+       cl.pool_calc_ref      AS pool_calc_id,
+       cl.client_ref         AS client_id,
+       cl.level              AS level,
+       cl.cv                 AS level_cv,
+       cl.percent            AS level_percent,
+       cl.commission         AS level_comm,
+       sum(clq.value)        AS quants_sum,
+       count(clq.cv_reg_ref) AS quants_count
+from (bon_pool_comm_level cl
+       left join bon_pool_comm_level_quant clq on
+  ((clq.comm_ref = cl.id)))
+group by cl.id;
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_calc_comm_quant AS
+SELECT cl.id            as comm_id,
+       cl.pool_calc_ref as pool_calc_id,
+       cl.client_ref    as comm_client_id,
+       cl.cv            as comm_cv,
+       cl.level         as comm_level,
+       cl.percent       as comm_percent,
+       cl.commission    as comm_total,
+       clq.value        as quant_value,
+       clq.cv_reg_ref   as quant_reg_id,
+       cr.client_ref    as quant_client_ref,
+       cr.volume        as quant_cv,
+       cr.is_autoship   as is_autoship,
+       cr.type          as quant_type,
+       cr.date          as quant_date,
+       crs.source_ref   as quant_sale_id
+FROM bon_pool_comm_level_quant as clq
+       LEFT JOIN bon_pool_comm_level as cl ON
+  cl.id = clq.comm_ref
+       LEFT JOIN bon_cv_reg as cr ON
+  cr.id = clq.cv_reg_ref
+       LEFT JOIN bon_cv_reg_sale as crs ON
+  crs.registry_ref = cr.id;
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_calc_cv AS
+select pc.id           AS pool_calc_id,
+       pc.calc_ref     AS suite_calc_id,
+       ci.cv_reg_ref   AS cv_reg_item_id,
+       cvr.client_ref  AS client_id,
+       cvr.volume      AS cv_volume,
+       cvr.is_autoship AS is_autoship,
+       cvr.date        AS cv_reg_date,
+       cvr.type        AS cv_reg_type
+from ((bon_pool_cv ci
+  left join bon_pool_calc pc on
+    ((pc.id = ci.pool_calc_ref)))
+       left join bon_cv_reg cvr on
+  ((cvr.id = ci.cv_reg_ref)));
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_calc_pool AS
+select pc.id          AS pool_calc_id,
+       ct.code        AS calc_type,
+       pp.suite_ref   AS suite_id,
+       p.id           AS pool_id,
+       p.date_started AS pool_started,
+       pp.id          AS period_id,
+       pp.state       AS period_state,
+       ps.period      AS period_type,
+       pp.date_begin  AS period_begin
+from ((((bon_pool p
+  left join bon_pool_period pp on
+    ((pp.id = p.period_ref)))
+  left join bon_pool_calc pc on
+    ((pc.pool_ref = p.id)))
+  left join bon_plan_suite ps on
+    ((ps.id = pp.suite_ref)))
+       left join bon_plan_calc_type ct on
+  ((ct.id = pc.calc_ref)));
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_calc_tree AS
+select tr.pool_calc_ref      AS pool_calc_id,
+       tr.client_ref         AS client_id,
+       tr.parent_ref         AS parent_id,
+       count(trq.cv_reg_ref) AS total_orders,
+       tpv.pv                AS pv,
+       tpv.apv               AS apv
+from bon_pool_tree tr
+       left join bon_pool_tree_pv_link trq on
+  trq.tree_node_ref = tr.id
+       left join bon_pool_tree_pv tpv on
+  tpv.tree_node_ref = tr.id
+group by tr.pool_calc_ref,
+         tr.client_ref,
+         tr.parent_ref,
+         tpv.pv,
+         tpv.apv;
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_comm_level AS
+select pr.sequence AS rank_order,
+       pr.code     AS rank_code,
+       cl.level    AS tree_level,
+       cl.percent  AS comm_percent,
+       ct.code     AS suite_calc_type
+from (((bon_calc_comm_level cl
+  left join bon_plan_rank pr on
+    ((pr.id = cl.rank_ref)))
+  left join bon_plan_suite_calc sc on
+    ((sc.id = cl.calc_ref)))
+       left join bon_plan_calc_type ct on
+  ((ct.id = sc.type_ref)));
+
+CREATE
+  OR REPLACE
+  VIEW bon_ui_event_log AS
+select log.id          AS id,
+       log.date        AS date,
+       log.type        AS type,
+       tree.client_ref AS tree_client_id,
+       tree.parent_ref AS tree_parent_id,
+       del.client_ref  AS del_client_id,
+       del.is_deleted  AS deleted,
+       tp.client_ref   AS type_client_id,
+       tp.is_customer  AS type_is_customer
+from (((bon_event_log log
+  left join bon_event_log_dwnl_tree tree on
+    ((tree.log_ref = log.id)))
+  left join bon_event_log_dwnl_del del on
+    ((del.log_ref = log.id)))
+       left join bon_event_log_dwnl_type tp on
+  ((tp.log_ref = log.id)));
+
+CREATE
+  OR REPLACE
   VIEW bon_ui_plan_calcs AS
 select sc.suite_ref AS suite_id,
        sc.id        AS suite_calc_id,
@@ -58,22 +196,6 @@ from (((((bon_calc_rank_rule crr
 
 CREATE
   OR REPLACE
-  VIEW bon_ui_comm_level AS
-select pr.sequence AS rank_order,
-       pr.code     AS rank_code,
-       cl.level    AS tree_level,
-       cl.percent  AS comm_percent,
-       ct.code     AS suite_calc_type
-from (((bon_calc_comm_level cl
-  left join bon_plan_rank pr on
-    ((pr.id = cl.rank_ref)))
-  left join bon_plan_suite_calc sc on
-    ((sc.id = cl.calc_ref)))
-       left join bon_plan_calc_type ct on
-  ((ct.id = sc.type_ref)));
-
-CREATE
-  OR REPLACE
   VIEW bon_ui_reg_cv AS
 select reg.id          AS id,
        reg.client_ref  AS client_id,
@@ -104,105 +226,3 @@ from ((bon_dwnl_tree tr
     ((reg.client_ref = tr.client_ref)))
        left join bon_dwnl_reg par on
   ((par.client_ref = tr.parent_ref)));
-
-CREATE
-  OR REPLACE
-  VIEW bon_ui_calc_pool AS
-select pc.id          AS pool_calc_id,
-       ct.code        AS calc_type,
-       pp.suite_ref   AS suite_id,
-       p.id           AS pool_id,
-       p.date_started AS pool_started,
-       pp.id          AS period_id,
-       pp.state       AS period_state,
-       ps.period      AS period_type,
-       pp.date_begin  AS period_begin
-from ((((bon_pool p
-  left join bon_pool_period pp on
-    ((pp.id = p.period_ref)))
-  left join bon_pool_calc pc on
-    ((pc.pool_ref = p.id)))
-  left join bon_plan_suite ps on
-    ((ps.id = pp.suite_ref)))
-       left join bon_plan_calc_type ct on
-  ((ct.id = pc.calc_ref)));
-
-CREATE
-  OR REPLACE
-  VIEW bon_ui_calc_cv AS
-select pc.id           AS pool_calc_id,
-       pc.calc_ref     AS suite_calc_id,
-       ci.cv_reg_ref   AS cv_reg_item_id,
-       cvr.client_ref  AS client_id,
-       cvr.volume      AS cv_volume,
-       cvr.is_autoship AS is_autoship,
-       cvr.date        AS cv_reg_date,
-       cvr.type        AS cv_reg_type
-from ((bon_pool_cv ci
-  left join bon_pool_calc pc on
-    ((pc.id = ci.pool_calc_ref)))
-       left join bon_cv_reg cvr on
-  ((cvr.id = ci.cv_reg_ref)));
-
-CREATE
-  OR REPLACE
-  VIEW `bon_ui_calc_tree` AS
-select `tr`.`pool_calc_ref`      AS `pool_calc_id`,
-       `tr`.`client_ref`         AS `client_id`,
-       `tr`.`parent_ref`         AS `parent_id`,
-       count(`trq`.`cv_reg_ref`) AS `total_orders`,
-       `tpv`.`pv`                AS `pv`,
-       `tpv`.`apv`               AS `apv`
-from `bon_pool_tree` `tr`
-       left join `bon_pool_tree_pv_link` `trq` on
-  `trq`.`tree_node_ref` = `tr`.`id`
-       left join `bon_pool_tree_pv` `tpv` on
-  `tpv`.`tree_node_ref` = `tr`.`id`
-group by `tr`.`pool_calc_ref`,
-         `tr`.`client_ref`,
-         `tr`.`parent_ref`,
-         `tpv`.`pv`,
-         `tpv`.`apv`;
-
-CREATE
-  OR REPLACE
-  VIEW bon_ui_calc_comm AS
-select cl.id                 AS comm_id,
-       cl.pool_calc_ref      AS pool_calc_id,
-       cl.client_ref         AS client_id,
-       cl.level              AS level,
-       cl.cv                 AS level_cv,
-       cl.percent            AS level_percent,
-       cl.commission         AS level_comm,
-       sum(clq.value)        AS quants_sum,
-       count(clq.cv_reg_ref) AS quants_count
-from (bon_pool_comm_level cl
-       left join bon_pool_comm_level_quant clq on
-  ((clq.comm_ref = cl.id)))
-group by cl.id;
-
-CREATE
-  OR REPLACE
-  VIEW bon_ui_calc_comm_quant AS
-SELECT cl.id            as comm_id,
-       cl.pool_calc_ref as pool_calc_id,
-       cl.client_ref    as comm_client_id,
-       cl.cv            as comm_cv,
-       cl.level         as comm_level,
-       cl.percent       as comm_percent,
-       cl.commission    as comm_total,
-       clq.value        as quant_value,
-       clq.cv_reg_ref   as quant_reg_id,
-       cr.client_ref    as quant_client_ref,
-       cr.volume        as quant_cv,
-       cr.is_autoship   as is_autoship,
-       cr.type          as quant_type,
-       cr.date          as quant_date,
-       crs.source_ref   as quant_sale_id
-FROM bon_pool_comm_level_quant as clq
-       LEFT JOIN bon_pool_comm_level as cl ON
-  cl.id = clq.comm_ref
-       LEFT JOIN bon_cv_reg as cr ON
-  cr.id = clq.cv_reg_ref
-       LEFT JOIN bon_cv_reg_sale as crs ON
-  crs.registry_ref = cr.id
