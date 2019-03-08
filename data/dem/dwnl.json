@@ -1,110 +1,6 @@
 {
   "DEM": {
     ".": "dwnl",
-    "log": {
-      "del": {
-        ".": {
-          "desc": "Log to save 'delete/restore' events in clients registry.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "date": {
-              "type": "datetime",
-              "desc": "Event date/time."
-            },
-            "is_deleted": {
-              "type": "boolean",
-              "desc": "'true' if client is deleted/anonymized.",
-              "default": false
-            }
-          },
-          "relation": {
-            "client": {
-              "path": "/dwnl/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      },
-      "tree": {
-        ".": {
-          "desc": "Log to save changes in 'parent-child' relations between clients (tree states in retrospective).",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client itself."
-            },
-            "parent_ref": {
-              "type": "reference",
-              "desc": "Reference to the client's  parent.",
-              "nullable": true
-            },
-            "date": {
-              "type": "datetime",
-              "desc": "Event date/time."
-            }
-          },
-          "relation": {
-            "client": {
-              "path": "/dwnl/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            },
-            "parent": {
-              "path": "/dwnl/reg",
-              "own": ["parent_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      },
-      "type": {
-        ".": {
-          "desc": "Log to save 'setType' changes in clients registry.",
-          "attr": {
-            "id": {
-              "type": "identity",
-              "desc": "ID of the log item to add natural order if 'date' values are equal for different items."
-            },
-            "client_ref": {
-              "type": "reference",
-              "desc": "Reference to the client."
-            },
-            "date": {
-              "type": "datetime",
-              "desc": "Event date/time."
-            },
-            "is_customer": {
-              "type": "boolean",
-              "desc": "'true' - client is customer, 'false' - distributor.",
-              "default": false
-            }
-          },
-          "relation": {
-            "client": {
-              "path": "/dwnl/reg",
-              "own": ["client_ref"],
-              "foreign": ["client_ref"],
-              "on": {"delete": "cascade", "update": "cascade"}
-            }
-          }
-        }
-      }
-    },
     "reg": {
       ".": {
         "desc": "Registry to save client data (downline tree nodes).",
@@ -145,7 +41,10 @@
             "path": "/res/partner",
             "own": ["client_ref"],
             "foreign": ["id"],
-            "on": {"delete": "restrict", "update": "cascade"}
+            "on": {
+              "delete": "restrict",
+              "update": "cascade"
+            }
           }
         }
       }
@@ -182,14 +81,20 @@
             "path": "/dwnl/reg",
             "own": ["client_ref"],
             "foreign": ["client_ref"],
-            "on": {"delete": "restrict", "update": "cascade"}
+            "on": {
+              "delete": "restrict",
+              "update": "cascade"
+            }
           },
           "parent": {
             ".comment": "Parent must exist in the current tree.",
             "path": "/dwnl/tree",
             "own": ["parent_ref"],
             "foreign": ["client_ref"],
-            "on": {"delete": "restrict", "update": "cascade"}
+            "on": {
+              "delete": "restrict",
+              "update": "cascade"
+            }
           }
         }
       }
