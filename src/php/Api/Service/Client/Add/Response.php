@@ -10,5 +10,8 @@ namespace Praxigento\Milc\Bonus\Api\Service\Client\Add;
 class Response
     extends \TeqFw\Lib\Data
 {
-
+    /** @var int */
+    public $enrollerId;
+    /** @var int */
+    public $parentId;
 }

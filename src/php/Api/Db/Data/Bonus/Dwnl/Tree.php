@@ -8,6 +8,8 @@ namespace Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Dwnl;
 
 
 /**
+ * Tree to save current 'parent-child' relations between clients.
+ *
  * @Entity
  * @Table(name="bon_dwnl_tree")
  */

@@ -14,11 +14,16 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Sale\Order as EFlectraSale;
 class Activity
     implements \Praxigento\Milc\Bonus\Api\Helper\Emulate\Activity
 {
+    /** @var \TeqFw\Lib\Db\Api\Dao\Entity\Anno */
+    private $dao;
     /** @var \DateTime date trace for events (is incremented on every event) */
     private $date;
-    /** @var \Doctrine\ORM\EntityManagerInterface */
-    private $em;
     /* maps are registries to save entities IDs */
+    /**
+     * @var \Doctrine\ORM\EntityManagerInterface
+     * @deprecated
+     */
+    private $em;
     private $mapClientAll = [];
     private $mapClientDeleted = [];
     private $mapClientTypeCust = [];
@@ -44,6 +49,7 @@ class Activity
 
     public function __construct(
         \Doctrine\ORM\EntityManagerInterface $em,
+        \TeqFw\Lib\Db\Api\Dao\Entity\Anno $dao,
         \Praxigento\Milc\Bonus\Api\Service\Client\Add $srvClientAdd,
         \Praxigento\Milc\Bonus\Api\Service\Client\ChangeParent $srvClientChangeParent,
         \Praxigento\Milc\Bonus\Api\Service\Client\Delete $srvClientDelete,
@@ -52,6 +58,7 @@ class Activity
         \Praxigento\Milc\Bonus\Api\Service\Bonus\Registry\Cv $srvCvReg
     ) {
         $this->em = $em;
+        $this->dao = $dao;
         $this->srvClientChangeParent = $srvClientChangeParent;
         $this->srvClientAdd = $srvClientAdd;
         $this->srvClientDelete = $srvClientDelete;
@@ -146,44 +153,52 @@ class Activity
         return [$clientId, $typeOld, $typeNew];
     }
 
-    public function clientCreate($percentIsCust)
+    public function clientCreate($treeType, $percentIsCust, $percentAddToLeft = 50)
     {
-        $customerId = $this->clientPartnerCreate();
-        $this->mapClientAll[] = $customerId;
+        $clientId = $this->clientPartnerCreate();
+        $this->mapClientAll[] = $clientId;
         /* prepare working data */
         $count = count($this->mapClientTypeDistr) - 1;
         if (is_null($this->rootId)) {
             /* this is first client, do it a root */
-            $this->rootId = $customerId;
-            $parentId = $customerId;
+            $this->rootId = $clientId;
+            $enrollerId = $clientId;
             $isNotDistr = false;
         } else {
             /* parent ID should not be equal to customer ID - we have a failures when we delete customers */
             do {
                 $key = random_int(0, $count);
-                $parentId = $this->mapClientTypeDistr[$key];
-            } while ($parentId == $customerId);
+                $enrollerId = $this->mapClientTypeDistr[$key];
+            } while ($enrollerId == $clientId);
 
             /* 5% - new customer is not distributor */
             $isNotDistr = $this->randomPercent($percentIsCust);
         }
-        $mlmId = $customerId; // simple rule: MLM ID equals to ID
+        $mlmId = $this->generateMlmId($clientId);
+        $addToLeftLeg = $this->randomPercent($percentAddToLeft);
 
         $req = new \Praxigento\Milc\Bonus\Api\Service\Client\Add\Request();
-        $req->clientId = $customerId;
-        $req->parentId = $parentId;
+        $req->treeType = $treeType;
+        $req->clientId = $clientId;
+        $req->enrollerId = $enrollerId;
         $req->mlmId = $mlmId;
         $req->isNotDistributor = $isNotDistr;
+        $req->placeToLeft = $addToLeftLeg;
         $req->date = $this->dateModify();
-        $this->srvClientAdd->exec($req);
+        $resp = $this->srvClientAdd->exec($req);
+        $parentId = $resp->parentId;
 
         if ($isNotDistr) {
-            $this->mapClientTypeCust[] = $customerId;
+            $this->mapClientTypeCust[] = $clientId;
         } else {
-            $this->mapClientTypeDistr[] = $customerId;
+            $this->mapClientTypeDistr[] = $clientId;
         }
 
-        return [$this->date, $this->rootId, $customerId, $parentId, $isNotDistr];
+        $type = $isNotDistr ? 'cust' : 'distr';
+        $place = $addToLeftLeg ? 'left' : 'right';
+        echo "\nnew: $clientId/$enrollerId (place: $place; parent: $parentId).";
+
+        return [$this->date, $this->rootId, $clientId, $enrollerId, $isNotDistr];
     }
 
     public function clientDelete()
@@ -216,9 +231,7 @@ class Activity
     private function clientPartnerCreate(): int
     {
         $partner = new EFlectraPartner();
-        $this->em->persist($partner);
-        $this->em->flush($partner);
-        $result = $partner->id;
+        $result = $this->dao->create($partner);
         return $result;
     }
 
@@ -262,6 +275,21 @@ class Activity
         $seconds = random_int(0, Cfg::BEGINNING_OF_AGES_INC_MAX);
         $this->date->modify("+$seconds seconds");
         return $this->date;
+    }
+
+    /**
+     * Generate random MLM ID and add $clientId to get uniqueness.
+     *
+     * @param int $clientId
+     * @return string
+     */
+    private function generateMlmId($clientId)
+    {
+        $head = sprintf("%04d", $clientId);
+        $tail = random_int(1, 99999);
+        $tail = sprintf("%05d", $tail);
+        $result = $head . $tail;
+        return $result;
     }
 
     /**

@@ -9,6 +9,7 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
+use Praxigento\Milc\Bonus\Service\Client\Add as SrvAdd;
 
 /** Maximal possible increment for date in seconds */
 const DATE_INC_MAX = Cfg::BEGINNING_OF_AGES_INC_MAX; //max random increment in seconds
@@ -46,7 +47,8 @@ try {
     $rootId = null;
     for ($i = 0; $i < TOTAL_CLIENTS; $i++) {
         /* add new customer to downline tree */
-        [$date, $rootId, $clientId, $parentId, $isNotDistr] = $hlpAct->clientCreate(PERCENT_NEW_CLIENT_IS_NOT_DISTR);
+        [$date, $rootId, $clientId, $parentId, $isNotDistr]
+            = $hlpAct->clientCreate(SrvAdd::TMP_TREE_TYPE_NATURAL, PERCENT_NEW_CLIENT_IS_NOT_DISTR);
         $type = $isNotDistr ? 'cust' : 'distr';
         echo "\nnew: $clientId/$parentId (type: $type).";
 

@@ -448,6 +448,10 @@
               "type": "reference",
               "desc": "Reference to the client data in Odoo 'res_partner'."
             },
+            "enroller_ref": {
+              "type": "reference",
+              "desc": "Reference to the client's enroller that should be already registered."
+            },
             "mlm_id": {
               "type": "string",
               "desc": "MLM ID of the distributor.",
@@ -476,12 +480,20 @@
           },
           "relation": {
             "client": {
-              ".comment": "TODO: should we have a foreign key in case of client can be deleted in the primary client table?",
               "path": "/res/partner",
               "own": ["client_ref"],
               "foreign": ["id"],
               "on": {
                 "delete": "restrict",
+                "update": "cascade"
+              }
+            },
+            "enroller": {
+              "path": "/bon/dwnl/reg",
+              "own": ["enroller_ref"],
+              "foreign": ["client_ref"],
+              "on": {
+                "delete": "cascade",
                 "update": "cascade"
               }
             }
@@ -490,7 +502,7 @@
       },
       "tree": {
         ".": {
-          "desc": "Natural tree to save current 'parent-child' relations between clients.",
+          "desc": "Tree to save current 'parent-child' relations between clients.",
           "attr": {
             "client_ref": {
               "type": "reference",
@@ -533,6 +545,38 @@
               "on": {
                 "delete": "restrict",
                 "update": "cascade"
+              }
+            }
+          }
+        },
+        "bin": {
+          ".": {
+            "desc": "Additional details for binary trees.",
+            "attr": {
+              "client_ref": {
+                "type": "reference",
+                "desc": "Reference to the client itself."
+              },
+              "is_on_left": {
+                "type": "boolean",
+                "desc": "'true' if client is on the left leg of his parent."
+              }
+            },
+            "index": {
+              "pk": {
+                "type": "primary",
+                "attrs": ["client_ref"]
+              }
+            },
+            "relation": {
+              "client": {
+                "path": "/bon/dwnl/tree",
+                "own": ["client_ref"],
+                "foreign": ["client_ref"],
+                "on": {
+                  "delete": "cascade",
+                  "update": "cascade"
+                }
               }
             }
           }

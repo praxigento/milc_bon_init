@@ -27,10 +27,12 @@ interface Activity
     /**
      * Create new client and place it into the downline tree.
      *
+     * @param string $treeType see \Praxigento\Milc\Bonus\Service\Client\Add::TMP_TREE_TYPE_...
      * @param int $percentIsCust 0..100 new client will not be a distributor.
+     * @param int $percentAddToLeft 0..100 add client to the left leg in downline (binary tree)
      * @return array
      */
-    public function clientCreate($percentIsCust);
+    public function clientCreate($treeType, $percentIsCust, $percentAddToLeft = 50);
 
     /**
      * Delete random client (except root).

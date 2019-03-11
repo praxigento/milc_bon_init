@@ -52,6 +52,7 @@ interface Config
     const DB_TBL_BON_CV_REG_SALE_BACK = 'bon_cv_reg_sale_back';
     const DB_TBL_BON_DWNL_REG = 'bon_dwnl_reg';
     const DB_TBL_BON_DWNL_TREE = 'bon_dwnl_tree';
+    const DB_TBL_BON_DWNL_TREE_BIN = 'bon_dwnl_tree_bin';
     const DB_TBL_BON_EVENT_LOG = 'bon_event_log';
     const DB_TBL_BON_EVENT_LOG_DWNL_DEL = 'bon_event_log_dwnl_del';
     const DB_TBL_BON_EVENT_LOG_DWNL_TREE = 'bon_event_log_dwnl_tree';

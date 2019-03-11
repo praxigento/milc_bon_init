@@ -21,6 +21,11 @@ class Registry
      */
     public $client_ref;
     /**
+     * @var int
+     * @Column(type="integer")
+     */
+    public $enroller_ref;
+    /**
      * @var boolean
      * @Column(type="boolean")
      */

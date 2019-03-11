@@ -118,6 +118,23 @@ from (((bon_calc_comm_level cl
 
 CREATE
   OR REPLACE
+  VIEW bon_ui_dwnl_tree AS
+select tr.client_ref    AS client_id,
+       reg.mlm_id       AS client_mlm_id,
+       reg.enroller_ref AS enroller_id,
+       tr.parent_ref    AS parent_id,
+       par.mlm_id       AS parent_mlm_id,
+       tr.depth         AS depth,
+       tr.path          AS path,
+       reg.is_customer  AS is_customer
+from ((bon_dwnl_tree tr
+  left join bon_dwnl_reg reg on
+    ((reg.client_ref = tr.client_ref)))
+       left join bon_dwnl_reg par on
+  ((par.client_ref = tr.parent_ref)));
+
+CREATE
+  OR REPLACE
   VIEW bon_ui_event_log AS
 select log.id          AS id,
        log.date        AS date,
@@ -210,19 +227,3 @@ from ((bon_cv_reg reg
     ((sale.registry_ref = reg.id)))
        left join bon_cv_reg_sale_back back on
   ((back.registry_ref = reg.id)));
-
-CREATE
-  OR REPLACE
-  VIEW bon_ui_reg_tree AS
-select tr.client_ref   AS client_id,
-       reg.mlm_id      AS client_mlm_id,
-       tr.parent_ref   AS parent_id,
-       par.mlm_id      AS parent_mlm_id,
-       tr.depth        AS depth,
-       tr.path         AS path,
-       reg.is_customer AS is_customer
-from ((bon_dwnl_tree tr
-  left join bon_dwnl_reg reg on
-    ((reg.client_ref = tr.client_ref)))
-       left join bon_dwnl_reg par on
-  ((par.client_ref = tr.parent_ref)));
