@@ -38,19 +38,38 @@ interface Bonus
     public function qualRules($calcId, $ranks);
 
     /**
-     * Create new suite of Unilevel based cals.
-     *
-     * @param $planId
-     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite
-     */
-    public function suiteUnilevel($planId): ESuite;
-
-    /**
-     * Create suite calculations for Unilevel Suite.
+     * Create calculations for Binary Suite.
      *
      * @param $suiteId
      * @param $typeIds
      * @return array [calc_type_code=>suite_calc_id]
      */
-    public function suiteUnilevelCalcs($suiteId, $typeIds);
+    public function suiteCalcsBinary($suiteId, $typeIds);
+
+    /**
+     * Create calculations for Unilevel Suite.
+     *
+     * @param $suiteId
+     * @param $typeIds
+     * @return array [calc_type_code=>suite_calc_id]
+     */
+    public function suiteCalcsUnilevel($suiteId, $typeIds);
+
+    /**
+     * Create new suite with monthly basis.
+     *
+     * @param $planId
+     * @param string $note
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite
+     */
+    public function suiteMonth($planId, $note): ESuite;
+
+    /**
+     * Create new suite with weekly basis.
+     *
+     * @param int $planId
+     * @param string $note
+     * @return \Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite
+     */
+    public function suiteWeek($planId, $note): ESuite;
 }

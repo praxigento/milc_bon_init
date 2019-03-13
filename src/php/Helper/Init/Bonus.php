@@ -16,7 +16,6 @@ use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Pv as EQualRulePv;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Calc\Rank\Rule\Rank as EQualRuleRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan as EPlan;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type as ECalcType;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Calc\Type\Deps\After as ECalcTypeDepsOn;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Rank as EPlanRank;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite as ESuite;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Plan\Suite\Calc as ESuiteCalc;
@@ -42,60 +41,65 @@ class Bonus
     {
         $result = [];
         //
+        $code = Cfg::CALC_TYPE_COMM_BINARY;
+        $idCommLevel = $this->calcTypesAdd($code, 'Binary commission calculation.');
+        $result[$code] = $idCommLevel;
+        //
+        $code = Cfg::CALC_TYPE_COMM_LEVEL_BASED;
+        $idCommLevel = $this->calcTypesAdd($code, 'Level based bonus calculation.');
+        $result[$code] = $idCommLevel;
+        //
+        $code = Cfg::CALC_TYPE_COMPRESSION;
+        $idDowngrade = $this->calcTypesAdd($code, 'Distributors downgrade calculation.');
+        $result[$code] = $idDowngrade;
+        //
         $code = Cfg::CALC_TYPE_CV_COLLECT;
-        $deps = [];
-        $idCvCollect = $this->calcTypesAdd($code, 'CV collection.', $deps);
+        $idCvCollect = $this->calcTypesAdd($code, 'CV collection.');
         $result[$code] = $idCvCollect;
         //
-        $code = Cfg::CALC_TYPE_TREE_NATURAL;
-        $deps = [];
-        $idTreeNatural = $this->calcTypesAdd($code, 'Plain downline tree composition.', $deps);
-        $result[$code] = $idTreeNatural;
-        //
-        $code = Cfg::CALC_TYPE_TREE_BINARY;
-//        $deps = [];
-        $idTreeBinary = $this->calcTypesAdd($code, 'Binary downline tree composition.', $deps);
-        $result[$code] = $idTreeBinary;
-        //
-        $code = Cfg::CALC_TYPE_TREE_MATRIX;
-//        $deps = [];
-        $idTreeMatrix = $this->calcTypesAdd($code, 'Binary downline tree composition.', $deps);
-        $result[$code] = $idTreeMatrix;
-        //
-        $code = Cfg::CALC_TYPE_CV_GROUPING_PV;
-        $deps = [$idTreeNatural, $idTreeBinary, $idTreeMatrix];
-        $idGroupPv = $this->calcTypesAdd($code, 'PV calculation in the tree.', $deps);
-        $result[$code] = $idGroupPv;
-        //
         $code = Cfg::CALC_TYPE_CV_GROUPING_GV;
-        $deps = [$idGroupPv];
-        $idGroupGv = $this->calcTypesAdd($code, 'GV calculation in the tree.', $deps);
+        $idGroupGv = $this->calcTypesAdd($code, 'GV calculation in the tree.');
         $result[$code] = $idGroupGv;
         //
         $code = Cfg::CALC_TYPE_CV_GROUPING_OV;
-//        $deps = [];
-        $idGroupOv = $this->calcTypesAdd($code, 'OV calculation in the tree.', $deps);
+        $idGroupOv = $this->calcTypesAdd($code, 'OV calculation in the tree.');
         $result[$code] = $idGroupOv;
         //
-        $code = Cfg::CALC_TYPE_RANK_QUAL;
-        $deps = [$idGroupPv, $idGroupGv, $idGroupOv];
-        $idRank = $this->calcTypesAdd($code, 'Simple qualification calculation (based on PV, ...).', $deps);
-        $result[$code] = $idRank;
-        //
-        $code = Cfg::CALC_TYPE_COMM_LEVEL_BASED;
-        $deps = [$idRank];
-        $idCommLevel = $this->calcTypesAdd($code, 'Level based bonus calculation.', $deps);
-        $result[$code] = $idCommLevel;
+        $code = Cfg::CALC_TYPE_CV_GROUPING_PV;
+        $idGroupPv = $this->calcTypesAdd($code, 'PV calculation in the tree.');
+        $result[$code] = $idGroupPv;
         //
         $code = Cfg::CALC_TYPE_DOWNGRADE;
-        $deps = [$idRank];
-        $idDowngrade = $this->calcTypesAdd($code, 'Distributors downgrade calculation.', $deps);
+        $idDowngrade = $this->calcTypesAdd($code, 'Distributors downgrade calculation.');
         $result[$code] = $idDowngrade;
+        //
+        $code = Cfg::CALC_TYPE_RANK_QUAL;
+        $idRank = $this->calcTypesAdd($code, 'Simple qualification calculation (based on PV, ...).');
+        $result[$code] = $idRank;
+        //
+        $code = Cfg::CALC_TYPE_TREE_BINARY;
+        $idTreeBinary = $this->calcTypesAdd($code, 'Binary downline tree composition.');
+        $result[$code] = $idTreeBinary;
+        //
+        $code = Cfg::CALC_TYPE_TREE_MATRIX;
+        $idTreeMatrix = $this->calcTypesAdd($code, 'Binary downline tree composition.');
+        $result[$code] = $idTreeMatrix;
+        //
+        $code = Cfg::CALC_TYPE_TREE_NATURAL;
+        $idTreeNatural = $this->calcTypesAdd($code, 'Plain downline tree composition.');
+        $result[$code] = $idTreeNatural;
 
         return $result;
     }
 
-    private function calcTypesAdd($code, $note, $depsOn = [])
+    /**
+     * Get ID for suite calculation by code or create new one and return new ID.
+     *
+     * @param string $code
+     * @param string $note
+     * @return int
+     */
+    private function calcTypesAdd($code, $note)
     {
         $key = [ECalcType::CODE => $code];
         /** @var ECalcType $found */
@@ -105,12 +109,6 @@ class Bonus
             $calcType->code = $code;
             $calcType->note = $note;
             $result = $this->dao->create($calcType);
-            foreach ($depsOn as $one) {
-                $link = new ECalcTypeDepsOn();
-                $link->ref = $result;
-                $link->other_ref = $one;
-                $this->dao->create($link);
-            }
         } else {
             $result = $found->id;
         }
@@ -360,23 +358,77 @@ class Bonus
         return $result;
     }
 
-    public function suiteUnilevel($planId): ESuite
+    public function suiteCalcsBinary($suiteId, $typeIds)
     {
-        $key = [ESuite::PLAN_REF => $planId];
-        $result = $this->dao->getOne(ESuite::class, $key);
-        if (!$result) {
-            $suite = new ESuite();
-            $suite->plan_ref = $planId;
-            $suite->date_created = $this->hlpFormat->getDateNowUtc();
-            $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
-            $suite->note = Cfg::SUITE_NOTE;
-            $this->dao->create($suite);
-            $result = $this->dao->getOne(ESuite::class, $key);
+        $result = [];
+        $key = [ESuiteCalc::SUITE_REF => $suiteId];
+        /** @var ESuiteCalc[] $found */
+        $found = $this->dao->getSet(ESuiteCalc::class, $key);
+        if (!count($found)) {
+            $i = 1;
+            /* COLLECT */
+            $typeCode = Cfg::CALC_TYPE_CV_COLLECT;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* BINARY TREE */
+            $typeCode = Cfg::CALC_TYPE_TREE_BINARY;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* PV GROUPING */
+            $typeCode = Cfg::CALC_TYPE_CV_GROUPING_PV;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* RANK QUALIFICATION */
+            $typeCode = Cfg::CALC_TYPE_RANK_QUAL;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+            /* BINARY COMMISSION */
+            $typeCode = Cfg::CALC_TYPE_COMM_BINARY;
+            $typeId = $typeIds[$typeCode];
+            $calc = new ESuiteCalc();
+            $calc->suite_ref = $suiteId;
+            $calc->type_ref = $typeId;
+            $calc->date_created = new \DateTime();
+            $calc->sequence = $i++;
+            $id = $this->dao->create($calc);
+            $result[$typeCode] = $id;
+        } else {
+            $flipped = array_flip($typeIds);
+            foreach ($found as $one) {
+                $typeId = $one->type_ref;
+                $code = $flipped[$typeId];
+                $id = $one->id;
+                $result[$code] = $id;
+            }
         }
         return $result;
     }
 
-    public function suiteUnilevelCalcs($suiteId, $typeIds)
+    public function suiteCalcsUnilevel($suiteId, $typeIds)
     {
         $result = [];
         $key = [ESuiteCalc::SUITE_REF => $suiteId];
@@ -442,6 +494,38 @@ class Bonus
                 $id = $one->id;
                 $result[$code] = $id;
             }
+        }
+        return $result;
+    }
+
+    public function suiteMonth($planId, $note): ESuite
+    {
+        $key = [ESuite::PLAN_REF => $planId];
+        $result = $this->dao->getOne(ESuite::class, $key);
+        if (!$result) {
+            $suite = new ESuite();
+            $suite->plan_ref = $planId;
+            $suite->date_created = $this->hlpFormat->getDateNowUtc();
+            $suite->period = Cfg::BONUS_PERIOD_TYPE_MONTH;
+            $suite->note = $note;
+            $this->dao->create($suite);
+            $result = $this->dao->getOne(ESuite::class, $key);
+        }
+        return $result;
+    }
+
+    public function suiteWeek($planId, $note): ESuite
+    {
+        $key = [ESuite::PLAN_REF => $planId];
+        $result = $this->dao->getOne(ESuite::class, $key);
+        if (!$result) {
+            $suite = new ESuite();
+            $suite->plan_ref = $planId;
+            $suite->date_created = $this->hlpFormat->getDateNowUtc();
+            $suite->period = Cfg::BONUS_PERIOD_TYPE_WEEK;
+            $suite->note = $note;
+            $this->dao->create($suite);
+            $result = $this->dao->getOne(ESuite::class, $key);
         }
         return $result;
     }

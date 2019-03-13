@@ -22,6 +22,7 @@ interface Config
     const BONUS_PERIOD_TYPE_WEEK = 'W';
     const BONUS_PERIOD_TYPE_YEAR = 'Y';
     /**/
+    const CALC_TYPE_COMM_BINARY = 'COMM_BINARY';
     const CALC_TYPE_COMM_LEVEL_BASED = 'COMM_LEVEL_BASED';
     const CALC_TYPE_COMPRESSION = 'COMPRESSION';
     const CALC_TYPE_CV_COLLECT = 'CV_COLLECT';
@@ -97,8 +98,6 @@ interface Config
     /**/
     const RULE_GROUP_LOGIC_AND = 'AND';
     const RULE_GROUP_LOGIC_OR = 'OR';
-    /**/
-    const SUITE_NOTE = 'Development calcs suite (monthly based).';
     /**/
     const TREE_DEPTH_INIT = 1;
     const TREE_PS = ':';

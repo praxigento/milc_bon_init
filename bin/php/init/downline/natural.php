@@ -105,10 +105,6 @@ try {
         }
     }
 
-    /** @var \Doctrine\ORM\EntityManagerInterface $em */
-    $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-    $em->flush();
-
     $conn->commit();
 
     echo "\nDone.\n";
