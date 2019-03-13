@@ -13,10 +13,10 @@
   ],
   "require": {
     "php": "^7.1",
-    "teqfw/back-di-php": "dev-master",
+    "teqfw/back-di-php": "dev-master as 0.1.0",
     "teqfw/back-db-repo3-php": "dev-master as 0.1.0",
     "doctrine/orm": "2.7.x-dev",
-    "zeptech/annotations": "dev-master"
+    "zeptech/annotations": "^1"
   },
   "require-dev": {
     "phpunit/phpunit": "^7"

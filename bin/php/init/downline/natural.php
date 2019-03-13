@@ -6,7 +6,7 @@
  * Since: 2019
  */
 /* PHP Composer's autoloader (access to dependencies sources) */
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Service\Client\Add as SrvAdd;
@@ -79,7 +79,7 @@ try {
         /* change client type (cust/distr)  */
         $needClientTypeChange = randomPercent(PERCENT_TYPE_CHANGE);
         if ($needClientTypeChange) {
-            [$clientId, $typeOld, $typeNew] = $hlpAct->clientChangeType();
+            [$clientId, $typeOld, $typeNew] = $hlpAct->clientChangeType(true);
             if (!is_null($clientId))
                 echo "\ntype changed: client #$clientId ($typeOld/$typeNew).";
         }

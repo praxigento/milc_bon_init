@@ -126,12 +126,15 @@ select tr.client_ref    AS client_id,
        par.mlm_id       AS parent_mlm_id,
        tr.depth         AS depth,
        tr.path          AS path,
-       reg.is_customer  AS is_customer
+       reg.is_customer  AS is_customer,
+       bin.is_on_left       as on_left
 from ((bon_dwnl_tree tr
   left join bon_dwnl_reg reg on
     ((reg.client_ref = tr.client_ref)))
-       left join bon_dwnl_reg par on
-  ((par.client_ref = tr.parent_ref)));
+  left join bon_dwnl_reg par on
+    ((par.client_ref = tr.parent_ref)))
+       left join bon_dwnl_tree_bin as bin ON
+  bin.client_ref = tr.client_ref;
 
 CREATE
   OR REPLACE

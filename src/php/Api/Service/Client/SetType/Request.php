@@ -16,5 +16,7 @@ class Request
     public $date;
     /** @var bool */
     public $isCustomer;
+    /** @var bool */
+    public $moveDownline;
 
 }

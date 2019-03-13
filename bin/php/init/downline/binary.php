@@ -50,32 +50,30 @@ try {
             = $hlpAct->clientCreate(SrvAdd::TMP_TREE_TYPE_BINARY, PERCENT_NEW_CLIENT_IS_NOT_DISTR, PERCENT_ADD_TO_LEFT_LEG);
 
         /* change client type (cust/distr)  */
-//        $needClientTypeChange = randomPercent(PERCENT_TYPE_CHANGE);
-//        if ($needClientTypeChange) {
-//            [$clientId, $typeOld, $typeNew] = $hlpAct->clientChangeType();
-//            if (!is_null($clientId))
-//                echo "\ntype changed: client #$clientId ($typeOld/$typeNew).";
-//        }
+        $needClientTypeChange = randomPercent(PERCENT_TYPE_CHANGE);
+        if ($needClientTypeChange) {
+            [$clientId, $typeOld, $typeNew] = $hlpAct->clientChangeType(false);
+        }
 
         /* add sale orders with CV/ACV */
-//        $sales = $hlpAct->salesAdd();
-//        $totals = count($sales);
-//        echo "\nsales: $totals:";
-//        foreach ($sales as $saleId => $saleData) {
-//            $cv = number_format($saleData[0], 2);
-//            $isAuto = $saleData[1] ? 'yes' : 'no';
-//            $clientId = $saleData[2];
-//            echo "\n\t#$saleId: cv: $cv, autoship: $isAuto, client: #$clientId;";
-//        }
-//
-//        /* add clawbacks for sale orders */
-//        $needClawback = randomPercent(PERCENT_CLAWBACK);
-//        if ($needClawback) {
-//            [$saleId, $cv, $isAutoship, $clientId] = $hlpAct->salesClawback();
-//            if ($saleId) {
-//                echo "\nclawback: sale #$saleId (cv: $cv, autoship: $isAuto, client: #$clientId).";
-//            }
-//        }
+        $sales = $hlpAct->salesAdd();
+        $totals = count($sales);
+        echo "\nsales: $totals:";
+        foreach ($sales as $saleId => $saleData) {
+            $cv = number_format($saleData[0], 2);
+            $isAuto = $saleData[1] ? 'yes' : 'no';
+            $clientId = $saleData[2];
+            echo "\n\t#$saleId: cv: $cv, autoship: $isAuto, client: #$clientId;";
+        }
+
+        /* add clawbacks for sale orders */
+        $needClawback = randomPercent(PERCENT_CLAWBACK);
+        if ($needClawback) {
+            [$saleId, $cv, $isAutoship, $clientId] = $hlpAct->salesClawback();
+            if ($saleId) {
+                echo "\nclawback: sale #$saleId (cv: $cv, autoship: $isAuto, client: #$clientId).";
+            }
+        }
     }
 
     /** @var \Doctrine\ORM\EntityManagerInterface $em */

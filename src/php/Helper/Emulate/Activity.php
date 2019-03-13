@@ -100,7 +100,7 @@ class Activity
         return [$clientId, $parentIdNew, $parentIdOld];
     }
 
-    public function clientChangeType()
+    public function clientChangeType($moveDownline)
     {
         $clientId = $typeOld = $typeNew = null;
         $changeDistr = $this->randomPercent(50);
@@ -133,6 +133,7 @@ class Activity
             $req->clientId = $clientId;
             $req->isCustomer = $changeDistr;
             $req->date = $this->dateModify();
+            $req->moveDownline = $moveDownline;
             $this->srvClientSetType->exec($req);
             /* fix maps */
             if ($changeDistr) {
@@ -140,11 +141,13 @@ class Activity
                 unset($this->mapClientTypeDistr[$key]);
                 $this->mapClientTypeDistr = array_values($this->mapClientTypeDistr);
                 $this->mapClientTypeCust[] = $clientId;
+                echo "\ntype changed: $clientId(dist => cust).";
             } else {
                 /* move cust to distr */
                 unset($this->mapClientTypeCust[$key]);
                 $this->mapClientTypeCust = array_values($this->mapClientTypeCust);
                 $this->mapClientTypeDistr[] = $clientId;
+                echo "\ntype changed: $clientId(cust => dist).";
             }
         } else {
             /* reset result vars to eliminate output noise */
@@ -196,7 +199,7 @@ class Activity
 
         $type = $isNotDistr ? 'cust' : 'distr';
         $place = $addToLeftLeg ? 'left' : 'right';
-        echo "\nnew: $clientId/$enrollerId (place: $place; parent: $parentId).";
+        echo "\nnew: $clientId/$enrollerId (place: $place; parent: $parentId; type: $type).";
 
         return [$this->date, $this->rootId, $clientId, $enrollerId, $isNotDistr];
     }

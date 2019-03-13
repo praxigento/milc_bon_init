@@ -6,10 +6,10 @@
 
 namespace Praxigento\Milc\Bonus\Service\Client;
 
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ELogTree;
-use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Type as ELogType;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Dwnl\Registry as ECustReg;
 use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Dwnl\Tree as ETree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Tree as ELogTree;
+use Praxigento\Milc\Bonus\Api\Db\Data\Bonus\Event\Log\Dwnl\Type as ELogType;
 use Praxigento\Milc\Bonus\Api\Service\Client\SetType\Request as ARequest;
 use Praxigento\Milc\Bonus\Api\Service\Client\SetType\Response as AResponse;
 
@@ -91,6 +91,7 @@ class SetType
         $clientId = $req->clientId;
         $isCust = $req->isCustomer;
         $date = $req->date;
+        $moveDownline = $req->moveDownline;
         if (!$date)
             $date = $this->hlpFormat->getDateNowUtc();
 
@@ -105,7 +106,7 @@ class SetType
                 /* save event into type log */
                 $this->addToTypeLog($clientId, $date, $isCust);
                 /* update parents for front line customers in tree */
-                if ($isCust) {
+                if ($isCust && $moveDownline) {
                     $this->changeParents($clientId, $date);
                 }
             }

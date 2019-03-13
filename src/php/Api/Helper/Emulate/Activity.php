@@ -20,9 +20,10 @@ interface Activity
 
     /**
      * Change type for client (distr/cust).
+     * @param bool $moveDownline 'true' move customer's downline up to it's parent.
      * @return array
      */
-    public function clientChangeType();
+    public function clientChangeType($moveDownline);
 
     /**
      * Create new client and place it into the downline tree.
