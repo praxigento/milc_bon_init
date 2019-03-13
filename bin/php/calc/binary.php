@@ -1,12 +1,12 @@
 <?php
 /**
- * Executable script to emulate Unilevel bonus calculation.
+ * Executable script to emulate Binary bonus calculation.
  *
  * Authors: Alex Gusev <alex@flancer64.com>
  * Since: 2019
  */
 /* PHP Composer's autoloader (access to dependencies sources) */
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Helper\Period as HPeriod;
@@ -31,16 +31,16 @@ try {
 
     /* start from the beginning of the ages and get one month to process */
     $date = \DateTime::createFromFormat(Cfg::BEGINNING_OF_AGES_FORMAT, Cfg::BEGINNING_OF_AGES);
-    $dateFrom = $hlpPeriod->getTimestampFrom($date, HPeriod::TYPE_MONTH);
-    $dateTo = $hlpPeriod->getTimestampTo($date, HPeriod::TYPE_MONTH);
+    $dateFrom = $hlpPeriod->getTimestampFrom($date, HPeriod::TYPE_WEEK);
+    $dateTo = $hlpPeriod->getTimestampTo($date, HPeriod::TYPE_WEEK);
 
     /* get developer suite of calcs */
     $suite = $hlpCalc->getSuite();
     $calcCollect = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_COLLECT);
-    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_NATURAL);
+    $calcTree = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_TREE_BINARY);
     $calcPv = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_CV_GROUPING_PV);
     $calcRank = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_RANK_QUAL);
-    $calcComm = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COMM_LEVEL_BASED);
+    $calcComm = $hlpCalc->getSuiteCalc($suite->id, Cfg::CALC_TYPE_COMM_BINARY);
 
     /* register new pool */
     $period = $hlpCalc->registerPeriod($dateFrom, $suite->id);
@@ -59,8 +59,8 @@ try {
     $poolCalcRank = $hlpCalc->registerPoolCalc($poolId, $calcRank->id);
     $hlpCalc->step04Rank($poolCalcRank->id, $poolCalcTree->id);
     /** Step 5: Level Based Commissions. */
-    $poolCalcComm = $hlpCalc->registerPoolCalc($poolId, $calcComm->id);
-    $hlpCalc->step05Comm($poolCalcComm->id, $poolCalcTree->id, $poolCalcRank->id);
+//    $poolCalcComm = $hlpCalc->registerPoolCalc($poolId, $calcComm->id);
+//    $hlpCalc->step05Comm($poolCalcComm->id, $poolCalcTree->id, $poolCalcRank->id);
 
 
     $conn->commit();

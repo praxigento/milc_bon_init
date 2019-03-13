@@ -7,7 +7,6 @@
  */
 /* PHP Composer's autoloader (access to dependencies sources) */
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once 'commons.php';
 
 use Praxigento\Milc\Bonus\Api\Config as Cfg;
 use Praxigento\Milc\Bonus\Api\Service\Client\Tree\Get\Request as ARequest;

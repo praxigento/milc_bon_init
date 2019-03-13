@@ -27,6 +27,16 @@ interface Period
     public function getPeriodFirstDate($datestamp);
 
     /**
+     * @return string
+     */
+    public function getWeekFirstDay();
+
+    /**
+     * @return string
+     */
+    public function getWeekLastDay();
+
+    /**
      * Get date-time value for "date >= :dateFrom" statements.
      *
      * @param string $datestamp

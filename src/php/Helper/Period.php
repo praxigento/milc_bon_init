@@ -20,8 +20,8 @@ class Period
     /**
      * Week first and last day by default.
      */
-    private $weekFirstDay = self::WEEK_SATURDAY;
-    private $weekLastDay = self::WEEK_FRIDAY;
+    private $weekFirstDay = self::WEEK_MONDAY;
+    private $weekLastDay = self::WEEK_SUNDAY;
 
     public function __construct(
         \Praxigento\Milc\Bonus\Api\Helper\Format $hlpFormat
@@ -170,6 +170,22 @@ class Period
                 break;
         }
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWeekFirstDay()
+    {
+        return $this->weekFirstDay;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWeekLastDay()
+    {
+        return $this->weekLastDay;
     }
 
     private function normalizePeriod($value, $type = self::TYPE_DAY)
