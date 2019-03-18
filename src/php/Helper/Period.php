@@ -49,16 +49,23 @@ class Period
                 $to = date(Cfg::FORMAT_DATETIME, $ts);
                 break;
             case self::TYPE_WEEK:
-                /* week period ends on ...  */
-                $end = $this->getWeekLastDay();
-                $prev = $this->getWeekDayNext($end);
-                /* this should be the last day of the week */
                 $periodValue = $this->normalizePeriod($periodValue, self::TYPE_DAY);
-                $dt = date_create_from_format('Ymd', $periodValue);
-                $ts = strtotime("previous $prev midnight", $dt->getTimestamp());
-                $from = date(Cfg::FORMAT_DATETIME, $ts);
-                $ts = strtotime('tomorrow midnight', $dt->getTimestamp());
-                $to = date(Cfg::FORMAT_DATETIME, $ts);
+                $dtNow = date_create_from_format('Ymd', $periodValue);
+                $tsNow = $dtNow->getTimestamp();
+                /* first day of the current week  */
+                $weekFirst = $this->getWeekFirstDay();
+                $tsFirst = strtotime("this $weekFirst midnight", $dtNow->getTimestamp());
+                if ($tsFirst > $tsNow) {
+                    $tsFirst = strtotime("previous $weekFirst midnight", $dtNow->getTimestamp());
+                }
+                $from = date(Cfg::FORMAT_DATETIME, $tsFirst);
+                /* last day of the current week  */
+                $weekLast = $this->getWeekLastDay();
+                $tsLast = strtotime("this $weekLast midnight", $dtNow->getTimestamp());
+                if ($tsLast < $tsNow) {
+                    $tsLast = strtotime("next $weekFirst midnight", $dtNow->getTimestamp());
+                }
+                $to = date(Cfg::FORMAT_DATETIME, $tsLast);
                 break;
             case self::TYPE_MONTH:
                 $periodValue = $this->normalizePeriod($periodValue, self::TYPE_MONTH);

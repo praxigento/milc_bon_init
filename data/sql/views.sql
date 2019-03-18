@@ -44,14 +44,14 @@ FROM bon_pool_comm_level_quant as clq
 CREATE
   OR REPLACE
   VIEW bon_ui_calc_cv AS
-select pc.id           AS pool_calc_id,
-       pc.suite_calc_ref     AS suite_calc_id,
-       ci.cv_reg_ref   AS cv_reg_item_id,
-       cvr.client_ref  AS client_id,
-       cvr.volume      AS cv_volume,
-       cvr.is_autoship AS is_autoship,
-       cvr.date        AS cv_reg_date,
-       cvr.type        AS cv_reg_type
+select pc.id             AS pool_calc_id,
+       pc.suite_calc_ref AS suite_calc_id,
+       ci.cv_reg_ref     AS cv_reg_item_id,
+       cvr.client_ref    AS client_id,
+       cvr.volume        AS cv_volume,
+       cvr.is_autoship   AS is_autoship,
+       cvr.date          AS cv_reg_date,
+       cvr.type          AS cv_reg_type
 from ((bon_pool_cv ci
   left join bon_pool_calc pc on
     ((pc.id = ci.pool_calc_ref)))
@@ -82,23 +82,41 @@ from ((((bon_pool p
 
 CREATE
   OR REPLACE
-  VIEW bon_ui_calc_tree AS
-select tr.pool_calc_ref      AS pool_calc_id,
-       tr.client_ref         AS client_id,
-       tr.parent_ref         AS parent_id,
-       count(trq.cv_reg_ref) AS total_orders,
-       tpv.pv                AS pv,
-       tpv.apv               AS apv
-from bon_pool_tree tr
-       left join bon_pool_tree_pv_link trq on
-  trq.tree_node_ref = tr.id
-       left join bon_pool_tree_pv tpv on
-  tpv.tree_node_ref = tr.id
-group by tr.pool_calc_ref,
-         tr.client_ref,
-         tr.parent_ref,
-         tpv.pv,
-         tpv.apv;
+  VIEW `bon_ui_calc_tree` AS
+select `tr`.`pool_calc_ref`      AS `pool_calc_id`,
+       `tr`.`client_ref`         AS `client_id`,
+       `tr`.`parent_ref`         AS `parent_id`,
+       `planr`.`code`            AS `rank`,
+       count(`trq`.`cv_reg_ref`) AS `total_orders`,
+       `tpv`.`pv`                AS `pv`,
+       `tpv`.`apv`               AS `apv`
+from `bon_pool_tree` `tr`
+       left join `bon_pool_tree_pv_link` `trq` on
+  `trq`.`tree_node_ref` = `tr`.`id`
+       left join `bon_pool_tree_pv` `tpv` on
+  `tpv`.`tree_node_ref` = `tr`.`id`
+       left join `bon_pool_calc` `bpc` on
+  `bpc`.`id` = `tr`.`pool_calc_ref`
+       left join `bon_plan_suite_calc` `bpsc` on
+  `bpsc`.`id` = `bpc`.`suite_calc_ref`
+       left join `bon_plan_suite_calc` `bpsc2` on
+  `bpsc2`.`suite_ref` = `bpsc`.`suite_ref`
+       left join `bon_plan_calc_type` `bpct` on
+  `bpct`.`id` = `bpsc2`.`type_ref`
+       left join `bon_pool_calc` `bpc2` on
+  `bpc2`.`suite_calc_ref` = `bpsc2`.`id`
+       left join `bon_pool_rank` `bpr2` on
+    (`bpr2`.`pool_calc_ref` = `bpc2`.`id`)
+    and (`bpr2`.`client_ref` = `tr`.`client_ref`)
+       left join `bon_plan_rank` `planr` on
+  `planr`.`id` = `bpr2`.`rank_ref`
+where `bpct`.`code` = 'RANK_QUAL'
+group by `tr`.`pool_calc_ref`,
+         `tr`.`client_ref`,
+         `tr`.`parent_ref`,
+         `planr`.`code`,
+         `tpv`.`pv`,
+         `tpv`.`apv`;
 
 CREATE
   OR REPLACE
@@ -127,7 +145,7 @@ select tr.client_ref    AS client_id,
        tr.depth         AS depth,
        tr.path          AS path,
        reg.is_customer  AS is_customer,
-       bin.is_on_left       as on_left
+       bin.is_on_left   as on_left
 from ((bon_dwnl_tree tr
   left join bon_dwnl_reg reg on
     ((reg.client_ref = tr.client_ref)))
@@ -173,14 +191,14 @@ from ((bon_plan_suite s
 CREATE
   OR REPLACE
   VIEW bon_ui_plan_ranks AS
-select pr.plan_ref AS plan_id,
-       pr.id       AS rank_id,
-       pr.code     AS rank_code,
-       pr.note     AS rank_desc,
-       pr.sequence AS rank_order,
+select pr.plan_ref       AS plan_id,
+       pr.id             AS rank_id,
+       pr.code           AS rank_code,
+       pr.note           AS rank_desc,
+       pr.sequence       AS rank_order,
        cr.suite_calc_ref AS suite_calc_id,
-       ct.code     AS suite_calc_type,
-       cr.rule_ref AS root_rule_id
+       ct.code           AS suite_calc_type,
+       cr.rule_ref       AS root_rule_id
 from (((bon_plan_rank pr
   left join bon_calc_rank cr on
     ((cr.rank_ref = pr.id)))
