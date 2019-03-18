@@ -55,7 +55,7 @@ class GetRanks
             "$asQual." . EPlanQual::RULE_REF . " as " . DRankEntry::RULE_ID
         ]);
         /* LEFT JOIN bon_calc_rank_rank */
-        $on = "$asQual." . EPlanQual::CALC_REF . "=$asCalc." . EPeriodCalc::CALC_REF;
+        $on = "$asQual." . EPlanQual::SUITE_CALC_REF . "=$asCalc." . EPeriodCalc::SUITE_CALC_REF;
         $result->leftJoin($asCalc, Cfg::DB_TBL_BON_CALC_RANK, $asQual, $on);
         /* LEFT JOIN bon_plan_rank */
         $on = "$asRank." . EPlanRank::ID . "=$asQual." . EPlanQual::RANK_REF;

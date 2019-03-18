@@ -8,7 +8,7 @@
           ".": {
             "desc": "Configuration for level based commission calculations.",
             "attr": {
-              "calc_ref": {
+              "suite_calc_ref": {
                 "type": "reference",
                 "desc": "Reference to the calculation."
               },
@@ -32,13 +32,13 @@
             "index": {
               "pk": {
                 "type": "primary",
-                "attrs": ["calc_ref", "rank_ref", "level"]
+                "attrs": ["suite_calc_ref", "rank_ref", "level"]
               }
             },
             "relation": {
               "calc": {
                 "path": "/bon/plan/suite/calc",
-                "own": ["calc_ref"],
+                "own": ["suite_calc_ref"],
                 "foreign": ["id"],
                 "on": {
                   "delete": "cascade",
@@ -62,7 +62,7 @@
         ".": {
           "desc": "Relations between ranks and qualification rules.",
           "attr": {
-            "calc_ref": {
+            "suite_calc_ref": {
               "type": "reference",
               "desc": "Reference to the calculation."
             },
@@ -78,13 +78,13 @@
           "index": {
             "pk": {
               "type": "primary",
-              "attrs": ["calc_ref", "rank_ref", "rule_ref"]
+              "attrs": ["suite_calc_ref", "rank_ref", "rule_ref"]
             }
           },
           "relation": {
             "calc": {
               "path": "/bon/plan/suite/calc",
-              "own": ["calc_ref"],
+              "own": ["suite_calc_ref"],
               "foreign": ["id"],
               "on": {
                 "delete": "cascade",
@@ -1036,7 +1036,7 @@
               "type": "reference",
               "desc": "Related pool (bound to period)."
             },
-            "calc_ref": {
+            "suite_calc_ref": {
               "type": "reference",
               "desc": "Related bonus calculation."
             }
@@ -1044,7 +1044,7 @@
           "index": {
             "unique": {
               "type": "unique",
-              "attrs": ["pool_ref", "calc_ref"]
+              "attrs": ["pool_ref", "suite_calc_ref"]
             }
           },
           "relation": {
@@ -1059,7 +1059,7 @@
             },
             "calc": {
               "path": "/bon/plan/suite/calc",
-              "own": ["calc_ref"],
+              "own": ["suite_calc_ref"],
               "foreign": ["id"],
               "on": {
                 "delete": "cascade",

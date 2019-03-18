@@ -45,7 +45,7 @@ CREATE
   OR REPLACE
   VIEW bon_ui_calc_cv AS
 select pc.id           AS pool_calc_id,
-       pc.calc_ref     AS suite_calc_id,
+       pc.suite_calc_ref     AS suite_calc_id,
        ci.cv_reg_ref   AS cv_reg_item_id,
        cvr.client_ref  AS client_id,
        cvr.volume      AS cv_volume,
@@ -78,7 +78,7 @@ from ((((bon_pool p
   left join bon_plan_suite ps on
     ((ps.id = pp.suite_ref)))
        left join bon_plan_calc_type ct on
-  ((ct.id = pc.calc_ref)));
+  ((ct.id = pc.suite_calc_ref)));
 
 CREATE
   OR REPLACE
@@ -112,7 +112,7 @@ from (((bon_calc_comm_level cl
   left join bon_plan_rank pr on
     ((pr.id = cl.rank_ref)))
   left join bon_plan_suite_calc sc on
-    ((sc.id = cl.calc_ref)))
+    ((sc.id = cl.suite_calc_ref)))
        left join bon_plan_calc_type ct on
   ((ct.id = sc.type_ref)));
 
@@ -178,14 +178,14 @@ select pr.plan_ref AS plan_id,
        pr.code     AS rank_code,
        pr.note     AS rank_desc,
        pr.sequence AS rank_order,
-       cr.calc_ref AS suite_calc_id,
+       cr.suite_calc_ref AS suite_calc_id,
        ct.code     AS suite_calc_type,
        cr.rule_ref AS root_rule_id
 from (((bon_plan_rank pr
   left join bon_calc_rank cr on
     ((cr.rank_ref = pr.id)))
   left join bon_plan_suite_calc sc on
-    ((sc.id = cr.calc_ref)))
+    ((sc.id = cr.suite_calc_ref)))
        left join bon_plan_calc_type ct on
   ((ct.id = sc.type_ref)));
 

@@ -117,7 +117,7 @@ class Bonus
 
     public function commLevels($calcId, $ranks)
     {
-        $found = $this->dao->getOne(ECalcLevel::class, [ECalcLevel::CALC_REF => $calcId]);
+        $found = $this->dao->getOne(ECalcLevel::class, [ECalcLevel::SUITE_CALC_REF => $calcId]);
         if (!$found) {
             $cfg = [
                 [1 => 0.20],    // HUM
@@ -130,7 +130,7 @@ class Bonus
                 $levels = $cfg[$i++];
                 foreach ($levels as $level => $percent) {
                     $entity = new ECalcLevel();
-                    $entity->calc_ref = $calcId;
+                    $entity->suite_calc_ref = $calcId;
                     $entity->rank_ref = $rankId;
                     $entity->level = $level;
                     $entity->percent = $percent;
@@ -184,7 +184,7 @@ class Bonus
     private function qualRankLink($calcId, $rankId, $ruleId)
     {
         $qual = new EPlanQual();
-        $qual->calc_ref = $calcId;
+        $qual->suite_calc_ref = $calcId;
         $qual->rank_ref = $rankId;
         $qual->rule_ref = $ruleId;
         $this->dao->create($qual);
@@ -192,7 +192,7 @@ class Bonus
 
     public function qualRules($calcId, $ranks)
     {
-        $found = $this->dao->getOne(EPlanQual::class, [EPlanQual::CALC_REF => $calcId]);
+        $found = $this->dao->getOne(EPlanQual::class, [EPlanQual::SUITE_CALC_REF => $calcId]);
         if (!$found) {
             $ruleIdHuman = $this->qualRulesHuman();
             $this->qualRankLink($calcId, $ranks[0], $ruleIdHuman);

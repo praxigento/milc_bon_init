@@ -205,7 +205,7 @@ class LevelBased
         $all = $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, EPoolCalc::class);
         /** @var EPoolCalc $one */
         $one = reset($all);
-        $result = $one->calc_ref;
+        $result = $one->suite_calc_ref;
         return $result;
     }
 
@@ -223,7 +223,7 @@ class LevelBased
         $qb = $this->conn->createQueryBuilder();
         $qb->from(Cfg::DB_TBL_BON_CALC_COMM_LEVEL, $as);
         $qb->select("$as.*");
-        $qb->where(ECalcLevel::CALC_REF . "=:$bndId");
+        $qb->where(ECalcLevel::SUITE_CALC_REF . "=:$bndId");
         $qb->setParameters([$bndId => $calcId]);
         $stmt = $qb->execute();
         /** @var ECalcLevel[] $all */

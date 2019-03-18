@@ -120,7 +120,7 @@ class Calc
     {
         $entity = new EPoolCalc();
         $entity->pool_ref = $poolId;
-        $entity->calc_ref = $suiteCalcId;
+        $entity->suite_calc_ref = $suiteCalcId;
         $id = $this->dao->create($entity);
         $result = $this->dao->getOne(EPoolCalc::class, $id);
         return $result;
